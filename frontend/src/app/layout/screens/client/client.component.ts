@@ -1,0 +1,78 @@
+import { NgModule, Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { routerTransition } from '../../../router.animations';
+import { BackendService } from '../../../shared/backend/backend.service';
+import { Popup } from '../../../shared/utils/ui';
+import * as $ from 'jquery';
+import { AutocompleteComponent } from '../../../shared/utils/autocomplete.component';
+import { Test } from '../../../shared/models/models';
+
+@Component({
+    selector: 'client-screen',
+    templateUrl: './client.component.html',
+    animations: [routerTransition()],
+})
+
+export class ClientScreen implements OnInit {
+    @Output() close: EventEmitter<any> = new EventEmitter();
+    @Input() test_ : Test = null;
+    test: Test;
+
+    ngOnInit() {
+        if (this.test_) {
+            this.test = this.test_ ;
+            this.test.load();
+        } else {
+            this.test = new Test();
+        }
+    }
+
+    closeScreen(update=false) {
+        if (this.test.hasChanged()) {
+            let popup = new Popup("You may have unsaved changes, do you still want to exit ?", {
+                header: "Unsaved Changes", buttons: [
+                    {
+                        name: "Yes",
+                        close: true,
+                        return: true,
+                        class: "btn btn-success pull-left"
+                    },
+                    {
+                        name: "No",
+                        close: true,
+                        return: false,
+                        class: "btn btn-danger pull-right"
+                    }
+                ]
+            }, (res) => {
+                if (res) {
+                    this.fadeOut();
+                    this.test.update(this.test.snapshot);
+                    setTimeout(() => this.close.emit(update), 500);
+                }
+            });
+            popup.open();
+        } else {
+            this.fadeOut();
+            setTimeout(() => this.close.emit(update), 500);
+        }
+    }
+
+    addAction() {
+        this.test.addAction();
+    }
+
+    addScreenShot() {
+        this.test.addScreenShot();
+    }
+
+    fadeOut() {
+        $(".card").removeClass("fadeIn2");
+        $(".backdrop").removeClass("fadeIn1");
+        $(".card").addClass("fadeOut2");
+        $(".backdrop").addClass("fadeOut1");
+    }
+
+    saveTest() {
+        this.test.save();
+    }
+}

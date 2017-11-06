@@ -1,0 +1,204 @@
+/* You can add global styles to this file, and also import other style files */
+@import "bootstrap/bootstrap";
+@import "spinner";
+@import "utils";
+@import "rtl";
+@import "responsive";
+
+.fadeIn2 {
+    -webkit-animation: fadein2 0.2s linear forwards;
+    animation: fadein2 0.2s linear forwards;
+}
+
+.fadeOut2 {
+    -webkit-animation: fadeout2 0.3s linear forwards;
+    animation: fadeout2 0.3s linear forwards;
+}
+
+@keyframes fadein2 {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeout2 {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.backdrop {
+    position: fixed; 
+    z-index: 1100; 
+    left: 0; 
+    top: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    background-color: black;  
+}
+
+.fadeIn1 {
+    -webkit-animation: fadein 0.5s linear forwards;
+    animation: fadein 0.5s linear forwards;
+}
+
+.fadeOut1 {
+    -webkit-animation: fadeout 0.3s linear forwards;
+    animation: fadeout 0.3s linear forwards;
+}
+// ******************
+// Popups
+// ******************
+
+.backdrop_popup {
+    position: fixed; 
+    z-index: 1300; 
+    left: 0; 
+    top: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    background-color: black;  
+}
+
+.popup {
+    z-index: 1400;
+}
+
+.popup-sm {
+    position: fixed; 
+    left: 35vw; 
+    top: 20vh; 
+    width: 30vw; 
+    height: 25vh;
+}
+
+.popup-md {
+    position: fixed; 
+    left: 30vw; 
+    top: 20vh; 
+    width: 40vw; 
+    height: 25vh;
+}
+
+.popup-lg {
+    position: fixed;
+    left: 25vw;
+    top: 20vh;
+    width: 50vw;
+    height: 25vh;
+}
+
+// ******************
+// Screens
+// ******************
+.screen-dark {
+    > .card-header {
+        background-color: #222;
+        color: white;
+    }
+    > .card-footer {
+        background-color: #222;
+        color: white;
+    }
+}
+
+.screen-sm {
+    z-index: 1200;
+    position: fixed; 
+    left: 35vw; 
+    top: 10vh; 
+    width: 30vw;
+}
+
+.screen-md {
+    z-index: 1200; 
+    position: fixed; 
+    left: 27.5vw; 
+    top: 10vh; 
+    width: 45vw;
+}
+
+.screen-lg {
+    z-index: 1200; 
+    position: fixed; 
+    left: 20vw; 
+    top: 10vh; 
+    width: 60vw;
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes fadeout {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+$topnav-background-color: #222;
+
+.rounded-btn{
+    -webkit-border-radius: 50px;
+            border-radius: 50px;
+    color: white;
+    background: $topnav-background-color;
+    border: 2px solid rgba(255,255,255,0.8);
+    font-size: 18px;
+    line-height: 40px;
+    padding: 0 25px;
+}
+
+.rounded-btn:hover,.rounded-btn:focus,.rounded-btn:active,.rounded-btn:visited{
+    color: rgba(255,255,255,1);
+    border: 2px solid rgba(255,255,255,1);
+    outline: none;
+}
+
+.layout-header {
+    height: 90px;
+}
+
+.layout-body {
+    height: calc(100vh - 350px);
+    max-height: calc(100vh - 350px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.btn-dark {
+    background-color: #222;
+    border: 1px solid #ababab;
+    color: white;
+}
+
+.layout-footer {
+    height: 80px;
+}

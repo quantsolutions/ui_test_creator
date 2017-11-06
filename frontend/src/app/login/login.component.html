@@ -1,0 +1,21 @@
+<div class="login-page" [@routerTransition]>
+    <div class="row">
+        <div class="col-md-4 push-md-4">
+            <img src="assets/images/keyboardninjagrey.png" width="150px" class="user-avatar" />
+            <h1>Login</h1>
+            <div class="form-content">
+                <div class="form-group">
+                    <input type="text" [(ngModel)]="username" class="form-control input-underline input-lg" (keydown)="processKey($event)" id="" placeholder="Email">
+                </div>
+
+                <div class="form-group">
+                    <input type="password" [(ngModel)]="password" class="form-control input-underline input-lg" (keydown)="processKey($event)" placeholder="Password">
+                </div>
+                <div class="form-group" style="height: 50px; color: red;">
+                    <span>{{errorMessage}}</span>
+                </div>
+                <a class="btn rounded-btn" (click)="onLoggedin()"> Log in </a>
+            </div>
+        </div>
+    </div>
+</div>
