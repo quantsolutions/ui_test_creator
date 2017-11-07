@@ -81,7 +81,7 @@ class goodxtest():
         for test in model['tests']:
             if test['type'] == 'suite':
                 test_suite = self._load_test_suite(test['name'])
-                self.runTestSuite(test_suite)
+                self.runTestSuite(session, test_suite)
             elif test['type'] == 'test':
                 test_ = self._load_test(test['name'])
                 self._run_test(test_)
