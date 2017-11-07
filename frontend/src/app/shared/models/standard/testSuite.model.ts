@@ -37,12 +37,12 @@ export class TestSuite extends Model {
     }
 
     save() {
-        this.serverPost('saveTestSuite', { model: this.values() });
         this.snapshot = this.toString();
+        return this.serverPost('saveTestSuite', { model: this.values() });
     }
 
-    addTest(testName) {
-        this.tests.push({ type: 'test', name: testName, order: 1 })
+    addTestOrSuite(testOrSuite) {
+        this.tests.push(testOrSuite);
     }
 
     addSuite(suiteName) {

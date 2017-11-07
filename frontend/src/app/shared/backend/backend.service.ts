@@ -169,11 +169,15 @@ export class BackendService {
     }
 
     searchTests(searchterm) {
-        return this.post('searchTests');
+        return this.post('searchTests', {search_term: searchterm});
     }
 
     getTests() {
         return this.post('getTests');
+    }
+
+    getSuites() {
+        return this.post('getSuites');
     }
 
     runTestSuite(model) {

@@ -37,7 +37,13 @@ class goodxtest():
     def getTests(self, session):
         tests = []
         for file in os.listdir(os.path.normpath(os.getcwd() + '\\tests\\')):
-            tests.append({ 'name' : file[:-5]})
+            tests.append({ 'name' : file[:-5], 'type': 'test'})
+        return tests
+
+    def getSuites(self, session):
+        tests = []
+        for file in os.listdir(os.path.normpath(os.getcwd() + '\\suites\\')):
+            tests.append({ 'name' : file[:-5], 'type': 'suite'})
         return tests
 
     def getImages(self, session):
@@ -58,7 +64,7 @@ class goodxtest():
         return self._load_test_suite(test_name)
 
     def _load_test_suite(self, test_name):
-        json_data = open(os.path.normpath(os.getcwd() + '\\suite\\' + test_name + '.json')).read()
+        json_data = open(os.path.normpath(os.getcwd() + '\\suites\\' + test_name + '.json')).read()
         return json.loads(json_data)
 
     def loadTest(self, session, test_name):
@@ -114,8 +120,21 @@ class goodxtest():
                 for k in range(int(action.get('repeat', '1') or '1')):
                     type_('{F4}', '{ALT}')
 
-    def searchTests(self, session, searchTerm):
-        return []
+    def searchTests(self, session, search_term):
+        tests = self.getTests(session)
+        tests_ = []
+        for test in tests:
+            if test['name'].lower().find(search_term.lower()) > -1:
+                tests_.append(test)
+        return tests_
+
+    def searchSuites(self, session, search_term):
+        suites = self.getSuites(session)
+        suites_ = []
+        for suite in suites:
+            if suite['name'].lower().find(search_term.lower()) > -1:
+                suites_.append(test)
+        return suites_
 
     def login(self, session, username, password):
         # Ensure the user is not logged in.

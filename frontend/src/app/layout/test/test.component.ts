@@ -6,7 +6,7 @@ import { LoggerService } from '../../shared/logger/logger.service';
 import { FormControl } from '@angular/forms';
 
 @Component({
-    selector: 'app-client',
+    selector: 'app-test',
     templateUrl: './test.component.html',
     styleUrls: ['./test.component.scss'],
     animations: [routerTransition()]
@@ -34,7 +34,7 @@ export class TestComponent {
 
     runTestSuite() {
         let test = this.selectedTests.map(x => {
-            return {name: x.name, type: 'test'};
+            return { name: x.name, type: 'test' };
         })
         this.backend.runTestSuite({ model: { tests: test } })
     }
@@ -54,7 +54,7 @@ export class TestComponent {
     }
 
     searchTests(searchTerm) {
-        if (searchTerm.length >= 3 || searchTerm.length === 0) {
+        if (searchTerm.length >= 3) {
             this.backend.searchTests(searchTerm)
                 .then(res => {
                     console.log(res);
@@ -62,6 +62,8 @@ export class TestComponent {
                         this.tests = res.data.map(x => new Test(x));
                     }
                 })
+        } else {
+            this.refreshTests();
         }
     }
 

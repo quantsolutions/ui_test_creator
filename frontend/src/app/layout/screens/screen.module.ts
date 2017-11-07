@@ -4,6 +4,7 @@ import { TestScreen } from './test/test.component';
 import { FormsModule } from '@angular/forms';
 import { BackendService } from '../../shared/backend/backend.service';
 import { AutocompleteComponent } from '../../shared/utils/autocomplete.component';
+import { SuiteScreen } from './suite/suite.component';
 
 @NgModule({
     imports: [
@@ -12,6 +13,7 @@ import { AutocompleteComponent } from '../../shared/utils/autocomplete.component
     ],
     declarations: [
         TestScreen,
+        SuiteScreen,
         AutocompleteComponent
     ],
     providers: [
@@ -19,6 +21,7 @@ import { AutocompleteComponent } from '../../shared/utils/autocomplete.component
     ],
     exports: [
         TestScreen,
+        SuiteScreen
     ]
 })
 export class ScreenModule { }

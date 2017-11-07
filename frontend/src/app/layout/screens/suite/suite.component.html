@@ -1,0 +1,73 @@
+<div class="backdrop fadeIn1"></div>
+<style>
+    .mr5 {
+        margin-right: 5px;
+    }
+</style>
+<div class="card screen-xxl screen-dark fadeIn2">
+    <div class="card-header">
+        Suite Screen
+    </div>
+    <div class="card-block">
+        <h4>Suite Details</h4>
+        <hr>
+        <div class="row" style="max-height: 60vh;">
+            <div class="col-sm-12 row">
+                <div class="col-sm-2">
+                    <span> Name </span>
+                </div>
+                <div class="col-sm-10">
+                    <input #nameInput class="input input-sm form-control" (blur)="filterSuiteName()" [(ngModel)]="suite.name" />
+                </div>
+            </div>
+            <div class="col-sm-12 row" style="margin-top: 10px;">
+                <div class="col-sm-2">
+                    <span> Description </span>
+                </div>
+                <div class="col-sm-10">
+                    <input class="input input-sm form-control" [(ngModel)]="suite.description" />
+                </div>
+            </div>
+            <div class="col-sm-12 row" style="margin-top: 10px;">
+                <div class="col-sm-4">
+                    <autocomplete *ngIf="suites" (optionSelected)="addTestOrSuite($event)" [options]="suites" [placeholder]="'Search for suites to add ...'" [filterOn]="'name'" [optionText]="'name'"></autocomplete>
+                </div>
+                <div class="col-sm-4">
+                    <autocomplete *ngIf="tests" (optionSelected)="addTestOrSuite($event)" [options]="tests" [placeholder]="'Search for tests to add...'" [filterOn]="'name'" [optionText]="'name'"></autocomplete>
+                </div>
+                <div class="col-sm-12" style="margin-top: 10px;">
+                    <button class="btn btn-success mr5" (click)="suite.run()"><i class="fa fa-setting"></i> Run Suite</button>
+                </div>
+            </div>
+            <div class="col-sm-12 row" style="margin-top: 10px;">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th width="20%">Selected Test/Suite</th>
+                            <th width="20%">Type</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="col-sm-12 row" style="max-height: 30vh; overflow-y: auto;">
+                <table>
+                    <tbody>
+                        <tr *ngFor="let test of suite.tests">
+                            <td width="20%">
+                                {{test.name}}
+                            </td>
+                            <td width="20%">
+                                {{test.type}}
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button type="button" class="btn btn-success pull-right" (click)="saveSuite()">Save</button>
+        <button type="button" class="btn btn-danger pull-left" (click)="closeScreen()">Close</button>
+    </div>
+</div>
