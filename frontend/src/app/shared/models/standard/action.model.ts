@@ -13,10 +13,10 @@ export class Action extends Model {
     /**
      * Fields for this model. These define the model, with the dbFields.
      */
-    description: string = "";   // Describe what the test must do.
-    action: string = "";        // The action that must be performed. 
-    data: string = "";          // Data associated with the action.
-    delay: string = "";         // Time to delay the action with.
+    description: string = '';   // Describe what the test must do.
+    action: string = '';        // The action that must be performed. 
+    data: string = '';          // Data associated with the action.
+    delay: string = '';         // Time to delay the action with.
     repeat: number = 1;         // Amount of times to repeat this action.
 
     actionOptions: Array<OPTIONTYPE> = ACTIONS; // List of actions that can be performed options.
@@ -30,11 +30,11 @@ export class Action extends Model {
 
         // Set the dbFields.
         this.dbFields = [
-            "description",
-            "action",
-            "data",
-            "delay",
-            "repeat"
+            'description',
+            'action',
+            'data',
+            'delay',
+            'repeat'
         ];
 
         // Update the model with the data.

@@ -13,8 +13,8 @@ export class TestSuite extends Model {
     /**
      * Fields for this model. These define the model, with the dbFields.
      */
-    description: string = "";        // Describe what the test must do.
-    name: string = "";               // Name of the test.
+    description: string = '';        // Describe what the test must do.
+    name: string = '';               // Name of the test.
     tests: Array<SUITETEST> = [];    // The action that must be performed.
     selected: boolean = false;       // Have the test been selected.
 
@@ -27,9 +27,9 @@ export class TestSuite extends Model {
 
         // Set the dbFields.
         this.dbFields = [
-            "description",
-            "tests",
-            "name",
+            'description',
+            'tests',
+            'name',
         ];
 
         // Update the model with the data.
@@ -38,6 +38,7 @@ export class TestSuite extends Model {
 
     save() {
         this.serverPost('saveTestSuite', { model: this.values() });
+        this.snapshot = this.toString();
     }
 
     addTest(testName) {

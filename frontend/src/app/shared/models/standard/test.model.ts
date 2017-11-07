@@ -14,10 +14,11 @@ export class Test extends Model {
     /**
      * Fields for this model. These define the model, with the dbFields.
      */
-    description: string = "";       // Describe what the test must do.
-    name: string = "";              // Name of the test.
+    description: string = '';       // Describe what the test must do.
+    name: string = '';              // Name of the test.
     actions: Array<Action> = [];    // The action that must be performed.
     selected: boolean = false;      // Have the test been selected.
+    order: any = null;
 
     /**
      * Constructor of the Patient Class.
@@ -28,9 +29,9 @@ export class Test extends Model {
 
         // Set the dbFields.
         this.dbFields = [
-            "description",
-            "actions",
-            "name",
+            'description',
+            'actions',
+            'name',
         ];
 
         // Set the modelFields
@@ -43,7 +44,8 @@ export class Test extends Model {
     }
 
     save() {
-        this.serverPost('saveTest', { model: this.values() });
+        this.snapshot = this.toString();
+        return this.serverPost('saveTest', { model: this.values() });
     }
 
     addAction() {

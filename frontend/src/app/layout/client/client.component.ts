@@ -16,6 +16,7 @@ export class ClientComponent {
     ws: WebSocket;
     session_id: string = null;
     selectedTest: Test = null;
+    selectedTests: Array<Test> = [];
     openTest: boolean = false;
     constructor(private backend: BackendService) { }
 
@@ -32,17 +33,14 @@ export class ClientComponent {
     }
 
     runTestSuite() {
-        let test = this.tests.filter(x => x.selected);
-        let test2 = test.map(x => {
-            return {name: x.name};
+        let test = this.selectedTests.map(x => {
+            return {name: x.name, type: 'test'};
         })
-        this.backend.runTestSuite({ model: { tests: test2 } })
+        this.backend.runTestSuite({ model: { tests: test } })
     }
 
     testClose(refresh) {
-        if (refresh) {
-            this.refreshTests();
-        }
+        this.refreshTests();
         this.openTest = false;
     }
 

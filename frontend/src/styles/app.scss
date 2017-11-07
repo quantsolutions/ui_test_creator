@@ -138,6 +138,22 @@
     width: 60vw;
 }
 
+.screen-xl {
+    z-index: 1200; 
+    position: fixed; 
+    left: 15vw; 
+    top: 10vh; 
+    width: 75vw;
+}
+
+.screen-xxl {
+    z-index: 1200; 
+    position: fixed; 
+    left: 5vw; 
+    top: 10vh; 
+    width: 90vw;
+}
+
 @keyframes fadein {
     0% {
         opacity: 0;

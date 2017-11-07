@@ -4,20 +4,20 @@
         margin-right: 5px;
     }
 </style>
-<div class="card screen-lg screen-dark fadeIn2">
+<div class="card screen-xxl screen-dark fadeIn2">
     <div class="card-header">
         Test Screen
     </div>
     <div class="card-block">
         <h4>Test Details</h4>
         <hr>
-        <div class="row">
+        <div class="row" style="max-height: 60vh;">
             <div class="col-sm-12 row">
                 <div class="col-sm-2">
                     <span>Name </span>
                 </div>
                 <div class="col-sm-10">
-                    <input class="input input-sm form-control" [(ngModel)]="test.name" />
+                    <input #nameInput class="input input-sm form-control" (blur)="filterTestName()" [(ngModel)]="test.name" />
                 </div>
             </div>
             <div class="col-sm-12 row" style="margin-top: 10px;">
@@ -43,21 +43,25 @@
                             <th width="10%">Repeat</th>
                         </tr>
                     </thead>
+                </table>
+            </div>
+            <div class="col-sm-12 row" style="max-height: 30vh; overflow-y: auto;">
+                <table>
                     <tbody>
                         <tr *ngFor="let action of test.actions">
-                            <td>
+                            <td width="20%">
                                 <select class="form-control" [(ngModel)]="action.action">
                                     <option *ngFor="let option of action.actionOptions" [ngValue]="option.value">{{option.name}}</option>
                                 </select>
                             </td>
-                            <td>
+                            <td width="60%">
                                 <input class="form-control" type="text" [(ngModel)]="action.data" />
                             </td>
-                            <td>
+                            <td width="10%">
                                 <input class="form-control" step="1" type="number" [disabled]="! ['wait', 'clickwait'].includes(action.action)" [(ngModel)]="action.delay"
                                 />
                             </td>
-                            <td>
+                            <td width="10%">
                                 <input class="form-control" step="1" type="number" [(ngModel)]="action.repeat" />
                             </td>
                         </tr>

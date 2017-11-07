@@ -1,4 +1,4 @@
-import { NgModule, Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { NgModule, Component, Input, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { routerTransition } from '../../../router.animations';
 import { BackendService } from '../../../shared/backend/backend.service';
 import { Popup } from '../../../shared/utils/ui';
@@ -13,6 +13,7 @@ import { Test } from '../../../shared/models/models';
 })
 
 export class ClientScreen implements OnInit {
+    @ViewChild('nameInput') nameInput: ElementRef;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Input() test_ : Test = null;
     test: Test;
@@ -24,6 +25,7 @@ export class ClientScreen implements OnInit {
         } else {
             this.test = new Test();
         }
+        this.nameInput.nativeElement.focus();
     }
 
     closeScreen(update=false) {
@@ -57,6 +59,10 @@ export class ClientScreen implements OnInit {
         }
     }
 
+    filterTestName() {
+        this.test.name = this.test.name.split(' ').map(x => x[0].toUpperCase() + x.slice(1, x.length)).join('');
+    }
+
     addAction() {
         this.test.addAction();
     }
@@ -73,6 +79,6 @@ export class ClientScreen implements OnInit {
     }
 
     saveTest() {
-        this.test.save();
+        this.test.save().then(() => this.closeScreen());
     }
 }
