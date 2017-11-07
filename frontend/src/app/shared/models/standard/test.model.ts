@@ -16,7 +16,8 @@ export class Test extends Model {
      */
     description: string = "";       // Describe what the test must do.
     name: string = "";              // Name of the test.
-    actions: Array<Action> = [];   // The action that must be performed.
+    actions: Array<Action> = [];    // The action that must be performed.
+    selected: boolean = false;      // Have the test been selected.
 
     /**
      * Constructor of the Patient Class.

@@ -4,6 +4,12 @@ export class OPTIONTYPE {
     allow_delay: boolean;
 }
 
+export class SUITETEST {
+    type: string;
+    name: string;
+    order: number;
+}
+
 export const ACTIONS = [
     { name: "Click", value: "click", allow_delay: false },
     { name: "Wait", value: "wait", allow_delay: true },

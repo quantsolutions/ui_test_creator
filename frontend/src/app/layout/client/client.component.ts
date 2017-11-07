@@ -31,6 +31,14 @@ export class ClientComponent {
         });
     }
 
+    runTestSuite() {
+        let test = this.tests.filter(x => x.selected);
+        let test2 = test.map(x => {
+            return {name: x.name};
+        })
+        this.backend.runTestSuite({ model: { tests: test2 } })
+    }
+
     testClose(refresh) {
         if (refresh) {
             this.refreshTests();

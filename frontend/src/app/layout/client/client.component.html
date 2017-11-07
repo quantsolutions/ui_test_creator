@@ -6,6 +6,7 @@
                 <input #searchTerm (input)="searchTests(searchTerm.value)" class="input form-control" type="text" placeholder="Search tests by name ..."/>
             </div>
             <a class="btn rounded-btn" (click)="newTest()" style="color: white;"><i class="fa fa-plus"></i> New Test</a>
+            <a class="btn rounded-btn" (click)="runTestSuite()" style="color: white;"><i class="fa fa-plus"></i> Run Selected Tests</a>
         </div>
     </div>
     <hr>
@@ -16,6 +17,7 @@
                     <thead>
                         <th width="10%">Name</th>
                         <th width="20%">Description</th>
+                        <th width="10%">Select</th>                        
                     </thead>
                 </table>
             </div>
@@ -25,6 +27,7 @@
                         <tr *ngFor="let test of tests" [ngClass]="{'selected': selectedTest === test}" (click)="testClicked(test)">
                             <td width="10%">{{test.name}}</td>
                             <td width="20%">{{test.description}}</td>
+                            <td width="10%"><input type="checkbox" [(ngModel)]="test.selected" /></td>
                         </tr>
                     </tbody>
                 </table>

@@ -217,6 +217,10 @@ export class BackendService {
         return this.post('getTests');
     }
 
+    runTestSuite(model) {
+        return this.post('runTestSuite', model);
+    }
+
     post(func, params = {}): Promise<any> {
         return new Promise(resolve => {
             this.serverPost(func, params)

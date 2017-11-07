@@ -51,11 +51,26 @@ class goodxtest():
             json.dump(model, fp, indent=4)
 
     def loadTest(self, session, test_name):
+        return self._load_test(test_name)
+
+    def _load_test(self, test_name):
         json_data = open(os.path.normpath(os.getcwd() + "\\tests\\" + test_name + '.json')).read()
-        data = json.loads(json_data)
-        return data
+        return json.loads(json_data)
+
+    def runTestSuite(self, session, model):
+        # sorted(list_to_be_sorted, key=lambda k: k['order'])
+        # Load all the test before you begin to execute them. So that the tests are equally as fast.
+        tests = []
+        for test in model["tests"]:
+            tests.append(self._load_test(test['name']))
+        # After loading, run all the tests in sequence.
+        for test in tests:
+            self._run_test(test)
 
     def runTest(self, session, model):
+        self._run_test(model)
+
+    def _run_test(self, model):
         for action in model["actions"]:
             if action["action"] == "click":
                 for k in range(int(action.get("repeat", "1") or "1")):
