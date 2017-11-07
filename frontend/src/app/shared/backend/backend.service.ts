@@ -98,34 +98,7 @@ export class BackendService {
 // ===========================================================================================
 // ================================= BACKEND FUNCTIONS =======================================
 // ===========================================================================================
-    /**
-     * Retrieves all the clients in the client table.
-     */
-    getClients(): Promise<any> {
-        return new Promise(resolve => {
-            this.serverPost("getClients")
-                .then(response => resolve(response))
-                .catch(error => {
-                    this.handleError(error);
-                    resolve({ result: false, msg: error });
-                })
-        })
-    }
 
-    /**
-     * Retrieves all the clients in the client table.
-     * @param searchTerm - The term by which to filter the clients by.
-     */
-    searchClients(searchTerm): Promise<any> {
-        return new Promise(resolve => {
-            this.serverPost("searchClients", {searchTerm: searchTerm})
-                .then(response => resolve(response))
-                .catch(error => {
-                    this.handleError(error);
-                    resolve({ result: false, msg: error });
-                })
-        })
-    }
 
     /**
      * Function that logs the user in with the supplied password and username, if the login is not successful it will be logged in the console.
@@ -155,20 +128,6 @@ export class BackendService {
     getUser(): Promise<any> {
         return new Promise(resolve => {
             this.serverPost("getUser")
-                .then(response => resolve(response))
-                .catch(error => {
-                    this.handleError(error);
-                    resolve({ result: false, msg: error });
-                })
-        })
-    }
-
-    /**
-     * Retrieves the bookings for the specified date and employee id.
-     */
-    getBookings(date, employee_id): Promise<any> {
-        return new Promise(resolve => {
-            this.serverPost("getBookings", {date: date, employee_id: employee_id})
                 .then(response => resolve(response))
                 .catch(error => {
                     this.handleError(error);

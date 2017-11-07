@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClientScreen } from '../screens/client/client.component';
+import { TestScreen } from './test/test.component';
 import { FormsModule } from '@angular/forms';
 import { BackendService } from '../../shared/backend/backend.service';
 import { AutocompleteComponent } from '../../shared/utils/autocomplete.component';
@@ -11,14 +11,14 @@ import { AutocompleteComponent } from '../../shared/utils/autocomplete.component
         FormsModule
     ],
     declarations: [
-        ClientScreen,
+        TestScreen,
         AutocompleteComponent
     ],
     providers: [
         BackendService
     ],
     exports: [
-        ClientScreen,
+        TestScreen,
     ]
 })
 export class ScreenModule { }

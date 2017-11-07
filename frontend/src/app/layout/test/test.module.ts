@@ -1,21 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClientRoutingModule } from './client-routing.module';
-import { ClientComponent } from './client.component';
+import { TestComponent } from './test.component';
 import { FormsModule } from '@angular/forms';
 import { BackendService } from '../../shared/backend/backend.service';
 import { ScreenModule } from '../screens/screen.module';
+import { TestRoutingModule } from './test-routing.module';
 
 @NgModule({
     imports: [
         CommonModule,
-        ClientRoutingModule,
         FormsModule,
+        TestRoutingModule,
         ScreenModule
     ],
     declarations: [
-        ClientComponent,
+        TestComponent,
     ],
     providers: [ BackendService ]
 })
-export class ClientModule { }
+export class TestModule { }

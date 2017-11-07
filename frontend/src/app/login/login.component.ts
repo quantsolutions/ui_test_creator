@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
         this.backend.login(this.username, this.password)
         .then(response => {
             if (response.result) {
-                this.router.navigate(['/client']);
+                this.router.navigate(['/test']);
             } else {
                 this.error = true;
                 this.errorMessage = response.msg;

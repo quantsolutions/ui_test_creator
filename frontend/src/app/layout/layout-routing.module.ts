@@ -8,8 +8,8 @@ const routes: Routes = [
         path: '', component: LayoutComponent,
         children: [
             {
-                path: 'client',
-                loadChildren: './client/client.module#ClientModule',
+                path: 'test',
+                loadChildren: './test/test.module#TestModule',
                 canActivate: [AuthGuard]
             }
         ]

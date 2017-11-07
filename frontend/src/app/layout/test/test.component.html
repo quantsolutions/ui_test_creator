@@ -1,5 +1,5 @@
 <div class="content" [@routerTransition]>
-    <client-screen *ngIf="openTest" [test_]="selectedTest" (close)="testClose($event)"></client-screen>
+    <test-screen *ngIf="openTest" [test_]="selectedTest" (close)="testClose($event)"></test-screen>
     <div class="content layout-header">
         <div class="row justify-content-center" style="margin-bottom: 10px;">
             <div class="col-sm-6">

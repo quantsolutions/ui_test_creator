@@ -7,12 +7,12 @@ import { AutocompleteComponent } from '../../../shared/utils/autocomplete.compon
 import { Test } from '../../../shared/models/models';
 
 @Component({
-    selector: 'client-screen',
-    templateUrl: './client.component.html',
+    selector: 'test-screen',
+    templateUrl: './test.component.html',
     animations: [routerTransition()],
 })
 
-export class ClientScreen implements OnInit {
+export class TestScreen implements OnInit {
     @ViewChild('nameInput') nameInput: ElementRef;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Input() test_ : Test = null;

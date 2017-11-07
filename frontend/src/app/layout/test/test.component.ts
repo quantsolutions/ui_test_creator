@@ -7,11 +7,11 @@ import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-client',
-    templateUrl: './client.component.html',
-    styleUrls: ['./client.component.scss'],
+    templateUrl: './test.component.html',
+    styleUrls: ['./test.component.scss'],
     animations: [routerTransition()]
 })
-export class ClientComponent {
+export class TestComponent {
     tests: Array<Test> = [];
     ws: WebSocket;
     session_id: string = null;
