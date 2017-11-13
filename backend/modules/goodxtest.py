@@ -11,10 +11,8 @@ from PIL import ImageGrab
 import numpy as np
 import cv2
 from random import *
-type_2 = type
-from lackey import *
-type_ = type
-type = type_2
+from lackey import click as _click, doubleClick as _doubleClick, rightClick as _rightClick, wait as _wait
+import pyautogui
 
 # logging.basicConfig(filename='booking_logfile.log', filemode='w', format='%(asctime)s %(message)s', level=logging.INFO)
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
@@ -93,32 +91,32 @@ class goodxtest():
         for action in model['actions']:
             if action['action'] == 'click':
                 for k in range(int(action.get('repeat', '1') or '1')):
-                    click(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'))
-            if action['action'] == 'rclick':
+                    _click(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'))
+            if action['action'] == 'r_click':
                 for k in range(int(action.get('repeat', '1') or '1')):
-                    rightClick(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'))
+                    _rightClick(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'))
             if action['action'] == 'doubleclick':
                 for k in range(int(action.get('repeat', '1') or '1')):
-                    doubleClick(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'))
+                    _doubleClick(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'))
             if action['action'] == 'wait':
                 for k in range(int(action.get('repeat', '1') or '1')):
-                    wait(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'), int(action['delay']))
+                    _wait(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'), int(action['delay']))
             if action['action'] == 'clickwait':
                 for k in range(int(action.get('repeat', '1') or '1')):
-                    click(wait(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'), int(action['delay'])))
+                    _click(_wait(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'), int(action['delay'])))
             if action['action'] == 'type':
                 for k in range(int(action.get('repeat', '1') or '1')):
-                    type_(action['data'])
+                    pyautogui.typewrite(action['data'])
             if action['action'] == 'keycombo':
                 keys = action['data'].split('+')
                 for k in range(int(action.get('repeat', '1') or '1')):
-                    type_(keys[-1], '+'.join(keys[:-1]))
+                    pyautogui.hotkey(*keys)
             if action['action'] == 'keypress':
                 for k in range(int(action.get('repeat', '1') or '1')):
-                    type_(action['data'])
+                    pyautogui.typewrite(action['data'])
             if action['action'] == 'close':
                 for k in range(int(action.get('repeat', '1') or '1')):
-                    type_('{F4}', '{ALT}')
+                    pyautogui.hotkey('alt', 'f4')
 
     def searchTests(self, session, search_term):
         tests = self.getTests(session)
