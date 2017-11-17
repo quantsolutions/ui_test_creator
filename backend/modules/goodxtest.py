@@ -10,7 +10,7 @@ import tkinter as tk
 import numpy as np
 import cv2
 from random import *
-#from lackey import click as _click, doubleClick as _doubleClick, rightClick as _rightClick, wait as _wait
+from lackey import click as _click, doubleClick as _doubleClick, rightClick as _rightClick, wait as _wait
 import pyautogui
 
 if sys.platform.startswith('linux'):
