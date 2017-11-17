@@ -18,7 +18,6 @@ There is also functionality to init the database you wish to create on defualt.
 * sudo apt-get install python3-pyqt5
 * sudo pip3 install pyscreenshot
 * sudo apt-get install python3-pil.imagetk
-* 
 
 --- Edit postgresql config file ---
 * sudo nano /etc/postgresql/9.5/main/pg_hba.conf
