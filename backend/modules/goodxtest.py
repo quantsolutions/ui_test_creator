@@ -7,12 +7,16 @@ import os
 import sys
 from PyQt5 import QtWidgets, QtCore, QtGui
 import tkinter as tk
-from PIL import ImageGrab
 import numpy as np
 import cv2
 from random import *
-from lackey import click as _click, doubleClick as _doubleClick, rightClick as _rightClick, wait as _wait
+#from lackey import click as _click, doubleClick as _doubleClick, rightClick as _rightClick, wait as _wait
 import pyautogui
+
+if sys.platform.startswith('linux'):
+    import pyscreenshot as ImageGrab
+elif sys.platform('win32') or sys.platform('darwin'):
+    from PIL import ImageGrab
 
 # logging.basicConfig(filename='booking_logfile.log', filemode='w', format='%(asctime)s %(message)s', level=logging.INFO)
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
@@ -34,42 +38,42 @@ class goodxtest():
 
     def getTests(self, session):
         tests = []
-        for file in os.listdir(os.path.normpath(os.getcwd() + '\\tests\\')):
+        for file in os.listdir(os.path.normpath(os.getcwd() + '/tests/')):
             tests.append({ 'name' : file[:-5], 'type': 'test'})
         return tests
 
     def getSuites(self, session):
         tests = []
-        for file in os.listdir(os.path.normpath(os.getcwd() + '\\suites\\')):
-            tests.append({ 'name' : file[:-5], 'type': 'suite'})
+        for file in os.listdir(os.path.normpath(os.getcwd() + '/suites/')):
+            tests.append({ 'name': file[:-5], 'type': 'suite'})
         return tests
 
     def getImages(self, session):
         images = []
-        for file in os.listdir(os.path.normpath(os.getcwd() + '\\images\\')):
+        for file in os.listdir(os.path.normpath(os.getcwd() + '/images/')):
             images.append(file[:-4])
         return images
 
     def saveTest(self, session, model):
-        with open(os.path.normpath(os.getcwd() + '\\tests\\' + model['name'] + '.json'), 'w') as fp:
+        with open(os.path.normpath(os.getcwd() + '/tests/' + model['name'] + '.json'), 'w') as fp:
             json.dump(model, fp, indent=4)
 
     def saveTestSuite(self, session, model):
-        with open(os.path.normpath(os.getcwd() + '\\suites\\' + model['name'] + '.json'), 'w') as fp:
+        with open(os.path.normpath(os.getcwd() + '/suites/' + model['name'] + '.json'), 'w') as fp:
             json.dump(model, fp, indent=4)
 
     def loadTestSuite(self, session, test_name):
         return self._load_test_suite(test_name)
 
     def _load_test_suite(self, test_name):
-        json_data = open(os.path.normpath(os.getcwd() + '\\suites\\' + test_name + '.json')).read()
+        json_data = open(os.path.normpath(os.getcwd() + '/suites/' + test_name + '.json')).read()
         return json.loads(json_data)
 
     def loadTest(self, session, test_name):
         return self._load_test(test_name)
 
     def _load_test(self, test_name):
-        json_data = open(os.path.normpath(os.getcwd() + '\\tests\\' + test_name + '.json')).read()
+        json_data = open(os.path.normpath(os.getcwd() + '/tests/' + test_name + '.json')).read()
         return json.loads(json_data)
 
     def runTestSuite(self, session, model):
@@ -206,7 +210,7 @@ class ScreenSnipper(QtWidgets.QWidget):
             y2 = max(self.begin.y(), self.end.y())
 
             img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
-            img.save(os.getcwd() + '\\images\\' + self.image_name + '.png')
+            img.save(os.path.normpath(os.getcwd() + '/images/' + self.image_name + '.png'))
         except:
             print('Failed to save the screen capture')
 
