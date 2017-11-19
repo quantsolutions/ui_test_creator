@@ -59,6 +59,30 @@ export class TestScreen implements OnInit {
         }
     }
 
+    removeAction(action) {
+            let popup = new Popup("Are you sure you wish to remove this action ?", {
+                header: "Remove action Confirmation", buttons: [
+                    {
+                        name: "Yes",
+                        close: true,
+                        return: true,
+                        class: "btn btn-success pull-left"
+                    },
+                    {
+                        name: "No",
+                        close: true,
+                        return: false,
+                        class: "btn btn-danger pull-right"
+                    }
+                ]
+            }, (res) => {
+                if (res) {
+                    this.test.actions.splice(this.test.actions.indexOf(action), 1);
+                }
+            });
+            popup.open();
+    }
+
     filterTestName() {
         this.test.name = this.test.name.split(' ').map(x => x[0].toUpperCase() + x.slice(1, x.length)).join('');
     }
