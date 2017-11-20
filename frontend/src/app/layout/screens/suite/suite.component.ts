@@ -76,6 +76,30 @@ export class SuiteScreen implements OnInit {
         this.suite.name = this.suite.name.split(' ').map(x => x[0].toUpperCase() + x.slice(1, x.length)).join('');
     }
 
+    removeTest(test) {
+            let popup = new Popup("Are you sure you wish to remove this test ?", {
+                header: "Remove test Confirmation", buttons: [
+                    {
+                        name: "Yes",
+                        close: true,
+                        return: true,
+                        class: "btn btn-success pull-left"
+                    },
+                    {
+                        name: "No",
+                        close: true,
+                        return: false,
+                        class: "btn btn-danger pull-right"
+                    }
+                ]
+            }, (res) => {
+                if (res) {
+                    this.suite.tests.splice(this.suite.tests.indexOf(test), 1);
+                }
+            });
+            popup.open();
+    }
+
     addTestOrSuite(testOrSuite) {
         this.suite.addTestOrSuite(testOrSuite);
     }

@@ -43,23 +43,30 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th width="20%">Selected Test/Suite</th>
-                            <th width="20%">Type</th>
+                            <th width="10%">Order</th>
+                            <th width="40%">Selected Test/Suite</th>
+                            <th width="40%">Type</th>
+                            <th width="10%">Remove</th>
                         </tr>
                     </thead>
                 </table>
             </div>
             <div class="col-sm-12 row" style="max-height: 30vh; overflow-y: auto;">
-                <table>
+                <table class="table table-striped">
                     <tbody>
-                        <tr *ngFor="let test of suite.tests">
-                            <td width="20%">
+                        <tr *ngFor="let test of suite.tests; let i = index;">
+                            <td width="10%">
+                                {{i + 1}}
+                            </td>
+                            <td width="40%">
                                 {{test.name}}
                             </td>
-                            <td width="20%">
+                            <td width="40%">
                                 {{test.type}}
                             </td>
-
+                            <td width="10%">
+                                <button class="btn btn-sm btn-danger" (click)="removeTest(test)"><i class="fa fa-trash"></i></button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
