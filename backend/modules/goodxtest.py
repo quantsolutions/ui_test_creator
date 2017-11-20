@@ -190,6 +190,13 @@ class ScreenSnipper(QtWidgets.QWidget):
         self.end = event.pos()
         self.update()
 
+    # Capture the keys being pressed in order to let the program exit incase the esc key is pressed.
+    def keyPressEvent(self, event):
+        # Did the user press the Escape key?
+        if event.key() == QtCore.Qt.Key_Escape:
+            # If it was escape, Close the window
+            self.close()
+
     def mouseReleaseEvent(self, event):
         self.close()
         try:
