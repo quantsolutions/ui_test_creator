@@ -84,7 +84,7 @@ export class TestScreen implements OnInit {
     }
 
     filterTestName() {
-        this.test.name = this.test.name.split(' ').map(x => x[0].toUpperCase() + x.slice(1, x.length)).join('');
+        this.test.name = this.test.name.split(' ').map(x => x.toLowerCase()).join('_');
     }
 
     addAction() {

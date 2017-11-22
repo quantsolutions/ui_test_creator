@@ -1,5 +1,0 @@
-./frontend/node_modules/
-./backend/images/
-./backend/tests/
-./backend/suites/
-*.pyc
