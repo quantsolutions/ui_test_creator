@@ -12,11 +12,8 @@ import cv2
 from random import *
 from lackey import click as _click, doubleClick as _doubleClick, rightClick as _rightClick, wait as _wait
 import pyautogui
+import pyscreenshot as ImageGrab
 
-if sys.platform.startswith('linux'):
-    import pyscreenshot as ImageGrab
-elif sys.platform('win32') or sys.platform('darwin'):
-    from PIL import ImageGrab
 
 # logging.basicConfig(filename='booking_logfile.log', filemode='w', format='%(asctime)s %(message)s', level=logging.INFO)
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
