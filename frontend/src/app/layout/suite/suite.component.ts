@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { routerTransition } from '../../router.animations';
+import { routerTransition } from '@animations';
 import { TestSuite } from '@models';
 import { BackendService } from '@backend';
 import { FormControl } from '@angular/forms';

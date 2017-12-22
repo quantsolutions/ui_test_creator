@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
     selector: 'autocomplete',
@@ -12,7 +12,7 @@ import { Component, ElementRef, Input, Output, EventEmitter } from '@angular/cor
             </div>
             <div *ngIf="filteredOptions.length > 0" class="suggestions">
                 <div class="item col-12" [ngClass]="{'selectedItem': item === selectedItem }"*ngFor="let item of filteredOptions" (click)="select(item)">
-                    {{item.name}} {{item.surname}}
+                    {{item[optionText]}}
                 </div>
             </div>
         </div>  	
@@ -27,17 +27,14 @@ import { Component, ElementRef, Input, Output, EventEmitter } from '@angular/cor
             background-color: white;
             width: 100%;
         }
-
         .item:hover {
             background-color: #222;
             color: white;
         }
-
         .item {
             width: 100%;
             color: black;
         }
-
         .selectedItem {
             background-color: #222;
             color: white;
@@ -45,9 +42,13 @@ import { Component, ElementRef, Input, Output, EventEmitter } from '@angular/cor
     `]
 })
 
-export class AutocompleteComponent {
+export class AutocompleteComponent implements OnInit{
     @Input() options: Array<any> = [];
-    @Input() placeholder: string = "'Start typing to search ...'";
+    @Input() placeholder: string = "Start typing to search ...";
+    @Input() queryText: string = "";
+    @Input() filterOn: string = "description";
+    @Input() optionText: string = "description";
+    @Input() clear: boolean = true;
     @Output() optionSelected: EventEmitter<any> = new EventEmitter();
     filteredOptions: Array<any> = [];
     elementRef;
@@ -56,6 +57,12 @@ export class AutocompleteComponent {
 
     constructor(myElement: ElementRef) {
         this.elementRef = myElement;
+    }
+
+    ngOnInit() {
+        if (this.queryText) {
+            this.query = this.queryText;
+        }
     }
 
     preventKey(key) {
@@ -86,14 +93,26 @@ export class AutocompleteComponent {
             key.preventDefault();
             return;
         }
-        this.filteredOptions = this.options.filter(el => ((el.name.toLowerCase() + ' ' + el.surname.toLowerCase()).indexOf(this.query.toLowerCase()) > -1 || el.name.toLowerCase().indexOf(this.query.toLowerCase()) > -1 || el.surname.toLowerCase().indexOf(this.query.toLowerCase()) > -1));
+        this.filteredOptions = this.options.filter(el => ((el[this.filterOn].toLowerCase()).indexOf(this.query.toLowerCase()) > -1));
     }
 
     select(item) {
         this.optionSelected.emit(item);
         this.filteredOptions = [];
-        this.query = "";
+        if(this.clear) {
+            this.query = "";
+        } else {
+            this.query = item[this.optionText];
+        }
         this.selectedItem = null;
+    }
+
+    clearQuery() {
+        this.query = ""; 
+    }
+
+    setQuery(term) {
+        this.query = term; 
     }
 
     handleClick(event) {

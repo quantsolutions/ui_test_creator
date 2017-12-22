@@ -347,14 +347,13 @@ export abstract class DBModel {
             });
             model[this.saveKey] = fields;
             let body = JSON.stringify(model);
-            return this.http.post(url + this._load_func, body, options)
+            this.http.post(url + this._load_func, body, options)
                 .toPromise()
                 .then(res => {
                     let response_data = extractData(res);
                     if (response_data.result) {
                         this.update(response_data.data);
                     }
-                    return response_data;
                 })
                 .catch(handleError);
         } else {

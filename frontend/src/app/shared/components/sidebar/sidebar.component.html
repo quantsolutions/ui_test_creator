@@ -1,13 +1,16 @@
 <nav class="sidebar" [ngClass]="{sidebarPushRight: isActive}">
     <ul class="list-group">
         <a routerLink="/dashboard" [routerLinkActive]="['router-link-active']" class="list-group-item">
-            <i class="fa fa-fw fa-book"></i>&nbsp;{{ 'Diary' }}
+            <i class="fa fa-dashboard"></i>&nbsp;{{ 'Dashboard' }}
         </a>
-        <a routerLink="/client" [routerLinkActive]="['router-link-active']" class="list-group-item">
-            <i class="fa fa-fw fa-user"></i>&nbsp;{{ 'Clients' }}
-        </a> 
-        <a (click)="onLogOut()" class="list-group-item">
-            <i class="fa fa-fw fa-power"></i>&nbsp;{{ 'Logout' }}
+        <a routerLink="/test" [routerLinkActive]="['router-link-active']" class="list-group-item">
+            <i class="fa fa-suitcase"></i>&nbsp;{{ 'Test Cases' }}
+        </a>
+        <a routerLink="/suite" [routerLinkActive]="['router-link-active']" class="list-group-item">
+            <i class="fa fa-fw fa-desktop"></i>&nbsp;{{ 'Test Suites' }}
+        </a>
+        <a (click)="onLogOut()" class="list-group-item" style="bottom: 0px">
+            <i class="fa fa-fw fa-power-off"></i>&nbsp;{{ 'Logout' }}
         </a>
     </ul>
 </nav>

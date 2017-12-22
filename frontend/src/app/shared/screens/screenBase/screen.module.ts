@@ -27,6 +27,7 @@ import { AutocompleteComponent } from '@utils';
         screenRender,
         TestScreen,
         SuiteScreen,
+        AutocompleteComponent        
     ]
 })
 

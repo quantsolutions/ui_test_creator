@@ -11,7 +11,7 @@
             <span>Name </span>
         </div>
         <div class="col-sm-10">
-            <input #nameInput class="input input-sm form-control" (blur)="filterTestName()" [(ngModel)]="test.name" />
+            <input #nameInput class="input input-sm form-control" (blur)="filterTestName()" [(ngModel)]="model.name" />
         </div>
     </div>
     <div class="col-sm-12 row" style="margin-top: 10px;">
@@ -19,13 +19,13 @@
             <span>Description </span>
         </div>
         <div class="col-sm-10">
-            <input class="input input-sm form-control" [(ngModel)]="test.description" />
+            <input class="input input-sm form-control" [(ngModel)]="model.description" />
         </div>
     </div>
     <div class="col-sm-12 row" style="margin-top: 10px;">
         <button class="btn btn-primary mr5" (click)="addScreenShot()">
             <i class="fa fa-camera"></i> Add Screenshot</button>
-        <button class="btn btn-success mr5" (click)="test.run()">
+        <button class="btn btn-success mr5" (click)="model.run()">
             <i class="fa fa-setting"></i> Run Test</button>
         <button class="btn btn-primary" (click)="addAction()">
             <i class="fa fa-plus"></i> Add Action </button>
@@ -47,7 +47,7 @@
     <div class="col-sm-12 row" style="max-height: 30vh; overflow-y: auto;">
         <table>
             <tbody>
-                <tr *ngFor="let action of test.actions; let i = index;">
+                <tr *ngFor="let action of model.actions; let i = index;">
                     <td width="5%">{{i+1}}</td>
                     <td width="20%">
                         <select class="form-control" [(ngModel)]="action.action">
