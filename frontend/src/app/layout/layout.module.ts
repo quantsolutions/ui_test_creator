@@ -1,25 +1,22 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateModule } from '@ngx-translate/core';
 import { LayoutRoutingModule } from './layout-routing.module';
 import { LayoutComponent } from './layout.component';
-import { HeaderComponent, SidebarComponent } from '../shared';
-import { TestComponent } from 'app/layout/test/test.component';
-import { ScreenModule } from 'app/layout/screens/screen.module';
-import { SuiteComponent } from 'app/layout/suite/suite.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HeaderComponent, SidebarComponent } from '@components';
+import { TestComponent } from './test/test.component';
+import { SuiteComponent } from './suite/suite.component';
 import { DashboardComponent } from 'app/layout/dashboard/dashboard.component';
+import { ScreenModule } from '@screens';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BackendService } from '@backend';
 
 @NgModule({
     imports: [
         CommonModule,
-        NgbDropdownModule.forRoot(),
         LayoutRoutingModule,
-        TranslateModule,
+        ScreenModule,
         FormsModule,
-        ReactiveFormsModule,
-        ScreenModule
+        ReactiveFormsModule
     ],
     declarations: [
         LayoutComponent,
@@ -27,7 +24,9 @@ import { DashboardComponent } from 'app/layout/dashboard/dashboard.component';
         SidebarComponent,
         TestComponent,
         SuiteComponent,
-        DashboardComponent
-    ]
+        DashboardComponent    
+    ],
+    providers: [ BackendService ]
 })
+
 export class LayoutModule { }

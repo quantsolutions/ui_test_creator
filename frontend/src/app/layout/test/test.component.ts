@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { routerTransition } from '../../router.animations';
-import { Test } from '../../shared/models/models';
-import { BackendService } from '../../shared/backend/backend.service';
-import { LoggerService } from '../../shared/logger/logger.service';
+import { Component, ViewChild } from '@angular/core';
+import { routerTransition } from '@animations';
+import { Test } from '@models';
+import { BackendService } from '@backend';
 import { FormControl } from '@angular/forms';
+import { screenRender } from '@screens';
 
 @Component({
     selector: 'app-test',
@@ -11,6 +11,7 @@ import { FormControl } from '@angular/forms';
     styleUrls: ['./test.component.scss'],
     animations: [routerTransition()]
 })
+
 export class TestComponent {
     tests: Array<Test> = [];
     ws: WebSocket;
@@ -18,10 +19,14 @@ export class TestComponent {
     selectedTest: Test = null;
     selectedTests: Array<Test> = [];
     openTest: boolean = false;
+    @ViewChild("testScreen") testScreen: screenRender;
+
     constructor(private backend: BackendService) { }
 
     ngOnInit() {
         this.refreshTests();
+        this.testScreen.closed.subscribe(() => this.refreshTests());
+        this.testScreen.saved.subscribe(() => this.refreshTests());
     }
 
     refreshTests(): void {
@@ -39,25 +44,15 @@ export class TestComponent {
         this.backend.runTestSuite({ model: { tests: test } })
     }
 
-    testClose(refresh) {
-        this.refreshTests();
-        this.openTest = false;
-    }
-
-    print(a) {
-        console.log(a);
-    }
-
     newTest() {
-        this.selectedTest = null;
-        this.openTest = true;
+        this.selectedTest = new Test();
+        this.testScreen.open(this.selectedTest);
     }
 
     searchTests(searchTerm) {
         if (searchTerm.length >= 3) {
             this.backend.searchTests(searchTerm)
                 .then(res => {
-                    console.log(res);
                     if (res.result && res.data) {
                         this.tests = res.data.map(x => new Test(x));
                     }
@@ -69,7 +64,7 @@ export class TestComponent {
 
     testClicked(test: Test): void {
         if (test === this.selectedTest) {
-            this.openTest = true;
+            this.testScreen.open(this.selectedTest);
         } else {
             this.selectedTest = test;
         }

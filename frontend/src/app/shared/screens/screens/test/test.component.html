@@ -1,0 +1,76 @@
+<style>
+    .mr5 {
+        margin-right: 5px;
+    }
+</style>
+<h4>Test Details</h4>
+<hr>
+<div class="row" style="max-height: 60vh;">
+    <div class="col-sm-12 row">
+        <div class="col-sm-2">
+            <span>Name </span>
+        </div>
+        <div class="col-sm-10">
+            <input #nameInput class="input input-sm form-control" (blur)="filterTestName()" [(ngModel)]="test.name" />
+        </div>
+    </div>
+    <div class="col-sm-12 row" style="margin-top: 10px;">
+        <div class="col-sm-2">
+            <span>Description </span>
+        </div>
+        <div class="col-sm-10">
+            <input class="input input-sm form-control" [(ngModel)]="test.description" />
+        </div>
+    </div>
+    <div class="col-sm-12 row" style="margin-top: 10px;">
+        <button class="btn btn-primary mr5" (click)="addScreenShot()">
+            <i class="fa fa-camera"></i> Add Screenshot</button>
+        <button class="btn btn-success mr5" (click)="test.run()">
+            <i class="fa fa-setting"></i> Run Test</button>
+        <button class="btn btn-primary" (click)="addAction()">
+            <i class="fa fa-plus"></i> Add Action </button>
+    </div>
+    <div class="col-sm-12 row" style="margin-top: 10px;">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td width="5%">Order</td>
+                    <th width="20%">Action</th>
+                    <th width="50%">Data</th>
+                    <th width="10%">Delay</th>
+                    <th width="10%">Repeat</th>
+                    <th width="5%"></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div class="col-sm-12 row" style="max-height: 30vh; overflow-y: auto;">
+        <table>
+            <tbody>
+                <tr *ngFor="let action of test.actions; let i = index;">
+                    <td width="5%">{{i+1}}</td>
+                    <td width="20%">
+                        <select class="form-control" [(ngModel)]="action.action">
+                            <option *ngFor="let option of action.actionOptions" [ngValue]="option.value">{{option.name}}</option>
+                        </select>
+                    </td>
+                    <td width="50%">
+                        <input class="form-control" type="text" [(ngModel)]="action.data" />
+                    </td>
+                    <td width="10%">
+                        <input class="form-control" step="1" type="number" [disabled]="! ['wait', 'clickwait'].includes(action.action)" [(ngModel)]="action.delay"
+                        />
+                    </td>
+                    <td width="10%">
+                        <input class="form-control" step="1" type="number" [(ngModel)]="action.repeat" />
+                    </td>
+                    <td width="5%">
+                        <button class="btn btn-sm btn-danger" (click)="removeAction(action)">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

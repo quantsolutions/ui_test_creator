@@ -3,6 +3,18 @@
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
     "baseUrl": "src",
+    "paths": {
+      "@animations": ["app/shared/animations"],
+      "@auth": ["app/shared/guard"],
+      "@backend": ["app/shared/backend"],
+      "@constants": ["app/shared/constants"],
+      "@components": ["app/shared/components"],
+      "@layout": ["app/layout"],
+      "@global": ["app/shared/global"],
+      "@models": ["app/shared/models"],
+      "@utils": ["app/shared/utils"],
+      "@screens": ["app/shared/screens"]
+    },
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
