@@ -1,19 +1,25 @@
 # Global variables
 _modulename = 'goodxtest'
 DATABASE = 'goodxtest'
-import logging
+import errno
+import glob
 import json
+import logging
 import os
 import sys
-from PyQt5 import QtWidgets, QtCore, QtGui
 import tkinter as tk
-import numpy as np
-import cv2
 from random import *
-from lackey import click as _click, doubleClick as _doubleClick, rightClick as _rightClick, wait as _wait
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+import cv2
+import numpy as np
 import pyautogui
 import pyscreenshot as ImageGrab
-
+from lackey import click as _click
+from lackey import doubleClick as _doubleClick
+from lackey import rightClick as _rightClick
+from lackey import wait as _wait
 
 # logging.basicConfig(filename='booking_logfile.log', filemode='w', format='%(asctime)s %(message)s', level=logging.INFO)
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
@@ -23,6 +29,7 @@ class goodxtest():
     def __init__(self, parent, getDatabase):
         self._parent = parent
         self.getDatabase = getDatabase
+        self.FileHandling = FileHandling()
 
     def newScreenshot(self, session, file_name='NO_NAME'):
         try:
@@ -52,11 +59,11 @@ class goodxtest():
         return images
 
     def saveTest(self, session, model):
-        with open(os.path.normpath(os.getcwd() + '/tests/' + model['name'] + '.json'), 'w') as fp:
+        with self.FileHandling.safe_open_w(os.path.normpath(os.getcwd() + '/tests/' + model['name'] + '.json')) as fp:
             json.dump(model, fp, indent=4)
 
     def saveTestSuite(self, session, model):
-        with open(os.path.normpath(os.getcwd() + '/suites/' + model['name'] + '.json'), 'w') as fp:
+        with self.FileHandling.safe_open_w(os.path.normpath(os.getcwd() + '/suites/' + model['name'] + '.json')) as fp:
             json.dump(model, fp, indent=4)
 
     def loadTestSuite(self, session, test_name):
@@ -156,6 +163,31 @@ class goodxtest():
 
     def getLoggedIn(self, session):
         return self._parent.getLoggedIn()
+
+
+class FileHandling:
+    """
+    Better why to handle files that needs to be saved etc.
+    The function below safe_open() take a path and will check if path exist.
+    If it doesn't, it will attempt to create the folders.
+    EXAMPLE USAGE: with safe_open_w('/Users/bill/output/output-text.txt') as f:
+                       f.write(stuff_to_file)
+    """
+    def _mkdir_p(self, path):
+        try:
+            os.makedirs(path)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise
+
+    def safe_open_w(self, path):
+        ''' Open "path" for writing, creating any parent directories as needed.
+        '''
+        self._mkdir_p(os.path.dirname(path))
+        return open(path, 'w')
+
 
 class ScreenSnipper(QtWidgets.QWidget):
     def __init__(self, image_name):
