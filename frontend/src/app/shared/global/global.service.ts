@@ -88,7 +88,7 @@ export class GlobalService {
             if (res.result) {
                 this.router.navigate([navigateTo, params]);
                 this.getUser(true);
-                this.createWebsocket();
+                // this.createWebsocket();
             };
             resolve(res);
         }));

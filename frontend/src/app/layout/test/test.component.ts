@@ -64,6 +64,7 @@ export class TestComponent {
 
     testClicked(test: Test): void {
         if (test === this.selectedTest) {
+            this.selectedTest.load();
             this.testScreen.open(this.selectedTest);
         } else {
             this.selectedTest = test;

@@ -4,7 +4,7 @@
         <div class="card-header">
             {{screenName}}
         </div>
-        <div class="card-block" #layout></div>
+        <div #layout></div>
         <div class="card-footer">
             <button *ngIf="options.save" type="button" class="btn btn-success pull-right" (click)="save()">Save</button>
             <button type="button" class="btn btn-danger pull-left" (click)="close()">Close</button>
