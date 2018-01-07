@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
-import { BackendService } from '../../backend/backend.service';
+import { GlobalService } from '@global';
 
 @Component({
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
-    providers: [ BackendService ]
+    providers: [GlobalService]
 })
 export class SidebarComponent {
     isActive = false;
     showMenu = '';
 
-    constructor(private backend: BackendService) {}
+    constructor(private globalService: GlobalService) { }
+
     eventCalled() {
         this.isActive = !this.isActive;
     }
@@ -23,7 +24,8 @@ export class SidebarComponent {
             this.showMenu = element;
         }
     }
+
     onLogOut() {
-        this.backend.logout();
+        this.globalService.logout();
     }
 }

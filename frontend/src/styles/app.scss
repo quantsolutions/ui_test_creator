@@ -1,9 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
-@import "bootstrap/bootstrap";
 @import "spinner";
 @import "utils";
 @import "rtl";
 @import "responsive";
+@import "bootstrap";
 
 .fadeIn2 {
     -webkit-animation: fadein2 0.2s linear forwards;
@@ -136,22 +136,6 @@
     left: 20vw; 
     top: 10vh; 
     width: 60vw;
-}
-
-.screen-xl {
-    z-index: 1200; 
-    position: fixed; 
-    left: 15vw; 
-    top: 10vh; 
-    width: 75vw;
-}
-
-.screen-xxl {
-    z-index: 1200; 
-    position: fixed; 
-    left: 5vw; 
-    top: 10vh; 
-    width: 90vw;
 }
 
 @keyframes fadein {

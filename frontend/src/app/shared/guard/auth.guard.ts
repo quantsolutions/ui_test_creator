@@ -1,9 +1,10 @@
 import { Injectable, Component } from "@angular/core";
 import { CanActivate } from "@angular/router";
 import { Router } from "@angular/router";
+import { CanActivateChild } from "@angular/router/src/interfaces";
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuard implements CanActivate, CanActivateChild {
 
     constructor(private router: Router) { }
 
@@ -17,11 +18,21 @@ export class AuthGuard implements CanActivate {
         }
     }
 
+    canActivateChild() {
+        let logged_in = this.getCookie("session_id");
+        if (logged_in) {
+            return true;
+        } else {
+            this.router.navigate(["/login"]);
+            return false;
+        }
+    }
+
     /**
      * Retrieves a cookie stored in the browsers storage for you by name. If no cookie is found , null is returned.
      * @param name - Name of the cookie to retrieve.
      */
-   getCookie(name: string) {
+    getCookie(name: string) {
         let ca: Array<string> = document.cookie.split(";");
         let caLen: number = ca.length;
         let cookieName = `${name}=`;

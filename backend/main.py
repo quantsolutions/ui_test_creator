@@ -1,5 +1,5 @@
 # ======== IMPORTS ===================================================================================================================== 
-import sys, getopt, cherrypy, json, os, argparse
+import sys, getopt, cherrypy, json, os, argparse, simplejson
 import importlib.util
 from lib import database_manager
 from cherrypy.lib import sessions
@@ -19,12 +19,8 @@ DATABASE = "client"
 def CORS():
     # This sets the response headers , anything you want in the headers to be returned must be done here.
     server_settings = SETTINGS_FILE.get("cherrypy", None) # Load settings for cherrypy
-    # cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
-    # The sessions and session validation is not working correctly right now with the custom hosting etc. Need to fix this.
-    cherrypy.response.headers["Access-Control-Allow-Origin"] = ARGUMENTS.client_host if ARGUMENTS.client_host else server_settings.get("client_host", "http://127.0.0.1:4200")
-    cherrypy.response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    cherrypy.response.headers["Access-Control-Allow-Credentials"] = "true"
-    cherrypy.response.headers["Connection"] = "Upgrade"
+    cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
+    # cherrypy.response.headers["Access-Control-Allow-Origin"] = ARGUMENTS.client_host if ARGUMENTS.client_host else server_settings.get("client_host", "http://127.0.0.1:4200")
 
 # ======== CLASS =======================================================================================================================
 # Custom webSocketPlugin that uses the WebSocketPlugin from ws4py as a base class.
@@ -58,6 +54,9 @@ class CustomWebSocketPlugin(WebSocketPlugin):
     
     def broadcast_message(self, message):
         for key, socket in self.sockets.items():
+            logging.info('---------------- SENDING WEBSOCKET MESSAGE ----------------')
+            logging.info('Message: ', message)
+            logging.info('-----------------------------------------------------------')
             socket.send(message)
 
 # Custom class that uses the base class EchoWebSocket of ws4py.
@@ -138,7 +137,7 @@ class server(object):
         logging.info(" -------- New Websocket Created for: %s ------------"%(cherrypy.session["user"]["user_id"]))
 
     @cherrypy.expose
-    def default(self, *args, **kwargs):
+    def default(self, *args):
         """
         Function: Default function that parses and calls the correct module with the function and parameters. Then parses it and sends the result back to the
                   url call from where it came.
@@ -149,9 +148,11 @@ class server(object):
 
         # Get Function that should be called from the url example http://127.0.0.1/booking/getClient -> getClient will be the function.
         func_ = args[1]
-
         # Get Parameters that was sent with the url request.
-        params_ = json.loads(kwargs["parameters"])
+        try:
+            params_ = simplejson.loads(cherrypy.request.body.read(int(cherrypy.request.headers['Content-Length'])))
+        except:
+            params_ = {}
 
         if valid_module:
             try:
@@ -189,9 +190,6 @@ class server(object):
             "msg": msg,
             "data": data
         }
-        # Can also do the following instead of def CORS() function call in tools.CORS.on
-        # cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
-        # cherrypy.response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         return json.dumps(ret)
 
     def getUser(self):

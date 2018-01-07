@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { routerTransition } from '../../router.animations';
-import { TestSuite } from '../../shared/models/models';
-import { BackendService } from '../../shared/backend/backend.service';
-import { LoggerService } from '../../shared/logger/logger.service';
+import { Component, ViewChild } from '@angular/core';
+import { routerTransition } from '@animations';
+import { TestSuite } from '@models';
+import { BackendService } from '@backend';
 import { FormControl } from '@angular/forms';
+import { screenRender } from '@screens';
 
 @Component({
     selector: 'app-suite',
@@ -11,16 +11,21 @@ import { FormControl } from '@angular/forms';
     styleUrls: ['./suite.component.scss'],
     animations: [routerTransition()]
 })
+
 export class SuiteComponent {
     suites: Array<TestSuite> = [];
     session_id: string = null;
     selectedSuite: TestSuite = null;
     selectedSuites: Array<TestSuite> = [];
     openSuite: boolean = false;
+    @ViewChild("suiteScreen") suiteScreen: screenRender;
+
     constructor(private backend: BackendService) { }
 
     ngOnInit() {
         this.refreshSuites();
+        this.suiteScreen.closed.subscribe(() => this.refreshSuites());
+        this.suiteScreen.saved.subscribe(() => this.refreshSuites());
     }
 
     refreshSuites(): void {
@@ -38,18 +43,9 @@ export class SuiteComponent {
         this.backend.runTestSuite({ model: { tests: suite } });
     }
 
-    suiteClose(refresh) {
-        this.refreshSuites();
-        this.openSuite = false;
-    }
-
-    print(a) {
-        console.log(a);
-    }
-
     newTest() {
-        this.selectedSuite = null;
-        this.openSuite = true;
+        this.selectedSuite = new TestSuite;
+        this.suiteScreen.open(this.selectedSuite);
     }
 
     searchSuites(searchTerm) {
@@ -66,7 +62,7 @@ export class SuiteComponent {
 
     testClicked(suite: TestSuite): void {
         if (suite === this.selectedSuite) {
-            this.openSuite = true;
+            this.suiteScreen.open(this.selectedSuite);
         } else {
             this.selectedSuite = suite;
         }

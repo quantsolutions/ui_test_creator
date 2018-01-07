@@ -1,5 +1,5 @@
 <div class="content" [@routerTransition]>
-    <suite-screen *ngIf="openSuite" [suite_]="selectedSuite" (close)="suiteClose($event)"></suite-screen>
+    <screen-render #suiteScreen [type]="'SuiteScreen'"></screen-render>    
     <div class="content layout-header">
         <div class="row justify-content-center" style="margin-bottom: 10px;">
             <div class="col-sm-6">
