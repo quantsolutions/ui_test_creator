@@ -62,6 +62,7 @@ export class SuiteComponent {
 
     testClicked(suite: TestSuite): void {
         if (suite === this.selectedSuite) {
+            this.selectedSuite.load();
             this.suiteScreen.open(this.selectedSuite);
         } else {
             this.selectedSuite = suite;

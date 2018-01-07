@@ -4,7 +4,7 @@ import * as $ from 'jquery';
 var ALREADY_OPEN = false;
 
 export class Input_ extends Popup {
-    
+        
         constructor(msg = "", options = {}, callback = null) {
             super(msg, options, callback);
         }
@@ -46,8 +46,14 @@ export class Input_ extends Popup {
                 div.append(div2);
                 div.append(card);
                 $("#popup_div").append(div);
+                $("#input_popup").focus();
                 ALREADY_OPEN = true;
             }
+        }
+
+        close() {
+            super.close();
+            ALREADY_OPEN = false;
         }
     }
 

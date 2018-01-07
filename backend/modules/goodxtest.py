@@ -164,31 +164,6 @@ class goodxtest():
     def getLoggedIn(self, session):
         return self._parent.getLoggedIn()
 
-
-class FileHandling:
-    """
-    Better why to handle files that needs to be saved etc.
-    The function below safe_open() take a path and will check if path exist.
-    If it doesn't, it will attempt to create the folders.
-    EXAMPLE USAGE: with safe_open_w('/Users/bill/output/output-text.txt') as f:
-                       f.write(stuff_to_file)
-    """
-    def _mkdir_p(self, path):
-        try:
-            os.makedirs(path)
-        except OSError as exc:
-            if exc.errno == errno.EEXIST and os.path.isdir(path):
-                pass
-            else:
-                raise
-
-    def safe_open_w(self, path):
-        ''' Open "path" for writing, creating any parent directories as needed.
-        '''
-        self._mkdir_p(os.path.dirname(path))
-        return open(path, 'w')
-
-
 class ScreenSnipper(QtWidgets.QWidget):
     def __init__(self, image_name):
         super().__init__()
@@ -239,8 +214,34 @@ class ScreenSnipper(QtWidgets.QWidget):
             y2 = max(self.begin.y(), self.end.y())
 
             img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
-            img.save(os.path.normpath(os.getcwd() + '/images/' + self.image_name + '.png'))
-        except:
-            print('Failed to save the screen capture')
+            print('Wooohooo !!!!')
+            print('ImageName')
+            img.save(os.path.normpath(os.path.join(os.getcwd(), 'images', self.image_name + '.png')))
+        except Exception as ex:
+            logging.info('Failed to save the screenShot')
+            logging.info('Exception: ' + str(ex))
+
+class FileHandling:
+    """
+    Better why to handle files that needs to be saved etc.
+    The function below safe_open() take a path and will check if path exist.
+    If it doesn't, it will attempt to create the folders.
+    EXAMPLE USAGE: with safe_open_w('/Users/bill/output/output-text.txt') as f:
+                       f.write(stuff_to_file)
+    """
+    def _mkdir_p(self, path):
+        try:
+            os.makedirs(path)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise
+
+    def safe_open_w(self, path):
+        ''' Open "path" for writing, creating any parent directories as needed.
+        '''
+        self._mkdir_p(os.path.dirname(path))
+        return open(path, 'w')
 
 Module = goodxtest
