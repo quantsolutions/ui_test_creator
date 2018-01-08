@@ -14,8 +14,13 @@ export class TestScreen extends Screen implements OnInit {
     @ViewChild('nameInput') nameInput: ElementRef;
     model: Test;
 
+    constructor() {
+        super();
+    }
+
     ngOnInit() {
         this.nameInput.nativeElement.focus();
+        console.log('OPEN !!!');
     }
 
     removeAction(action) {

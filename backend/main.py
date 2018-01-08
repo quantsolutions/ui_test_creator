@@ -54,9 +54,9 @@ class CustomWebSocketPlugin(WebSocketPlugin):
     
     def broadcast_message(self, message):
         for key, socket in self.sockets.items():
-            logging.info('---------------- SENDING WEBSOCKET MESSAGE ----------------')
-            logging.info('Message: ', message)
-            logging.info('-----------------------------------------------------------')
+            print('=========================== SENDIND =========================')
+            print(message)
+            print('=============================================================')
             socket.send(message)
 
 # Custom class that uses the base class EchoWebSocket of ws4py.

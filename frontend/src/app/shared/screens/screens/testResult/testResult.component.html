@@ -1,0 +1,41 @@
+<style>
+    .mr5 {
+        margin-right: 5px;
+    }
+</style>
+<div class="col-sm-12">
+    <h4>Test Details</h4>
+    <hr>
+    <div class="row" style="max-height: 60vh;">
+        <div class="col-sm-12 row" style="margin-top: 10px;">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <td width="5%">Order</td>
+                        <th width="20%">Action</th>
+                        <th width="50%">Data</th>
+                        <th width="25%">Result</th>>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="col-sm-12 row" style="max-height: 30vh; overflow-y: auto;">
+            <table>
+                <tbody>
+                    <tr *ngFor="let result of testResults; let i = index;">
+                        <td width="5%">{{i+1}}</td>
+                        <td width="20%">
+                            {{result.action}}
+                        </td>
+                        <td width="50%">
+                            {{result.data}}
+                        </td>
+                        <td width="25%">
+                            {{result.result}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

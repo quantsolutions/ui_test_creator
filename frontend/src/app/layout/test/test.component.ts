@@ -20,6 +20,7 @@ export class TestComponent {
     selectedTests: Array<Test> = [];
     openTest: boolean = false;
     @ViewChild("testScreen") testScreen: screenRender;
+    @ViewChild("testResultScreen") testResultScreen: screenRender;
 
     constructor(private backend: BackendService) { }
 
@@ -41,7 +42,8 @@ export class TestComponent {
         let test = this.selectedTests.map(x => {
             return { name: x.name, type: 'test' };
         })
-        this.backend.runTestSuite({ model: { tests: test } })
+        this.backend.runTestSuite({ model: { tests: test } });
+        this.testResultScreen.open({});
     }
 
     newTest() {

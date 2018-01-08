@@ -58,7 +58,7 @@ export class screenRender {
         this.fadeOut();
         this.openScreen = false;
         this.rendered = false;
-        if (this.options.save) {
+        if (!this.component.noModel && this.options.save) {
             this.component.model.save();
             setTimeout(() => {
                 this.saved.emit(this.component.model.values())
@@ -73,7 +73,7 @@ export class screenRender {
      * When the close button is clicked, emit the closed action and call the close callback.
      */
     close() {
-        if (this.component.model.hasChanged()) {
+        if (!this.component.noModel && this.component.model.hasChanged()) {
             let confirm = new Confirm("You may have unsaved changes, do you still want to exit ?", {
                 header: "Unsaved Changes"
             }, (res) => {
@@ -94,11 +94,11 @@ export class screenRender {
         } else {
             this.fadeOut();
             setTimeout(() => {
-                this.closed.emit(this.component.model.values());
+                this.closed.emit(!this.component.noModel ? this.component.model.values() : null);
                 this.openScreen = false;
                 this.rendered = false;
                 if (this.callbacks.close) {
-                    this.callbacks.close(this.component.model.values());
+                    this.callbacks.close(!this.component.noModel ? this.component.model.values() : null);
                 }
             }, 500);
         }

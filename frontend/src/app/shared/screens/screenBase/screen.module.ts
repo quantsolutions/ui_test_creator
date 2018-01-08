@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TestScreen, SuiteScreen, screenRender } from '@screens';
+import { TestScreen, SuiteScreen, screenRender, TestResultScreen } from '@screens';
 import { FormsModule } from '@angular/forms';
 import { BackendService } from '@backend';
 import { AutocompleteComponent } from '@utils';
@@ -14,6 +14,7 @@ import { AutocompleteComponent } from '@utils';
         screenRender,
         TestScreen,
         SuiteScreen,
+        TestResultScreen,
         AutocompleteComponent
     ],
     providers: [
@@ -22,12 +23,14 @@ import { AutocompleteComponent } from '@utils';
     entryComponents: [
         TestScreen,
         SuiteScreen,
+        TestResultScreen,
     ],
     exports: [
         screenRender,
         TestScreen,
         SuiteScreen,
-        AutocompleteComponent        
+        TestResultScreen,
+        AutocompleteComponent
     ]
 })
 
