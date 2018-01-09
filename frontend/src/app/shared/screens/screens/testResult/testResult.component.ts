@@ -12,31 +12,36 @@ import { wsURL, ACTIONS } from '@constants';
 })
 
 export class TestResultScreen extends Screen implements OnInit {
-    results: Array<any> = [];
-    ws: WebSocket;
-    model: any;
+    results: Array<any> = [];  // The results of the tests.
 
     constructor(private backend: BackendService) {
         super();
-        this.noModel = true;
-        this.options.save = false;
-        this.screenName = "Test Results"
+        this.noModel = true;                // This Screen does not have a valid model.
+        this.options.save = false;          // Dont show the save button.
+        this.screenName = "Test Results";   // Name of the screen.
     }
 
     ngOnInit() {
         this.backend.runTestSuite(this.model).then(res => {
-            this.results = this.traverseTests(res.data);
-            console.log('xxxxxxxxxxxxxxxxxxxx');
-            console.log(res.data);
-            console.log(this.results);
-            console.log('xxxxxxxxxxxxxxxxxxxx');            
+            this.results = this.traverseTests(res.data);          
         });
     }
 
+    /**
+     * From the actions array find the name of the action matching the value.
+     * @param {string} action_value - The value of the action to find.
+     * @returns {string}
+     */
     getAction(action_value) {
         return ACTIONS.find(action => action.value === action_value).name;
     }
 
+    /**
+     * Recursive function that traverses a test/suite array and only returns the tests in a target array.
+     * @param {array} test - The test/suites to traverse.
+     * @param {array} target - The target array to put all the tests in, will recursive call the function with this array.
+     * @returns {array} target array.
+     */
     traverseTests(test, target=[]) {
         test.forEach(t => {
             if(t.type === 'suite') {
