@@ -1,0 +1,48 @@
+<style>
+    .mr5 {
+        margin-right: 5px;
+    }
+    .break-w {
+        word-wrap: break-word;
+    }
+</style>
+<div class="col-sm-12">
+    <h4 *ngIf="results.length">Test Details</h4>
+    <hr *ngIf="results.length">
+    <div class="row" *ngIf="results.length" style="max-height: 60vh; overflow: auto;">
+        <div class="col-sm-12 row" style="margin-top: 10px;">
+            <table class="table table-custom table-striped">
+                <thead>
+                    <tr>
+                        <th width="20%">Order</th>
+                        <th width="20%">Action</th>
+                        <th width="30%">Data</th>
+                        <th width="30%">Result</th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let test of results">
+                    <tr>
+                        <td colspan="4"><b>TEST: {{test.name}} - {{test.index + 1}}</b></td>
+                    </tr>
+                    <tr *ngFor="let result of test.results.success_actions">
+                        <td width="20%" class="break-w">{{result.index + 1}}</td>
+                        <td width="20%" class="break-w">{{getAction(result.action)}}</td>
+                        <td width="30%" class="break-w">{{result.data}}</td>
+                        <td width="30%" class="break-w">SUCCESS</td>
+                    </tr>
+                    <tr *ngFor="let result of test.results.failed_actions">
+                        <td width="20%" class="break-w">{{result.index + 1}}</td>
+                        <td width="20%" class="break-w">{{getAction(result.action)}}</td>
+                        <td width="30%" class="break-w">{{result.data}}</td>
+                        <td width="30%" class="break-w">ERROR - {{result.error}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row" *ngIf="!results.length" style="height: 50vh; margin-top: 20px;">
+        <div class="col-sm-12 text-center">
+            <span style="font-size: 20px;"><i class="fa fa-refresh fa-spin fa-3x"></i> Running Tests Please wait...</span>
+        </div>
+    </div>
+</div>
