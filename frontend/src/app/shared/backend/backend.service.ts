@@ -81,6 +81,14 @@ export class BackendService {
         return this.post('getTests');
     }
 
+    getTestsCount() {
+        return this.post('getTestsCount');
+    }
+
+    getSuitesCount() {
+        return this.post('getSuitesCount')
+    }
+
     getSuites() {
         return this.post('getSuites');
     }

@@ -265,7 +265,7 @@ if __name__ == "__main__":
     parser.add_argument("--server_port", type=int)
     parser.add_argument("--server_host")
     parser.add_argument("--client_host")
-    parser.add_argument("--init", type=bool)
+    parser.add_argument("--init", action='store_true')
     ARGUMENTS = parser.parse_args()
     if ARGUMENTS.server_port:
         logging.info("---------- Starting with PORT: %s ---------"%(ARGUMENTS.server_port))

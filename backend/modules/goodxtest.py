@@ -1,6 +1,3 @@
-# Global variables
-_modulename = 'goodxtest'
-DATABASE = 'goodxtest'
 import errno
 import glob
 import json
@@ -24,6 +21,11 @@ from lackey import wait as _wait
 # logging.basicConfig(filename='booking_logfile.log', filemode='w', format='%(asctime)s %(message)s', level=logging.INFO)
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
+# Global variables
+_modulename = 'goodxtest'
+DATABASE = 'goodxtest'
+SAVE_FOLDER = os.path.normpath(os.getcwd() + '/save_files/')
+
 # Class
 class goodxtest():
     def __init__(self, parent, getDatabase):
@@ -40,44 +42,50 @@ class goodxtest():
         except Exception as ex:
             raise Exception(ex)
 
+    def getTestsCount(self, session):
+        return len(os.listdir(os.path.normpath(SAVE_FOLDER + '/tests/')))
+
+    def getSuitesCount(self, session):
+        return len(os.listdir(os.path.normpath(SAVE_FOLDER + '/suites/')))
+
     def getTests(self, session):
         tests = []
-        for file in os.listdir(os.path.normpath(os.getcwd() + '/tests/')):
+        for file in os.listdir(os.path.normpath(SAVE_FOLDER + '/tests/')):
             tests.append({ 'name' : file[:-5], 'type': 'test'})
         return tests
 
     def getSuites(self, session):
         tests = []
-        for file in os.listdir(os.path.normpath(os.getcwd() + '/suites/')):
+        for file in os.listdir(os.path.normpath(SAVE_FOLDER + '/suites/')):
             tests.append({ 'name': file[:-5], 'type': 'suite'})
         return tests
 
     def getImages(self, session):
         images = []
-        for file in os.listdir(os.path.normpath(os.getcwd() + '/images/')):
+        for file in os.listdir(os.path.normpath(SAVE_FOLDER + '/images/')):
             images.append(file[:-4])
         return images
 
     def saveTest(self, session, model):
-        with self.FileHandling.safe_open_w(os.path.normpath(os.getcwd() + '/tests/' + model['name'] + '.json')) as fp:
+        with self.FileHandling.safe_open_w(os.path.normpath(SAVE_FOLDER + '/tests/' + model['name'] + '.json')) as fp:
             json.dump(model, fp, indent=4)
 
     def saveTestSuite(self, session, model):
-        with self.FileHandling.safe_open_w(os.path.normpath(os.getcwd() + '/suites/' + model['name'] + '.json')) as fp:
+        with self.FileHandling.safe_open_w(os.path.normpath(SAVE_FOLDER + '/suites/' + model['name'] + '.json')) as fp:
             json.dump(model, fp, indent=4)
 
     def loadTestSuite(self, session, test_name):
         return self._load_test_suite(test_name)
 
     def _load_test_suite(self, test_name):
-        json_data = open(os.path.normpath(os.getcwd() + '/suites/' + test_name + '.json')).read()
+        json_data = open(os.path.normpath(SAVE_FOLDER + '/suites/' + test_name + '.json')).read()
         return json.loads(json_data)
 
     def loadTest(self, session, test_name):
         return self._load_test(test_name)
 
     def _load_test(self, test_name):
-        json_data = open(os.path.normpath(os.getcwd() + '/tests/' + test_name + '.json')).read()
+        json_data = open(os.path.normpath(SAVE_FOLDER + '/tests/' + test_name + '.json')).read()
         return json.loads(json_data)
 
     def runTestSuite(self, session, model):
@@ -151,7 +159,7 @@ class goodxtest():
                     "index": index,
                     "action": action["action"],
                     "data": action["data"],
-                    "error": str(ex)
+                    "error": str(ex.__doc__)
                 })
         return test_result
 
@@ -197,6 +205,7 @@ class ScreenSnipper(QtWidgets.QWidget):
     def __init__(self, image_name):
         super().__init__()
         root = tk.Tk()
+        self.FileHandling = FileHandling()
         self.image_name = image_name
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
@@ -243,9 +252,8 @@ class ScreenSnipper(QtWidgets.QWidget):
             y2 = max(self.begin.y(), self.end.y())
 
             img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
-            print('Wooohooo !!!!')
-            print('ImageName')
-            img.save(os.path.normpath(os.path.join(os.getcwd(), 'images', self.image_name + '.png')))
+            logging.info('Image name: ' + self.image_name)
+            img.save(self.FileHandling.safe_create_path(os.path.normpath(SAVE_FOLDER + '/images/' + self.image_name + '.png')))
         except Exception as ex:
             logging.info('Failed to save the screenShot')
             logging.info('Exception: ' + str(ex))
@@ -272,5 +280,11 @@ class FileHandling:
         '''
         self._mkdir_p(os.path.dirname(path))
         return open(path, 'w')
+
+    def safe_create_path(self, path):
+        '''Create Path give if doesn't exist
+        '''
+        self._mkdir_p(os.path.dirname(path))
+        return path
 
 Module = goodxtest
