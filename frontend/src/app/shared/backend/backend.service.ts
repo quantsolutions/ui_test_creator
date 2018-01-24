@@ -76,15 +76,17 @@ export class BackendService {
     searchTests(searchterm) {
         return this.post('searchTests', {search_term: searchterm});
     }
-
+    
     getTests() {
         return this.post('getTests');
     }
 
+    // Backend function to get the test cases count
     getTestsCount() {
         return this.post('getTestsCount');
     }
 
+    // Backend function to get the test suites count
     getSuitesCount() {
         return this.post('getSuitesCount')
     }
