@@ -35,7 +35,7 @@ export class SuiteScreen extends Screen implements OnInit {
     }
 
     filterSuiteName() {
-        this.model.name = this.model.name.split(' ').map(x => x[0].toUpperCase() + x.slice(1, x.length)).join('');
+        this.model.name = this.model.name.split(' ').map(x => x.toLowerCase()).join('_');
     }
 
     removeTest(test) {

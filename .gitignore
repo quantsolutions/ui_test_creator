@@ -5,7 +5,7 @@
 /out-tsc
 
 # dependencies
-/node_modules
+frontend/node_modules
 
 # IDEs and editors
 /.idea
@@ -16,6 +16,7 @@
 .settings/
 *.sublime-workspace
 
+
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
@@ -24,18 +25,26 @@
 !.vscode/extensions.json
 
 # misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-testem.log
-/typings
+frontend/.sass-cache
+frontend/connect.lock
+frontend/coverage
+frontend/libpeerconnection.log
+frontend/npm-debug.log
+frontend/testem.log
+frontend/typings
+frontend/package-lock.json
 
 # e2e
-/e2e/*.js
-/e2e/*.map
+frontend/e2e/*.js
+frontend/e2e/*.map
 
 # System Files
 .DS_Store
 Thumbs.db
+
+# Python
+*.pyo
+*.pyc
+
+# Project Files
+backend/save_files/
