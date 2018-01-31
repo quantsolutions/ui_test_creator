@@ -137,20 +137,20 @@ class Server(object):
             schema_ = db.executeSQLWithResult("SELECT schema_name FROM information_schema.schemata WHERE schema_name = %s", (schema["name"],))
             if len(schema_) == 0:
                 logging.info("------------------------ INIT SCHEMA %s ------------------------"%(schema["name"]))
-                db.executeSQL(schema["sql"], ())
+                db.executeSQL(schema["sql"])
             for table in schema["tables"]:
                 table_ = db.executeSQLWithResult("SELECT * FROM information_schema.tables WHERE table_name = %s", (table["name"],))
                 if len(table_) == 0:
                     logging.info("------------------------ INIT TABLE %s ------------------------"%(table["name"]))
-                    db.executeSQL(table["sql"], ())
+                    db.executeSQL(table["sql"])
                     for sql in table["defaults"]:
                         logging.info("------------------------ INIT DEFAULT SQL %s ----------------------"%(table["name"]))
-                        db.executeSQL(sql, ())
+                        db.executeSQL(sql)
             for view in schema["views"]:
                 view_ = db.executeSQLWithResult("IF EXISTS(select * FROM sys.views where name = %s)", (view["name"],))
                 if len(view_) == 0:
                     logging.info("------------------------ INIT VIEW %s ------------------------"%(view["name"]))
-                    db.executeSQL(view["sql"], ())
+                    db.executeSQL(view["sql"])
     
     def create_save_folders(self):
         save_folder_path = os.path.normpath(os.getcwd() + '/save_files/')
