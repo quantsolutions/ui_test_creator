@@ -20,6 +20,7 @@ def CORS():
     # This sets the response headers , anything you want in the headers to be returned must be done here.
     server_settings = SETTINGS_FILE.get("cherrypy", None) # Load settings for cherrypy
     cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
+    cherrypy.response.headers["Access-Control-Allow-Credentials"] = True
     # cherrypy.response.headers["Access-Control-Allow-Origin"] = ARGUMENTS.client_host if ARGUMENTS.client_host else server_settings.get("client_host", "http://127.0.0.1:4200")
 
 # ======== CLASS =======================================================================================================================
@@ -142,12 +143,26 @@ class server(object):
         Function: Default function that parses and calls the correct module with the function and parameters. Then parses it and sends the result back to the
                   url call from where it came.
         """
+        module_ = None
+        func_ = None
+
         # Get Module That should be called from the url example http://127.0.0.1/booking/getClient -> booking will be the module.
-        module_ = args[0]
+        # Check if the module is defined in the url request, otherwise just serve the index.html
+        try:
+            module_ = args[0]
+        except:
+            return open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend", "index.html"))
+
+        # Check if the module was valid.
         valid_module = True if self.module_dict.get(module_, None) else False # Check if the module exists
 
         # Get Function that should be called from the url example http://127.0.0.1/booking/getClient -> getClient will be the function.
-        func_ = args[1]
+        # Check if the function is defined in the url request, otherwise just serve the index.html
+        try:
+            func_ = args[1]
+        except:
+            return open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend", "index.html"))
+
         # Get Parameters that was sent with the url request.
         try:
             params_ = simplejson.loads(cherrypy.request.body.read(int(cherrypy.request.headers['Content-Length'])))
@@ -157,10 +172,11 @@ class server(object):
         if valid_module:
             try:
                 # Check if the user is logged in, let it pass if the function call is login or logout.
-                if func_ not in ["login", "logout", "getUser"]:
-                    self.getUser()
+                # if func_ not in ["login", "logout", "getUser"]:
+                #     self.getUser()
 
-                params_["session"] = cherrypy.session.get("user", None)
+                # Set the user of the session from the session_id cookie.
+                params_["session"] = cherrypy.session.get("user")
 
                 # logging.info to know what is happening
                 logging.info("*************************** CALLING ****************************")
@@ -304,10 +320,14 @@ if __name__ == "__main__":
             "tools.sessions.locking": "explicit",
             "tools.sessions.timeout": 600,
             "tools.sessions.storage_type": "ram",
-            "tools.CORS.on": True
+            "tools.CORS.on": True,
+            "tools.staticdir.on": True,
+            "tools.staticdir.dir": "",
+            "tools.staticdir.root": os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend"),
             },
-        "/ws" : {
-            "tools.websocket.on": True,
-            "tools.websocket.handler_cls": CustomWebSocket
+            "/ws" : {
+                "tools.websocket.on": True,
+                "tools.websocket.handler_cls": CustomWebSocket
             }
-        })
+        }
+    )
