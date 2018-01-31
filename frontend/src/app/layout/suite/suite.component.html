@@ -3,7 +3,7 @@
     <div class="content layout-header">
         <div class="row justify-content-center" style="margin-bottom: 10px;">
             <div class="col-sm-6">
-                <input #searchTerm (input)="searchTests(searchTerm.value)" class="input form-control" type="text" placeholder="Search suites by name ..."/>
+                <input #searchTerm (input)="searchSuites(searchTerm.value)" class="input form-control" type="text" placeholder="Search suites by name ..."/>
             </div>
             <a class="btn rounded-btn" (click)="newTest()" style="color: white;"><i class="fa fa-plus"></i> New Suite</a>
             <a class="btn rounded-btn" (click)="runTestSuite()" style="color: white;"><i class="fa fa-plus"></i> Run Selected Suites</a>
