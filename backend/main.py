@@ -9,7 +9,7 @@ from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 
 # logging.basicConfig(filename="main_logfile.log", filemode="w", format="%(asctime)s %(message)s", level=logging.INFO)
 logging.basicConfig(format="%(asctime)s %(message)s", level=logging.INFO)
-from flask import Flask
+from flask import Flask, request
 
 # ======== GLOBAL VARS =================================================================================================================
 SETTINGS_FILE = {}
@@ -123,8 +123,8 @@ class customFlask(Flask):
 
 app = customFlask(__name__)
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@app.route('/', defaults={'path': ''}, methods=['GET', 'POST'])
+@app.route('/<path:path>', methods=['GET', 'POST'])
 def default(path):
     path = path.split("/")
     """
