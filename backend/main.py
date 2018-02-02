@@ -9,91 +9,17 @@ from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 
 # logging.basicConfig(filename="main_logfile.log", filemode="w", format="%(asctime)s %(message)s", level=logging.INFO)
 logging.basicConfig(format="%(asctime)s %(message)s", level=logging.INFO)
+from flask import Flask
 
 # ======== GLOBAL VARS =================================================================================================================
-SETTINGS_FILE = None
+SETTINGS_FILE = {}
 ARGUMENTS = []
 DATABASE = "client"
 
 # ======== GLOBAL FUNCTIONS ============================================================================================================
-def CORS():
-    # This sets the response headers , anything you want in the headers to be returned must be done here.
-    server_settings = SETTINGS_FILE.get("cherrypy", None) # Load settings for cherrypy
-    cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
-    cherrypy.response.headers["Access-Control-Allow-Credentials"] = True
-    # cherrypy.response.headers["Access-Control-Allow-Origin"] = ARGUMENTS.client_host if ARGUMENTS.client_host else server_settings.get("client_host", "http://127.0.0.1:4200")
-
-# ======== CLASS =======================================================================================================================
-# Custom webSocketPlugin that uses the WebSocketPlugin from ws4py as a base class.
-class CustomWebSocketPlugin(WebSocketPlugin):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.sockets = {}
-
-    def start(self):
-        super().start()
-        self.bus.subscribe("ws-opened", self.add_socket) # Add the socket to the list when opened.
-        self.bus.subscribe("ws-closed", self.del_socket) # Remove the socket from the list when the socket connection is closed.
-        self.bus.subscribe("get-client", self.get_client) # Returns a client that you want to send a message to.
-        self.bus.subscribe("broadcast", self.broadcast_message) # Broadcasts a message to every client in the websocket (self.sockets) dictionary.
-
-    def stop(self):
-        super().stop()
-        self.bus.unsubscribe("ws-opened", self.add_socket)
-        self.bus.unsubscribe("ws-closed", self.del_socket)
-        self.bus.subscribe("get-client", self.get_client)
-        self.bus.unsubscribe("broadcast", self.broadcast_message)
-
-    def add_socket(self, socket, user_id):
-        self.sockets[user_id] = socket
-
-    def del_socket(self, socket, user_id, code=0, reason="No Reason"):
-        del self.sockets[user_id]
-
-    def get_client(self, user_id):
-        return self.sockets[user_id]
-    
-    def broadcast_message(self, message):
-        for key, socket in self.sockets.items():
-            print('=========================== SENDIND =========================')
-            print(message)
-            print('=============================================================')
-            socket.send(message)
-
-# Custom class that uses the base class EchoWebSocket of ws4py.
-class CustomWebSocket(EchoWebSocket):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.session_id = None
-
-    def opened(self):
-        # This will have to change to the user_id of the user that is logged in, otherwise it can get confusing when sending to other users.
-        self.session_id = cherrypy.session.id
-        # self.session_id = cherrypy.session["user"]["user_id"]
-        cherrypy.engine.publish("ws-opened", self, self.session_id)
-
-    def closed(self, code, reason="No Reason"):
-        cherrypy.engine.publish("ws-closed", self, self.session_id, code, reason)
-
-    def received_message(self, msg):
-        # Override the base class receive_message function in order to process this information.
-        packet = json.loads(str(msg))
-        # If the packet does not contain any user_ids to send the message to, then broadcast it to EVERY websocket connected.
-        if packet.get("to", None) is None or packet.get("to", "") == "":
-            cherrypy.engine.publish("broadcast", msg)
-        else:
-            # If its a list of user_ids iterate over them and send the message.
-            if isinstance(packet["to"], list):
-                for user_id in packet["to"]:
-                    client = cherrypy.engine.publish("get-client", user_id)
-                    client[0].send(packet["message"])
-            # If its a single string (single user) then only send it to them.
-            else:
-                client = cherrypy.engine.publish("get-client", packet["to"])
-                client[0].send(packet["message"])
-
-class server(object):    
-    def __init__(self):
+class customFlask(Flask):
+    def __init__(self, import_name, static_url_path=None, static_folder="static", static_host=None, host_matching=False, template_folder="templates", instance_path=None, instance_relative_config=False, root_path=None):
+        super().__init__(import_name, static_url_path=None, static_folder="static", template_folder="templates", instance_path=None, instance_relative_config=False, root_path=None)
         self.module_dict = {}
         self.database_dict = {}
         self.build_modules()
@@ -111,7 +37,7 @@ class server(object):
             # If you want to run the database checker just run python3 main.py init, the init param is needed to start this
             if ARGUMENTS.init:
                 self.check_tables(database)
-    
+
     def check_tables(self, database):
         db = self.database_dict[database["database_name"]] 
         for schema in database["schemas"]:
@@ -133,86 +59,11 @@ class server(object):
                     logging.info("------------------------ INIT VIEW %s ------------------------"%(view["name"]))
                     db.executeSQL(view["sql"], ())
 
-    @cherrypy.expose
-    def ws(self, *args, **kwargs):
-        logging.info(" -------- New Websocket Created for: %s ------------"%(cherrypy.session["user"]["user_id"]))
-
-    @cherrypy.expose
-    def default(self, *args):
-        """
-        Function: Default function that parses and calls the correct module with the function and parameters. Then parses it and sends the result back to the
-                  url call from where it came.
-        """
-        module_ = None
-        func_ = None
-
-        # Get Module That should be called from the url example http://127.0.0.1/booking/getClient -> booking will be the module.
-        # Check if the module is defined in the url request, otherwise just serve the index.html
-        try:
-            module_ = args[0]
-        except:
-            return open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend", "index.html"))
-
-        # Check if the module was valid.
-        valid_module = True if self.module_dict.get(module_, None) else False # Check if the module exists
-
-        # Get Function that should be called from the url example http://127.0.0.1/booking/getClient -> getClient will be the function.
-        # Check if the function is defined in the url request, otherwise just serve the index.html
-        try:
-            func_ = args[1]
-        except:
-            return open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend", "index.html"))
-
-        # Get Parameters that was sent with the url request.
-        try:
-            params_ = simplejson.loads(cherrypy.request.body.read(int(cherrypy.request.headers['Content-Length'])))
-        except:
-            params_ = {}
-
-        if valid_module:
-            try:
-                # Check if the user is logged in, let it pass if the function call is login or logout.
-                # if func_ not in ["login", "logout", "getUser"]:
-                #     self.getUser()
-
-                # Set the user of the session from the session_id cookie.
-                params_["session"] = cherrypy.session.get("user")
-
-                # logging.info to know what is happening
-                logging.info("*************************** CALLING ****************************")
-                logging.info("MODULE: %s; \nFUNCTION: %s; \nPARAMETERS: %s;"%(module_, func_, str(params_)))
-                logging.info("****************************************************************")                
-
-                # Call the module with the function
-                data = self.callModuleFunc(module_, func_, params_)
-                result = True
-                msg = "Success"
-            except Exception as ex:
-                logging.info("******************** EXCEPTION OCCURED *************************")
-                logging.info("MODULE: %s; \nFUNCTION: %s; \nPARAMETERS: %s; \nEXCEPTION: %s;"%(module_, func_, str(params_), str(ex)))
-                logging.info("****************************************************************")
-                msg = str(ex) if str(ex) != "'%s' object has no attribute '%s'"%(module_, func_) else "Function %s does not exist on module %s"%(func_, module_) 
-                data = None
-                result = False
-        else:
-            logging.info("******************** EXCEPTION OCCURED *************************")
-            logging.info("EXCEPTION: Module %s was not found"%(module_))
-            logging.info("****************************************************************")
-            msg = "MODULE " + module_ + " WAS NOT FOUND"
-            data = None
-            result = False
-        ret = {
-            "result": result,
-            "msg": msg,
-            "data": data
-        }
-        return json.dumps(ret)
-
-    def getUser(self):
-        if cherrypy.session.get("user", None):
-            return cherrypy.session["user"]
-        else:
-            raise Exception("NOT LOGGED IN")
+    # def getUser(self):
+    #     if cherrypy.session.get("user", None):
+    #         return cherrypy.session["user"]
+    #     else:
+    #         raise Exception("NOT LOGGED IN")
 
     def callModule(self, module_name):
         _module_ = importlib.util.module_from_spec(self.module_dict[module_name])
@@ -243,7 +94,7 @@ class server(object):
                 self.getDatabase(db).executeSQL("UPDATE global.user set login_count = coalesce(login_count, 0)+1 where id=%s", (user[0]["id"],))
             except:
                 pass
-            cherrypy.session["user"] = { 
+            cherrypy.session["user"] = {
                                          "username": user[0]["username"],
                                          "user_id": user[0]["id"],
                                          "name": user[0]["name"],
@@ -260,28 +111,98 @@ class server(object):
             logging.info("***********************************************************")
             raise Exception("LOGIN FAILED: Password or Username Incorrect")
     
-    def getLoggedIn(self):
-        return cherrypy.session.get("user", None)
+    # def getLoggedIn(self):
+    #     return cherrypy.session.get("user", None)
 
-    def doLogout(self):
+    # def doLogout(self):
+    #     try:
+    #         cherrypy.session.clear()
+    #         return "LOGOUT SUCCESSFUL"
+    #     except:
+    #         raise Exception("LOGOUT FAILED: NOT LOGGED IN")
+
+app = customFlask(__name__)
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def default(path):
+    path = path.split("/")
+    """
+    Function: Default function that parses and calls the correct module with the function and parameters. Then parses it and sends the result back to the
+                url call from where it came.
+    """
+    module_ = None
+    func_ = None
+
+    # Get Module That should be called from the url example http://127.0.0.1/booking/getClient -> booking will be the module.
+    # Check if the module is defined in the url request, otherwise just serve the index.html
+    try:
+        module_ = path[0]
+    except:
+        return open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend", "index.html"))
+
+    # Check if the module was valid.
+    valid_module = True if app.module_dict.get(module_, None) else False # Check if the module exists
+
+    # Get Function that should be called from the url example http://127.0.0.1/booking/getClient -> getClient will be the function.
+    # Check if the function is defined in the url request, otherwise just serve the index.html
+    try:
+        func_ = path[1]
+    except:
+        return open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend", "index.html"))
+
+    # Get Parameters that was sent with the url request.
+    try:
+        params_ = simplejson.loads(request.data)
+    except:
+        params_ = {}
+
+    if valid_module:
         try:
-            cherrypy.session.clear()
-            return "LOGOUT SUCCESSFUL"
-        except:
-            raise Exception("LOGOUT FAILED: NOT LOGGED IN")
+            # Check if the user is logged in, let it pass if the function call is login or logout.
+            # if func_ not in ["login", "logout", "getUser"]:
+            #     self.getUser()
+
+            # Set the user of the session from the session_id cookie.
+            params_["session"] = {}
+
+            # logging.info to know what is happening
+            logging.info("*************************** CALLING ****************************")
+            logging.info("MODULE: %s; \nFUNCTION: %s; \nPARAMETERS: %s;"%(module_, func_, str(params_)))
+            logging.info("****************************************************************")                
+
+            # Call the module with the function
+            data = app.callModuleFunc(module_, func_, params_)
+            result = True
+            msg = "Success"
+        except Exception as ex:
+            logging.info("******************** EXCEPTION OCCURED *************************")
+            logging.info("MODULE: %s; \nFUNCTION: %s; \nPARAMETERS: %s; \nEXCEPTION: %s;"%(module_, func_, str(params_), str(ex)))
+            logging.info("****************************************************************")
+            msg = str(ex) if str(ex) != "'%s' object has no attribute '%s'"%(module_, func_) else "Function %s does not exist on module %s"%(func_, module_) 
+            data = None
+            result = False
+    else:
+        logging.info("******************** EXCEPTION OCCURED *************************")
+        logging.info("EXCEPTION: Module %s was not found"%(module_))
+        logging.info("****************************************************************")
+        msg = "MODULE " + module_ + " WAS NOT FOUND"
+        data = None
+        result = False
+    ret = {
+        "result": result,
+        "msg": msg,
+        "data": data
+    }
+    return json.dumps(ret)
 
 # ======== INIT FUNCTION =================================================================================================================
-
-if __name__ == "__main__":
-    # You can run the server on a specific host and port on startup
-    # You can also let the db init run in the init mode.
-    # In order to this use the following format : python3 main.py --port=8080 --host=0.0.0.0 --init=True
-
+if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--server_port", type=int)
     parser.add_argument("--server_host")
     parser.add_argument("--client_host")
-    parser.add_argument("--init", action='store_true')
+    parser.add_argument("--init", type=bool)
     ARGUMENTS = parser.parse_args()
     if ARGUMENTS.server_port:
         logging.info("---------- Starting with PORT: %s ---------"%(ARGUMENTS.server_port))
@@ -304,30 +225,7 @@ if __name__ == "__main__":
     if server_settings is None:
         raise Exception("CHERRYPY SETTINGS ARE EMPTY")
 
-    cherrypy.tools.CORS = cherrypy.Tool("before_handler", CORS) # This MUST run before every request sent
-
-    #Update cherrypy with the settings from the settings.json file
-    cherrypy.config.update({
-        "server.socket_host": ARGUMENTS.server_host if ARGUMENTS.server_host else server_settings["host"], # If the host arugunemnt is present rather use that argument otherwise use the host in the settings file
-        "server.socket_port": ARGUMENTS.server_port if ARGUMENTS.server_port else server_settings["port"], # If the port arugunemnt is present rather use that argument otherwise use the port in the settings file
-    })
-    CustomWebSocketPlugin(cherrypy.engine).subscribe()
-    cherrypy.tools.websocket = WebSocketTool()
-    cherrypy.quickstart(server(), "", config={
-        "/": {
-            "tools.sessions.on": True,
-            "tools.sessions.name": "session_id",
-            "tools.sessions.locking": "explicit",
-            "tools.sessions.timeout": 600,
-            "tools.sessions.storage_type": "ram",
-            "tools.CORS.on": True,
-            "tools.staticdir.on": True,
-            "tools.staticdir.dir": "",
-            "tools.staticdir.root": os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend"),
-            },
-            "/ws" : {
-                "tools.websocket.on": True,
-                "tools.websocket.handler_cls": CustomWebSocket
-            }
-        }
+    app.run(
+        host=ARGUMENTS.server_host if ARGUMENTS.server_host else server_settings["host"], # If the host arugunemnt is present rather use that argument otherwise use the host in the settings file
+        port=ARGUMENTS.server_port if ARGUMENTS.server_port else server_settings["port"], # If the port arugunemnt is present rather use that argument otherwise use the port in the settings file
     )

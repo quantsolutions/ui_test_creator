@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import 'rxjs/add/operator/toPromise';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
-import { handleError, extractData, deleteCookie } from '@backend';
+import { handleError, extractData, deleteCookie, setCookie } from '@backend';
 import { URL } from '@constants';
 
 const headers = new Headers({ 'Content-Type': 'application/json' });
@@ -111,6 +111,8 @@ export class BackendService {
                     if (!response.result) {
                         // If the login was unsuccesful completely delete the cookie of session.
                         deleteCookie('session_id');
+                    } else {
+                        setCookie('session_id', response.data.session_id, 1);
                     }
                     return resolve(response);
                 })
