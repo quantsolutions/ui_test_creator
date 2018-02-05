@@ -21,7 +21,7 @@ import { Component, ElementRef, Input, OnInit, Output, EventEmitter } from '@ang
             border-radius: 5px;
             position: absolute;
             left: 0;
-            z-index: 1500;
+            z-index: 2000;
             background-color: white;
             width: 100%;
         }
