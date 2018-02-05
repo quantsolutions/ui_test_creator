@@ -6,6 +6,7 @@ import os
 import sys
 import tkinter as tk
 from random import *
+import time
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -25,6 +26,12 @@ logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 _modulename = 'goodxtest'
 DATABASE = 'goodxtest'
 SAVE_FOLDER = os.path.normpath(os.getcwd() + '/save_files/')
+
+try:
+    with open("settings.json") as settings_file:
+        SETTINGS_FILE = json.load(settings_file)
+except:
+    raise Exception("NO SETTINGS JSON FILE FOUND")
 
 # Class
 class goodxtest():
@@ -119,23 +126,24 @@ class goodxtest():
             "failed_actions": [],
             "success_actions": []
         }
+        time.sleep(SETTINGS_FILE.get("testSettings", {}).get("runTestDelay", 5))
         for index, action in enumerate(model['actions']):
             try:
                 if action['action'] == 'click':
                     for k in range(int(action.get('repeat', '1') or '1')):
-                        _click(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'))
+                        _click(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
                 if action['action'] == 'r_click':
                     for k in range(int(action.get('repeat', '1') or '1')):
-                        _rightClick(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'))
+                        _rightClick(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
                 if action['action'] == 'doubleclick':
                     for k in range(int(action.get('repeat', '1') or '1')):
-                        _doubleClick(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'))
+                        _doubleClick(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
                 if action['action'] == 'wait':
                     for k in range(int(action.get('repeat', '1') or '1')):
-                        _wait(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'), int(action['delay']))
+                        _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
                 if action['action'] == 'clickwait':
                     for k in range(int(action.get('repeat', '1') or '1')):
-                        _click(_wait(os.path.normpath(os.getcwd() + '\\images\\' + action['data'] + '.png'), int(action['delay'])))
+                        _click(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay'])))
                 if action['action'] == 'type':
                     for k in range(int(action.get('repeat', '1') or '1')):
                         pyautogui.typewrite(action['data'])
@@ -201,97 +209,97 @@ class goodxtest():
     def getLoggedIn(self, session):
         return self._parent.getLoggedIn()
 
-class ScreenSnipper(QtWidgets.QWidget):
-    def __init__(self, image_name):
-        super().__init__()
-        root = tk.Tk()
-        self.FileHandling = FileHandling()
-        self.image_name = image_name
-        screen_width = root.winfo_screenwidth()
-        screen_height = root.winfo_screenheight()
-        self.setGeometry(0, 0, screen_width, screen_height)
-        self.setWindowTitle(' ')
-        self.begin = QtCore.QPoint()
-        self.end = QtCore.QPoint()
-        self.setWindowOpacity(0.3)
-        QtWidgets.QApplication.setOverrideCursor(
-            QtGui.QCursor(QtCore.Qt.CrossCursor)
-        )
-        # self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        self.show()
+# class ScreenSnipper(QtWidgets.QWidget):
+#     def __init__(self, image_name):
+#         super().__init__()
+#         root = tk.Tk()
+#         self.FileHandling = FileHandling()
+#         self.image_name = image_name
+#         screen_width = root.winfo_screenwidth()
+#         screen_height = root.winfo_screenheight()
+#         self.setGeometry(0, 0, screen_width, screen_height)
+#         self.setWindowTitle(' ')
+#         self.begin = QtCore.QPoint()
+#         self.end = QtCore.QPoint()
+#         self.setWindowOpacity(0.3)
+#         QtWidgets.QApplication.setOverrideCursor(
+#             QtGui.QCursor(QtCore.Qt.CrossCursor)
+#         )
+#         # self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+#         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+#         self.show()
 
-    def paintEvent(self, event):
-        qp = QtGui.QPainter(self)
-        qp.setPen(QtGui.QPen(QtGui.QColor('black'), 3))
-        qp.setBrush(QtGui.QColor(128, 128, 255, 128))
-        qp.drawRect(QtCore.QRect(self.begin, self.end))
+#     def paintEvent(self, event):
+#         qp = QtGui.QPainter(self)
+#         qp.setPen(QtGui.QPen(QtGui.QColor('black'), 3))
+#         qp.setBrush(QtGui.QColor(128, 128, 255, 128))
+#         qp.drawRect(QtCore.QRect(self.begin, self.end))
 
-    def mousePressEvent(self, event):
-        self.begin = event.pos()
-        self.end = self.begin
-        self.update()
+#     def mousePressEvent(self, event):
+#         self.begin = event.pos()
+#         self.end = self.begin
+#         self.update()
 
-    def mouseMoveEvent(self, event):
-        self.end = event.pos()
-        self.update()
+#     def mouseMoveEvent(self, event):
+#         self.end = event.pos()
+#         self.update()
 
-    # Capture the keys being pressed in order to let the program exit incase the esc key is pressed.
-    def keyPressEvent(self, event):
-        # Did the user press the Escape key?
-        if event.key() == QtCore.Qt.Key_Escape:
-            # If it was escape, Close the window
-            self.close()
+#     # Capture the keys being pressed in order to let the program exit incase the esc key is pressed.
+#     def keyPressEvent(self, event):
+#         # Did the user press the Escape key?
+#         if event.key() == QtCore.Qt.Key_Escape:
+#             # If it was escape, Close the window
+#             self.close()
 
-    def mouseReleaseEvent(self, event):
-        self.close()
-        try:
-            x1 = min(self.begin.x(), self.end.x())
-            y1 = min(self.begin.y(), self.end.y())
-            x2 = max(self.begin.x(), self.end.x())
-            y2 = max(self.begin.y(), self.end.y())
+#     def mouseReleaseEvent(self, event):
+#         self.close()
+#         try:
+#             x1 = min(self.begin.x(), self.end.x())
+#             y1 = min(self.begin.y(), self.end.y())
+#             x2 = max(self.begin.x(), self.end.x())
+#             y2 = max(self.begin.y(), self.end.y())
 
-            img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
-            __wilco_se_special_print__ = """
-                                   _
-                       \"-._ _.--"~~"--._
-                        \   "            ^.    ___
-                        /                  \.-~_.-~
-                 .-----'     /\/"\ /~-._      /
-                /  __      _/\-.__\L_.-/\     "-.
-               /.-"  \    ( ` \_o>"<o_/  \  .--._\
-              /'      \    \:     "     :/_/     "`
-                      /  /\ "\    ~    /~"
-                      \ I  \/]"-._ _.-"[
-                   ___ \|___/ ./    l   \___   ___
-              .--v~   "v` ( `-.__   __.-' ) ~v"   ~v--.
-           .-{   |     :   \_    "~"    _/   :     |   }-.
-          /   \  |           ~-.,___,.-~           |  /   \
-         ]     \ |                                 | /     [
-         /\     \|     :                     :     |/     /\
-        /  ^._  _K.___,^                     ^.___,K_  _.^  \
-       /   /  "~/  "\                           /"  \~"  \   \
-      /   /    /     \ _          :          _ /     \    \   \
-    .^--./    /       Y___________l___________Y       \    \.--^.
-    [    \   /        |        [/    ]        |        \   /    ]
-    |     "v"         l________[____/]________j  -Row   }r"     /
-    }------t          /                       \       /`-.     /
-    |      |         Y                         Y     /    "-._/
-    }-----v'         |         :               |     7-.     /
-    |   |_|          |         l               |    / . "-._/
-    l  .[_]          :          \              :  r[]/_.  /
-     \_____]                     "--.             "-.____/
+#             img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
+#             __wilco_se_special_print__ = """
+#                                    _
+#                        \"-._ _.--"~~"--._
+#                         \   "            ^.    ___
+#                         /                  \.-~_.-~
+#                  .-----'     /\/"\ /~-._      /
+#                 /  __      _/\-.__\L_.-/\     "-.
+#                /.-"  \    ( ` \_o>"<o_/  \  .--._\
+#               /'      \    \:     "     :/_/     "`
+#                       /  /\ "\    ~    /~"
+#                       \ I  \/]"-._ _.-"[
+#                    ___ \|___/ ./    l   \___   ___
+#               .--v~   "v` ( `-.__   __.-' ) ~v"   ~v--.
+#            .-{   |     :   \_    "~"    _/   :     |   }-.
+#           /   \  |           ~-.,___,.-~           |  /   \
+#          ]     \ |                                 | /     [
+#          /\     \|     :                     :     |/     /\
+#         /  ^._  _K.___,^                     ^.___,K_  _.^  \
+#        /   /  "~/  "\                           /"  \~"  \   \
+#       /   /    /     \ _          :          _ /     \    \   \
+#     .^--./    /       Y___________l___________Y       \    \.--^.
+#     [    \   /        |        [/    ]        |        \   /    ]
+#     |     "v"         l________[____/]________j  -Row   }r"     /
+#     }------t          /                       \       /`-.     /
+#     |      |         Y                         Y     /    "-._/
+#     }-----v'         |         :               |     7-.     /
+#     |   |_|          |         l               |    / . "-._/
+#     l  .[_]          :          \              :  r[]/_.  /
+#      \_____]                     "--.             "-.____/
 
 
-                                        "Dragonball Z"
-                                                    ---Row
-            """
-            print(__wilco_se_special_print__)
-            logging.info('Image name: ' + self.image_name)
-            img.save(self.FileHandling.safe_create_path(os.path.normpath(SAVE_FOLDER + '/images/' + self.image_name + '.png')))
-        except Exception as ex:
-            logging.info('Failed to save the screenShot')
-            logging.info('Exception: ' + str(ex))
+#                                         "Dragonball Z"
+#                                                     ---Row
+#             """
+#             print(__wilco_se_special_print__)
+#             logging.info('Image name: ' + self.image_name)
+#             img.save(self.FileHandling.safe_create_path(os.path.normpath(SAVE_FOLDER + '/images/' + self.image_name + '.png')))
+#         except Exception as ex:
+#             logging.info('Failed to save the screenShot')
+#             logging.info('Exception: ' + str(ex))
 
 class FileHandling:
     """

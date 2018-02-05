@@ -46,5 +46,8 @@
         "database_name": "postgres",
         "password": "masterkey",
         "username":"postgres"
+    },
+    "testSettings": {
+        "runTestDelay": 2
     }
 }

@@ -31,6 +31,7 @@ export class TestComponent {
     }
 
     refreshTests(): void {
+        this.selectedTests = [];
         this.backend.getTests().then(e => {
             if (e.result && e.data) {
                 this.tests = e.data.map(x => new Test(x));

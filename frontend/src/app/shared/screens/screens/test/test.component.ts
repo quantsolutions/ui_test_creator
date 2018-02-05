@@ -34,6 +34,18 @@ export class TestScreen extends Screen implements OnInit {
         popup.open();
     }
 
+    moveActionIndex(action, type) {
+        let currentActionIndex = this.model.actions.indexOf(action);
+        console.log(currentActionIndex)
+        if (type === 'decrease') {
+            let previousActionIndex = this.model.actions.indexOf(action) - 1;
+            this.model.actions.splice(previousActionIndex, 2, action, this.model.actions[previousActionIndex])
+        } else if (type === 'increase') {
+            let nextActionIndex = this.model.actions.indexOf(action) + 1;
+            this.model.actions.splice(currentActionIndex, 2, this.model.actions[nextActionIndex], action)
+        }
+    }
+
     filterTestName() {
         this.model.name = this.model.name.split(' ').map(x => x.toLowerCase()).join('_');
     }
