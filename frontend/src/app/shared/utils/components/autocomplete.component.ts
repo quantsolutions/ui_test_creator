@@ -19,11 +19,9 @@ import { Component, ElementRef, Input, OnInit, Output, EventEmitter } from '@ang
         .suggestions {
             border: 1px solid #ababab;
             border-radius: 5px;
-            position: absolute;
-            left: 0;
+            position: fixed;
             z-index: 2000;
             background-color: white;
-            width: 100%;
         }
         .item:hover {
             background-color: #222;
