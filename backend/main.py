@@ -1,11 +1,19 @@
 # ======== IMPORTS ===================================================================================================================== 
-import sys, getopt, cherrypy, json, os, argparse, simplejson
+import argparse
+import getopt
 import importlib.util
-from lib import database_manager
-from cherrypy.lib import sessions
+import json
 import logging
-from ws4py.websocket import EchoWebSocket
+import os
+import sys
+import errno
+
+import cherrypy
+import simplejson
+from cherrypy.lib import sessions
+from lib import database_manager
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
+from ws4py.websocket import EchoWebSocket
 
 # logging.basicConfig(filename="main_logfile.log", filemode="w", format="%(asctime)s %(message)s", level=logging.INFO)
 logging.basicConfig(format="%(asctime)s %(message)s", level=logging.INFO)
@@ -92,7 +100,7 @@ class CustomWebSocket(EchoWebSocket):
                 client = cherrypy.engine.publish("get-client", packet["to"])
                 client[0].send(packet["message"])
 
-class server(object):    
+class Server(object):    
     def __init__(self):
         self.module_dict = {}
         self.database_dict = {}
@@ -106,32 +114,57 @@ class server(object):
 
     def build_databases(self):
         for database in SETTINGS_FILE.get("databases", []):
-            self.database_dict[database["database_name"]] = database_manager.DatabaseConnection(database)
+            try:
+                self.database_dict[database["database_name"]] = database_manager.DatabaseConnection(database)
+            except:
+                try:
+                    defualt_db_conn = database_manager.DatabaseConnection(SETTINGS_FILE.get("defaultDatabase"))
+                    defualt_db_conn.executeSQL(database["sql"])
+                    logging.info("------------------------ DEFAULT SYSTEM DB CREATED %s ------------------------"%(database["database_name"]))
+
+
+                    self.database_dict[database["database_name"]] = database_manager.DatabaseConnection(database)
+                except:
+                    raise
 
             # If you want to run the database checker just run python3 main.py init, the init param is needed to start this
             if ARGUMENTS.init:
                 self.check_tables(database)
+                self.create_save_folders()
     
     def check_tables(self, database):
-        db = self.database_dict[database["database_name"]] 
+        db = self.database_dict[database["database_name"]]
         for schema in database["schemas"]:
             schema_ = db.executeSQLWithResult("SELECT schema_name FROM information_schema.schemata WHERE schema_name = %s", (schema["name"],))
             if len(schema_) == 0:
                 logging.info("------------------------ INIT SCHEMA %s ------------------------"%(schema["name"]))
-                db.executeSQL(schema["sql"], ())
+                db.executeSQL(schema["sql"])
             for table in schema["tables"]:
                 table_ = db.executeSQLWithResult("SELECT * FROM information_schema.tables WHERE table_name = %s", (table["name"],))
                 if len(table_) == 0:
                     logging.info("------------------------ INIT TABLE %s ------------------------"%(table["name"]))
-                    db.executeSQL(table["sql"], ())
+                    db.executeSQL(table["sql"])
                     for sql in table["defaults"]:
                         logging.info("------------------------ INIT DEFAULT SQL %s ----------------------"%(table["name"]))
-                        db.executeSQL(sql, ())
+                        db.executeSQL(sql)
             for view in schema["views"]:
                 view_ = db.executeSQLWithResult("IF EXISTS(select * FROM sys.views where name = %s)", (view["name"],))
                 if len(view_) == 0:
                     logging.info("------------------------ INIT VIEW %s ------------------------"%(view["name"]))
-                    db.executeSQL(view["sql"], ())
+                    db.executeSQL(view["sql"])
+    
+    def create_save_folders(self):
+        save_folder_path = os.path.normpath(os.getcwd() + '/save_files/')
+        folder_names = ['images', 'tests', 'suites']
+        for folder_name in folder_names:
+            path = os.path.normpath(save_folder_path + '/' + folder_name + '/')
+            try:
+                os.makedirs(path)
+            except OSError as exc:
+                if exc.errno == errno.EEXIST and os.path.isdir(path):
+                    pass
+                else:
+                    raise
 
     @cherrypy.expose
     def ws(self, *args, **kwargs):
@@ -275,7 +308,7 @@ class server(object):
 if __name__ == "__main__":
     # You can run the server on a specific host and port on startup
     # You can also let the db init run in the init mode.
-    # In order to this use the following format : python3 main.py --port=8080 --host=0.0.0.0 --init=True
+    # In order to this use the following format : python3 main.py --port=8080 --host=0.0.0.0 --init
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--server_port", type=int)
@@ -313,7 +346,7 @@ if __name__ == "__main__":
     })
     CustomWebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
-    cherrypy.quickstart(server(), "", config={
+    cherrypy.quickstart(Server(), "", config={
         "/": {
             "tools.sessions.on": True,
             "tools.sessions.name": "session_id",

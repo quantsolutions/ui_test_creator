@@ -76,7 +76,11 @@ export class BackendService {
     searchTests(searchterm) {
         return this.post('searchTests', {search_term: searchterm});
     }
-    
+
+    getImages() {
+        return this.post('getImages');
+    }
+
     getTests() {
         return this.post('getTests');
     }
