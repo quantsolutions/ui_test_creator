@@ -57,7 +57,9 @@
                             </select>
                         </td>
                         <td width="45%">
-                            <input class="form-control" type="text" [(ngModel)]="action.data" />
+                            <input class="form-control" *ngIf="!(['doubleclick', 'click', 'clickwait', 'rclick'].includes(action.action))" type="text" [(ngModel)]="action.data" />
+                            <autocomplete *ngIf="imageList && ['doubleclick', 'click', 'clickwait', 'rclick'].includes(action.action)" (optionSelected)="action.data = $event.name" [options]="imageList" [placeholder]="'Search for images to add ...'"
+                            [filterOn]="'name'" [clear]="false" [queryText]="action.data" [optionText]="'name'"></autocomplete>
                         </td>
                         <td width="10%">
                             <input class="form-control" step="1" type="number" [disabled]="! ['wait', 'clickwait'].includes(action.action)" [(ngModel)]="action.delay"

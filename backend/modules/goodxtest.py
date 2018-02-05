@@ -70,7 +70,7 @@ class goodxtest():
     def getImages(self, session):
         images = []
         for file in os.listdir(os.path.normpath(SAVE_FOLDER + '/images/')):
-            images.append(file[:-4])
+            images.append({"name": file[:-4]})
         return images
 
     def saveTest(self, session, model):

@@ -13,14 +13,15 @@ import { Screen } from '@screens';
 export class TestScreen extends Screen implements OnInit {
     @ViewChild('nameInput') nameInput: ElementRef;
     model: Test;
+    imageList: Array<{ name: string }> = [];
 
-    constructor() {
+    constructor(private backend: BackendService) {
         super();
     }
 
     ngOnInit() {
         this.nameInput.nativeElement.focus();
-        console.log('OPEN !!!');
+        this.backend.getImages().then(res => this.imageList = res.data);
     }
 
     removeAction(action) {
