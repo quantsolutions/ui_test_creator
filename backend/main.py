@@ -1,11 +1,19 @@
 # ======== IMPORTS ===================================================================================================================== 
-import sys, getopt, cherrypy, json, os, argparse, simplejson
+import argparse
+import getopt
 import importlib.util
-from lib import database_manager
-from cherrypy.lib import sessions
+import json
 import logging
-from ws4py.websocket import EchoWebSocket
+import os
+import sys
+import errno
+
+import cherrypy
+import simplejson
+from cherrypy.lib import sessions
+from lib import database_manager
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
+from ws4py.websocket import EchoWebSocket
 
 # logging.basicConfig(filename="main_logfile.log", filemode="w", format="%(asctime)s %(message)s", level=logging.INFO)
 logging.basicConfig(format="%(asctime)s %(message)s", level=logging.INFO)
@@ -20,6 +28,7 @@ def CORS():
     # This sets the response headers , anything you want in the headers to be returned must be done here.
     server_settings = SETTINGS_FILE.get("cherrypy", None) # Load settings for cherrypy
     cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
+    cherrypy.response.headers["Access-Control-Allow-Credentials"] = True
     # cherrypy.response.headers["Access-Control-Allow-Origin"] = ARGUMENTS.client_host if ARGUMENTS.client_host else server_settings.get("client_host", "http://127.0.0.1:4200")
 
 # ======== CLASS =======================================================================================================================
@@ -91,7 +100,7 @@ class CustomWebSocket(EchoWebSocket):
                 client = cherrypy.engine.publish("get-client", packet["to"])
                 client[0].send(packet["message"])
 
-class server(object):    
+class Server(object):    
     def __init__(self):
         self.module_dict = {}
         self.database_dict = {}
@@ -105,32 +114,57 @@ class server(object):
 
     def build_databases(self):
         for database in SETTINGS_FILE.get("databases", []):
-            self.database_dict[database["database_name"]] = database_manager.DatabaseConnection(database)
+            try:
+                self.database_dict[database["database_name"]] = database_manager.DatabaseConnection(database)
+            except:
+                try:
+                    defualt_db_conn = database_manager.DatabaseConnection(SETTINGS_FILE.get("defaultDatabase"))
+                    defualt_db_conn.executeSQL(database["sql"])
+                    logging.info("------------------------ DEFAULT SYSTEM DB CREATED %s ------------------------"%(database["database_name"]))
+
+
+                    self.database_dict[database["database_name"]] = database_manager.DatabaseConnection(database)
+                except:
+                    raise
 
             # If you want to run the database checker just run python3 main.py init, the init param is needed to start this
             if ARGUMENTS.init:
                 self.check_tables(database)
+                self.create_save_folders()
     
     def check_tables(self, database):
-        db = self.database_dict[database["database_name"]] 
+        db = self.database_dict[database["database_name"]]
         for schema in database["schemas"]:
             schema_ = db.executeSQLWithResult("SELECT schema_name FROM information_schema.schemata WHERE schema_name = %s", (schema["name"],))
             if len(schema_) == 0:
                 logging.info("------------------------ INIT SCHEMA %s ------------------------"%(schema["name"]))
-                db.executeSQL(schema["sql"], ())
+                db.executeSQL(schema["sql"])
             for table in schema["tables"]:
                 table_ = db.executeSQLWithResult("SELECT * FROM information_schema.tables WHERE table_name = %s", (table["name"],))
                 if len(table_) == 0:
                     logging.info("------------------------ INIT TABLE %s ------------------------"%(table["name"]))
-                    db.executeSQL(table["sql"], ())
+                    db.executeSQL(table["sql"])
                     for sql in table["defaults"]:
                         logging.info("------------------------ INIT DEFAULT SQL %s ----------------------"%(table["name"]))
-                        db.executeSQL(sql, ())
+                        db.executeSQL(sql)
             for view in schema["views"]:
                 view_ = db.executeSQLWithResult("IF EXISTS(select * FROM sys.views where name = %s)", (view["name"],))
                 if len(view_) == 0:
                     logging.info("------------------------ INIT VIEW %s ------------------------"%(view["name"]))
-                    db.executeSQL(view["sql"], ())
+                    db.executeSQL(view["sql"])
+    
+    def create_save_folders(self):
+        save_folder_path = os.path.normpath(os.getcwd() + '/save_files/')
+        folder_names = ['images', 'tests', 'suites']
+        for folder_name in folder_names:
+            path = os.path.normpath(save_folder_path + '/' + folder_name + '/')
+            try:
+                os.makedirs(path)
+            except OSError as exc:
+                if exc.errno == errno.EEXIST and os.path.isdir(path):
+                    pass
+                else:
+                    raise
 
     @cherrypy.expose
     def ws(self, *args, **kwargs):
@@ -142,12 +176,26 @@ class server(object):
         Function: Default function that parses and calls the correct module with the function and parameters. Then parses it and sends the result back to the
                   url call from where it came.
         """
+        module_ = None
+        func_ = None
+
         # Get Module That should be called from the url example http://127.0.0.1/booking/getClient -> booking will be the module.
-        module_ = args[0]
+        # Check if the module is defined in the url request, otherwise just serve the index.html
+        try:
+            module_ = args[0]
+        except:
+            return open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend", "index.html"))
+
+        # Check if the module was valid.
         valid_module = True if self.module_dict.get(module_, None) else False # Check if the module exists
 
         # Get Function that should be called from the url example http://127.0.0.1/booking/getClient -> getClient will be the function.
-        func_ = args[1]
+        # Check if the function is defined in the url request, otherwise just serve the index.html
+        try:
+            func_ = args[1]
+        except:
+            return open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend", "index.html"))
+
         # Get Parameters that was sent with the url request.
         try:
             params_ = simplejson.loads(cherrypy.request.body.read(int(cherrypy.request.headers['Content-Length'])))
@@ -157,10 +205,11 @@ class server(object):
         if valid_module:
             try:
                 # Check if the user is logged in, let it pass if the function call is login or logout.
-                if func_ not in ["login", "logout", "getUser"]:
-                    self.getUser()
+                # if func_ not in ["login", "logout", "getUser"]:
+                #     self.getUser()
 
-                params_["session"] = cherrypy.session.get("user", None)
+                # Set the user of the session from the session_id cookie.
+                params_["session"] = cherrypy.session.get("user")
 
                 # logging.info to know what is happening
                 logging.info("*************************** CALLING ****************************")
@@ -259,7 +308,7 @@ class server(object):
 if __name__ == "__main__":
     # You can run the server on a specific host and port on startup
     # You can also let the db init run in the init mode.
-    # In order to this use the following format : python3 main.py --port=8080 --host=0.0.0.0 --init=True
+    # In order to this use the following format : python3 main.py --port=8080 --host=0.0.0.0 --init
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--server_port", type=int)
@@ -297,17 +346,21 @@ if __name__ == "__main__":
     })
     CustomWebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
-    cherrypy.quickstart(server(), "", config={
+    cherrypy.quickstart(Server(), "", config={
         "/": {
             "tools.sessions.on": True,
             "tools.sessions.name": "session_id",
             "tools.sessions.locking": "explicit",
             "tools.sessions.timeout": 600,
             "tools.sessions.storage_type": "ram",
-            "tools.CORS.on": True
+            "tools.CORS.on": True,
+            "tools.staticdir.on": True,
+            "tools.staticdir.dir": "",
+            "tools.staticdir.root": os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend"),
             },
-        "/ws" : {
-            "tools.websocket.on": True,
-            "tools.websocket.handler_cls": CustomWebSocket
+            "/ws" : {
+                "tools.websocket.on": True,
+                "tools.websocket.handler_cls": CustomWebSocket
             }
-        })
+        }
+    )

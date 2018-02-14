@@ -6,8 +6,7 @@ import { Component, ElementRef, Input, OnInit, Output, EventEmitter } from '@ang
         '(document:click)': 'handleClick($event)',
     },
     template: `
-        <div class="container" >
-            <div class="input row">
+            <div class="input" style="width: 100%">
               <input id="country" type="text" class="input form-control" [placeholder]="placeholder" [(ngModel)]="query" (keyup)="filter($event)" (keydown)="preventKey($event)" >
             </div>
             <div *ngIf="filteredOptions.length > 0" class="suggestions">
@@ -15,17 +14,14 @@ import { Component, ElementRef, Input, OnInit, Output, EventEmitter } from '@ang
                     {{item[optionText]}}
                 </div>
             </div>
-        </div>  	
         `,
     styles: [`
         .suggestions {
             border: 1px solid #ababab;
             border-radius: 5px;
-            position: absolute;
-            left: 0;
-            z-index: 1500;
+            position: fixed;
+            z-index: 2000;
             background-color: white;
-            width: 100%;
         }
         .item:hover {
             background-color: #222;

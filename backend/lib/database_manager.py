@@ -15,6 +15,10 @@ class DatabaseConnection():
                                     user=self.settings["username"], 
                                     password=self.settings["password"],
                                     port=self.settings["port"])
+
+        if self.settings["config_type"] == "default_db":
+            self._db.autocommit = True
+
         return self._db
 
     def getDatabase(self):
@@ -57,7 +61,7 @@ class DatabaseConnection():
         query_insert = "INSERT INTO %s (%s) VALUES (%s) %s"%(table_name, column_str, value_str, return_str)
         return self._execute(query_insert, value_tuple, return_key=return_key)
 
-    def executeSQL(self, sql_statement, params_tuple):
+    def executeSQL(self, sql_statement, params_tuple=None):
         """
         Function: Execute the sql provided in sql_statement with the params provided in params_tuple, this is recommended for create tables, deletes etc..
         Example: SQL = 'SELECT * FROM client.client WHERE name = %s AND surname = %s LIMIT 10;'
@@ -131,6 +135,7 @@ class DatabaseConnection():
         return self._execute(query_insert, value_tuple, False)
 
     def _execute(self, sql, values=None, return_=False, return_key=None):
+
         cursor = self.getCursor()
         retval = None
         try:
