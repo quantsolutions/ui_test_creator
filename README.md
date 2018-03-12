@@ -1,3 +1,5 @@
+# [OUTDATED] Will be updated soon!!!
+
 ========================================
 
 This project is a integration between angular and python3 cherrypy.
