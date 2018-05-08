@@ -8,18 +8,12 @@ import tkinter as tk
 from random import *
 import time
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-
-import cv2
-import numpy as np
 import pyautogui
-import pyscreenshot as ImageGrab
 from lackey import click as _click
 from lackey import doubleClick as _doubleClick
-from lackey import rightClick as _rightClick
+from lackey import rightClick as _rightClick``
 from lackey import wait as _wait
 
-# logging.basicConfig(filename='booking_logfile.log', filemode='w', format='%(asctime)s %(message)s', level=logging.INFO)
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
 # Global variables
@@ -34,20 +28,11 @@ except:
     raise Exception("NO SETTINGS JSON FILE FOUND")
 
 # Class
-class goodxtest():
+class goodxtest:
     def __init__(self, parent, getDatabase):
         self._parent = parent
         self.getDatabase = getDatabase
         self.FileHandling = FileHandling()
-
-    def newScreenshot(self, session, file_name='NO_NAME'):
-        try:
-            app = QtWidgets.QApplication(sys.argv)
-            screenSnipper = ScreenSnipper(file_name)
-            screenSnipper.show()
-            app.exec_()
-        except Exception as ex:
-            raise Exception(ex)
 
     def getTestsCount(self, session):
         return len(os.listdir(os.path.normpath(SAVE_FOLDER + '/tests/')))
@@ -58,13 +43,15 @@ class goodxtest():
     def getTests(self, session):
         tests = []
         for file in os.listdir(os.path.normpath(SAVE_FOLDER + '/tests/')):
-            tests.append({ 'name' : file[:-5], 'type': 'test'})
+            description = json.loads(open(os.path.normpath(SAVE_FOLDER + '/tests/' + file)).read())['description']
+            tests.append({ 'name' : file[:-5], 'description': description, 'type': 'test'})
         return tests
 
     def getSuites(self, session):
         tests = []
         for file in os.listdir(os.path.normpath(SAVE_FOLDER + '/suites/')):
-            tests.append({ 'name': file[:-5], 'type': 'suite'})
+            description = json.loads(open(os.path.normpath(SAVE_FOLDER + '/suites/' + file)).read())['description']
+            tests.append({ 'name': file[:-5], 'description': description, 'type': 'suite'})
         return tests
 
     def getImages(self, session):
@@ -121,55 +108,55 @@ class goodxtest():
     def runTest(self, session, model):
         self._run_test(model)
 
-    def _run_test(self, model):
-        test_result =  {
-            "failed_actions": [],
-            "success_actions": []
-        }
-        time.sleep(SETTINGS_FILE.get("testSettings", {}).get("runTestDelay", 5))
-        for index, action in enumerate(model['actions']):
-            try:
-                if action['action'] == 'click':
-                    for k in range(int(action.get('repeat', '1') or '1')):
-                        _click(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
-                if action['action'] == 'r_click':
-                    for k in range(int(action.get('repeat', '1') or '1')):
-                        _rightClick(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
-                if action['action'] == 'doubleclick':
-                    for k in range(int(action.get('repeat', '1') or '1')):
-                        _doubleClick(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
-                if action['action'] == 'wait':
-                    for k in range(int(action.get('repeat', '1') or '1')):
-                        _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
-                if action['action'] == 'clickwait':
-                    for k in range(int(action.get('repeat', '1') or '1')):
-                        _click(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay'])))
-                if action['action'] == 'type':
-                    for k in range(int(action.get('repeat', '1') or '1')):
-                        pyautogui.typewrite(action['data'])
-                if action['action'] == 'keycombo':
-                    keys = action['data'].split('+')
-                    for k in range(int(action.get('repeat', '1') or '1')):
-                        pyautogui.hotkey(*keys)
-                if action['action'] == 'keypress':
-                    for k in range(int(action.get('repeat', '1') or '1')):
-                        pyautogui.typewrite(action['data'])
-                if action['action'] == 'close':
-                    for k in range(int(action.get('repeat', '1') or '1')):
-                        pyautogui.hotkey('alt', 'f4')
-                test_result["success_actions"].append({
-                    "index": index,
-                    "action": action["action"],
-                    "data": action["data"]
-                })
-            except Exception as ex:
-                test_result["failed_actions"].append({
-                    "index": index,
-                    "action": action["action"],
-                    "data": action["data"],
-                    "error": str(ex.__doc__)
-                })
-        return test_result
+    # def _run_test(self, model):
+    #     test_result =  {
+    #         "failed_actions": [],
+    #         "success_actions": []
+    #     }
+    #     time.sleep(SETTINGS_FILE.get("testSettings", {}).get("runTestDelay", 5))
+    #     for index, action in enumerate(model['actions']):
+    #         try:
+    #             if action['action'] == 'click':
+    #                 for k in range(int(action.get('repeat', '1') or '1')):
+    #                     _click(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
+    #             if action['action'] == 'r_click':
+    #                 for k in range(int(action.get('repeat', '1') or '1')):
+    #                     _rightClick(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
+    #             if action['action'] == 'doubleclick':
+    #                 for k in range(int(action.get('repeat', '1') or '1')):
+    #                     _doubleClick(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
+    #             if action['action'] == 'wait':
+    #                 for k in range(int(action.get('repeat', '1') or '1')):
+    #                     _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+    #             if action['action'] == 'clickwait':
+    #                 for k in range(int(action.get('repeat', '1') or '1')):
+    #                     _click(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay'])))
+    #             if action['action'] == 'type':
+    #                 for k in range(int(action.get('repeat', '1') or '1')):
+    #                     pyautogui.typewrite(action['data'])
+    #             if action['action'] == 'keycombo':
+    #                 keys = action['data'].split('+')
+    #                 for k in range(int(action.get('repeat', '1') or '1')):
+    #                     pyautogui.hotkey(*keys)
+    #             if action['action'] == 'keypress':
+    #                 for k in range(int(action.get('repeat', '1') or '1')):
+    #                     pyautogui.typewrite(action['data'])
+    #             if action['action'] == 'close':
+    #                 for k in range(int(action.get('repeat', '1') or '1')):
+    #                     pyautogui.hotkey('alt', 'f4')
+    #             test_result["success_actions"].append({
+    #                 "index": index,
+    #                 "action": action["action"],
+    #                 "data": action["data"]
+    #             })
+    #         except Exception as ex:
+    #             test_result["failed_actions"].append({
+    #                 "index": index,
+    #                 "action": action["action"],
+    #                 "data": action["data"],
+    #                 "error": str(ex.__doc__)
+    #             })
+    #     return test_result
 
     def searchTests(self, session, search_term):
         tests = self.getTests(session)
@@ -184,7 +171,7 @@ class goodxtest():
         suites_ = []
         for suite in suites:
             if suite['name'].lower().find(search_term.lower()) > -1:
-                suites_.append(test)
+                suites_.append(suite)
         return suites_
 
     def login(self, session, username, password):
@@ -209,97 +196,6 @@ class goodxtest():
     def getLoggedIn(self, session):
         return self._parent.getLoggedIn()
 
-# class ScreenSnipper(QtWidgets.QWidget):
-#     def __init__(self, image_name):
-#         super().__init__()
-#         root = tk.Tk()
-#         self.FileHandling = FileHandling()
-#         self.image_name = image_name
-#         screen_width = root.winfo_screenwidth()
-#         screen_height = root.winfo_screenheight()
-#         self.setGeometry(0, 0, screen_width, screen_height)
-#         self.setWindowTitle(' ')
-#         self.begin = QtCore.QPoint()
-#         self.end = QtCore.QPoint()
-#         self.setWindowOpacity(0.3)
-#         QtWidgets.QApplication.setOverrideCursor(
-#             QtGui.QCursor(QtCore.Qt.CrossCursor)
-#         )
-#         # self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-#         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-#         self.show()
-
-#     def paintEvent(self, event):
-#         qp = QtGui.QPainter(self)
-#         qp.setPen(QtGui.QPen(QtGui.QColor('black'), 3))
-#         qp.setBrush(QtGui.QColor(128, 128, 255, 128))
-#         qp.drawRect(QtCore.QRect(self.begin, self.end))
-
-#     def mousePressEvent(self, event):
-#         self.begin = event.pos()
-#         self.end = self.begin
-#         self.update()
-
-#     def mouseMoveEvent(self, event):
-#         self.end = event.pos()
-#         self.update()
-
-#     # Capture the keys being pressed in order to let the program exit incase the esc key is pressed.
-#     def keyPressEvent(self, event):
-#         # Did the user press the Escape key?
-#         if event.key() == QtCore.Qt.Key_Escape:
-#             # If it was escape, Close the window
-#             self.close()
-
-#     def mouseReleaseEvent(self, event):
-#         self.close()
-#         try:
-#             x1 = min(self.begin.x(), self.end.x())
-#             y1 = min(self.begin.y(), self.end.y())
-#             x2 = max(self.begin.x(), self.end.x())
-#             y2 = max(self.begin.y(), self.end.y())
-
-#             img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
-#             __wilco_se_special_print__ = """
-#                                    _
-#                        \"-._ _.--"~~"--._
-#                         \   "            ^.    ___
-#                         /                  \.-~_.-~
-#                  .-----'     /\/"\ /~-._      /
-#                 /  __      _/\-.__\L_.-/\     "-.
-#                /.-"  \    ( ` \_o>"<o_/  \  .--._\
-#               /'      \    \:     "     :/_/     "`
-#                       /  /\ "\    ~    /~"
-#                       \ I  \/]"-._ _.-"[
-#                    ___ \|___/ ./    l   \___   ___
-#               .--v~   "v` ( `-.__   __.-' ) ~v"   ~v--.
-#            .-{   |     :   \_    "~"    _/   :     |   }-.
-#           /   \  |           ~-.,___,.-~           |  /   \
-#          ]     \ |                                 | /     [
-#          /\     \|     :                     :     |/     /\
-#         /  ^._  _K.___,^                     ^.___,K_  _.^  \
-#        /   /  "~/  "\                           /"  \~"  \   \
-#       /   /    /     \ _          :          _ /     \    \   \
-#     .^--./    /       Y___________l___________Y       \    \.--^.
-#     [    \   /        |        [/    ]        |        \   /    ]
-#     |     "v"         l________[____/]________j  -Row   }r"     /
-#     }------t          /                       \       /`-.     /
-#     |      |         Y                         Y     /    "-._/
-#     }-----v'         |         :               |     7-.     /
-#     |   |_|          |         l               |    / . "-._/
-#     l  .[_]          :          \              :  r[]/_.  /
-#      \_____]                     "--.             "-.____/
-
-
-#                                         "Dragonball Z"
-#                                                     ---Row
-#             """
-#             print(__wilco_se_special_print__)
-#             logging.info('Image name: ' + self.image_name)
-#             img.save(self.FileHandling.safe_create_path(os.path.normpath(SAVE_FOLDER + '/images/' + self.image_name + '.png')))
-#         except Exception as ex:
-#             logging.info('Failed to save the screenShot')
-#             logging.info('Exception: ' + str(ex))
 
 class FileHandling:
     """

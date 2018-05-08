@@ -42,4 +42,8 @@ export class HeaderComponent implements OnInit {
     openKeyboardNinjas() {
         window.open("https://www.keyboardninjas.co.za")
     }
+
+    openTingus() {
+        window.open("https://github.com/quantsolutions/ui_test_creator")
+    }
 }

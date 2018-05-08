@@ -24,9 +24,9 @@ import { BackendService } from '@backend';
         SidebarComponent,
         TestComponent,
         SuiteComponent,
-        DashboardComponent    
+        DashboardComponent
     ],
-    providers: [ BackendService ]
+    providers: [BackendService]
 })
 
 export class LayoutModule { }

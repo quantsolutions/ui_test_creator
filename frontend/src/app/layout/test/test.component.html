@@ -18,8 +18,8 @@
                     <thead>
                         <th width="10%">Name</th>
                         <th width="20%">Description</th>
-                        <th width="10%">Select</th>                        
-                        <th width="10%">Order</th>                        
+                        <th width="10%">Select</th>
+                        <th width="10%">Order</th>
                     </thead>
                 </table>
             </div>
@@ -29,7 +29,12 @@
                         <tr *ngFor="let test of tests" [ngClass]="{'selected': selectedTest === test}">
                             <td width="10%" (click)="testClicked(test)">{{test.name}}</td>
                             <td width="20%" (click)="testClicked(test)">{{test.description}}</td>
-                            <td width="10%"><input class="form-control input" style="height: 20px;" type="checkbox" (click)="selectedTests.indexOf(test) > -1 ? selectedTests.splice(selectedTests.indexOf(test), 1) : this.selectedTests.push(test)" [(ngModel)]="test.selected" /></td>
+                            <td width="10%">
+                                <input class="form-control input"
+                                       style="height: 20px;"
+                                       type="checkbox" (click)="selectedTests.indexOf(test) > -1 ? selectedTests.splice(selectedTests.indexOf(test), 1) : this.selectedTests.push(test)"
+                                       [(ngModel)]="test.selected"/>
+                            </td>
                             <td width="10%">{{selectedTests.indexOf(test) > -1 ? selectedTests.indexOf(test) + 1 : 'Not Selected'}}</td>
                         </tr>
                     </tbody>

@@ -1,0 +1,1 @@
+pyinstaller --onefile --uac-admin --uac-uiaccess --hidden-import lackey --hidden-import pyautogui main.py

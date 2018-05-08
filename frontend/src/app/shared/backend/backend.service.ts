@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http, RequestMethod, RequestOptions, Response } from '@angular/http';
 import { Router } from '@angular/router';
-import 'rxjs/add/operator/toPromise';
+// import 'rxjs/add/operator/toPromise';
 import { Observable } from 'rxjs';
-import 'rxjs/add/operator/map';
+// import 'rxjs/add/operator/map';
 import { handleError, extractData, deleteCookie } from '@backend';
 import { URL } from '@constants';
 
@@ -39,16 +39,16 @@ export class BackendService {
             .catch(handleError);
     }
 
-    /**
-     * The same as the above function, accept it returns a observable on which you can subscribe and wait until data is returned (NON ASYNC).
-     * @param request 
-     * @param parameters 
-     */
-    protected serverObservePost(request: string, parameters: any = {}): Observable<any> {
-        let body = JSON.stringify(parameters);
-        return this.http.post(url + request, body, options)
-            .map(extractData.bind(this));
-    }
+    // /**
+    //  * The same as the above function, accept it returns a observable on which you can subscribe and wait until data is returned (NON ASYNC).
+    //  * @param request 
+    //  * @param parameters 
+    //  */
+    // protected serverObservePost(request: string, parameters: any = {}): Observable<any> {
+    //     let body = JSON.stringify(parameters);
+    //     return this.http.post(url + request, body, options)
+    //         .map(extractData.bind(this));
+    // }
 
     protected post(func, params = {}): Promise<any> {
         return new Promise(resolve => {
@@ -61,9 +61,9 @@ export class BackendService {
         });
     }
 
-    protected observePost(func, params = {}): Observable<any> {
-        return this.serverObservePost(func, params);
-    }
+    // protected observePost(func, params = {}): Observable<any> {
+    //     return this.serverObservePost(func, params);
+    // }
 
 
     // ===========================================================================================
@@ -75,6 +75,10 @@ export class BackendService {
 
     searchTests(searchterm) {
         return this.post('searchTests', {search_term: searchterm});
+    }
+
+    searchSuites(searchterm) {
+        return this.post('searchSuites', {search_term: searchterm});
     }
 
     getImages() {
