@@ -55,15 +55,6 @@ export class Test extends DBModel {
         this.actions.push(new Action());
     }
 
-    addScreenShot() {
-        let prompt_ = new Input_('Please provide a name for the screenshot', { header: 'ScreenShot Name' }, (res, name) => {
-            if (res) {
-                this.serverPost('newScreenshot', { file_name: name });
-            }
-        });
-        prompt_.open();
-    }
-
     load() {
         this.serverPost('loadTest', { test_name: this.name }).then(data => {
             this.update(data.data);

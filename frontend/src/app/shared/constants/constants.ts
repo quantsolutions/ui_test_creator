@@ -4,7 +4,7 @@ export const version = '0.0.2'
 
 export const releaseDate = '2018-05-01'
 
-export const URL = '/goodxtest/';
+export const URL = 'http://127.0.0.1:9000/';
 
 export class OPTIONTYPE {
     name: string;

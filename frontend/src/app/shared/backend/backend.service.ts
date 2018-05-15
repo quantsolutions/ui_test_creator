@@ -8,7 +8,7 @@ import { handleError, extractData, deleteCookie } from '@backend';
 import { URL } from '@constants';
 
 const headers = new Headers({ 'Content-Type': 'application/json' });
-const options = new RequestOptions({ headers: headers, withCredentials: true });
+const options = new RequestOptions({ headers: headers});
 
 const url = URL; // <-- This url will be used when posting it should be your server address.
 // <-- The /booking is the module which you wish to call.
@@ -32,7 +32,7 @@ export class BackendService {
      * @param parameters - Parameters that should be sent to the backend , these are the positional arguments in the python code of the function your requesting.
      */
     protected serverPost(request: string, parameters: any = {}): Promise<any> {
-        let body = JSON.stringify(parameters);
+        const body = JSON.stringify(parameters);
         return this.http.post(url + request, body, options)
             .toPromise()
             .then(extractData.bind(this))
