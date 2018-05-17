@@ -1,12 +1,30 @@
 import argparse
+import asyncio
 import errno
 import logging
 import os
+import sys
 
-import aiohttp_cors
 import aiohttp
+import aiohttp_cors
 
 from modules import main_routes
+
+# Ctrl-C (KeyboardInterrupt) does not work well on Windows
+# This module solve that issue with wakeup coroutine.
+# The gist: https://gist.github.com/lambdalisue/05d5654bd1ec04992ad316d50924137c
+# https://stackoverflow.com/questions/24774980/why-cant-i-catch-sigint-when-asyncio-event-loop-is-running/24775107#24775107
+if sys.platform.startswith('win'):
+    def hotfix(loop: asyncio.AbstractEventLoop) -> asyncio.AbstractEventLoop:
+        loop.call_soon(_wakeup, loop, 1.0)
+        return loop
+
+    def _wakeup(loop: asyncio.AbstractEventLoop, delay: float=1.0) -> None:
+        loop.call_later(delay, _wakeup, loop, delay)
+else:
+    # Do Nothing on non Windows
+    def hotfix(loop: asyncio.AbstractEventLoop) -> asyncio.AbstractEventLoop:
+        return loop
 
 logging.basicConfig(format="%(asctime)s %(message)s")
 
@@ -47,21 +65,6 @@ if args.setup:
 if args.dev:
     # Should start server and not try to serve page.
     pass
-
-def setup():
-    logging.info('Setup started...')
-    # Create Save Folders
-    save_folder_path = os.path.normpath(os.getcwd() + '/save_files/')
-    folder_names = ['images', 'tests', 'suites']
-    for folder_name in folder_names:
-        path = os.path.normpath(save_folder_path + '/' + folder_name + '/')
-        try:
-            os.makedirs(path)
-        except OSError as exc:
-            if exc.errno == errno.EEXIST and os.path.isdir(path):
-                pass
-            else:
-                raise
 
 logging.info('Starting Web Server...')
 # Call the Class with all the Routes
