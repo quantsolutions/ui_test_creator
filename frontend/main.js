@@ -76,8 +76,7 @@ app.on('before-quit', () => {
   //Kill Tingus Backend before app closes.
   console.log(tingusBackendName.pid)
   console.log(typeof tingusBackendName.pid)
-  child_process.spawn('taskkill /IM Tingus-Backend.exe /F');
-  child_process.spawn('taskkill /IM Tingus-Backend.exe /F');
+  child_process.spawn('taskkill /IM Tingus-Backend.exe /F /T');
 })
   // In this file you can include the rest of your app's specific main process
   // code. You can also put them in separate files and require them here.

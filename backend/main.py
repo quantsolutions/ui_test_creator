@@ -1,30 +1,12 @@
 import argparse
-import asyncio
 import errno
 import logging
 import os
-import sys
 
 import aiohttp
 import aiohttp_cors
 
 from modules import main_routes
-
-# Ctrl-C (KeyboardInterrupt) does not work well on Windows
-# This module solve that issue with wakeup coroutine.
-# The gist: https://gist.github.com/lambdalisue/05d5654bd1ec04992ad316d50924137c
-# https://stackoverflow.com/questions/24774980/why-cant-i-catch-sigint-when-asyncio-event-loop-is-running/24775107#24775107
-if sys.platform.startswith('win'):
-    def hotfix(loop: asyncio.AbstractEventLoop) -> asyncio.AbstractEventLoop:
-        loop.call_soon(_wakeup, loop, 1.0)
-        return loop
-
-    def _wakeup(loop: asyncio.AbstractEventLoop, delay: float=1.0) -> None:
-        loop.call_later(delay, _wakeup, loop, delay)
-else:
-    # Do Nothing on non Windows
-    def hotfix(loop: asyncio.AbstractEventLoop) -> asyncio.AbstractEventLoop:
-        return loop
 
 logging.basicConfig(format="%(asctime)s %(message)s")
 
@@ -42,8 +24,6 @@ def setup():
                 pass
             else:
                 raise
-
-
 
 parser = argparse.ArgumentParser(description='Tingus Start Options.')
 parser.add_argument('--dev', action='store_true', help='If you are going to develop and want to make things easier.')
