@@ -1,0 +1,5 @@
+aiohttp_cors
+pyautogui
+lackey
+pyinstaller
+

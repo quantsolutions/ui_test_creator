@@ -1,1 +1,1 @@
-pyinstaller --onefile --uac-admin --uac-uiaccess --hidden-import lackey --hidden-import pyautogui main.py
+"C:\Program Files (x86)\Python36-32\Scripts\pyinstaller.exe" -y --clean --workpath .\build_temp --name Tingus --onefile --uac-admin --uac-uiaccess --icon .\favicon.ico --hidden-import lackey --hidden-import pyautogui main.py

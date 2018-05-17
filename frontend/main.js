@@ -1,15 +1,25 @@
 const { app, BrowserWindow } = require('electron')
+const child_proc = require('child_process');
 const path = require('path')
 const url = require('url')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
+let tingusBackendName = ''
 
 function createWindow() {
   if(process.platform === "win32") {
     // Start Backend.exe
+    tingusBackendName = child_proc.execFile('Tingus-Backend.exe', function(err, data) {
+      if(err) {
+        console.error(err);
+	return;
+      }
+      console.warn(data.toString());
+    });
   }
+  console.log(tingusBackendName)
   // Create the browser window.
   win = new BrowserWindow({
     width: 1366,
@@ -29,7 +39,7 @@ function createWindow() {
   }))
 
   // Open the DevTools.
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -62,5 +72,12 @@ app.on('activate', () => {
   }
 })
 
+app.on('before-quit', () => {
+  //Kill Tingus Backend before app closes.
+  console.log(tingusBackendName.pid)
+  console.log(typeof tingusBackendName.pid)
+  child_process.spawn('taskkill /IM Tingus-Backend.exe /F');
+  child_process.spawn('taskkill /IM Tingus-Backend.exe /F');
+})
   // In this file you can include the rest of your app's specific main process
   // code. You can also put them in separate files and require them here.
