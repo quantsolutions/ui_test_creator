@@ -9,10 +9,10 @@
             "config_type": "system_db",
             "host": "127.0.0.1",
             "port": 5432,
-            "database_name": "goodxtest",
+            "database_name": "tingus",
             "password": "masterkey",
             "username": "postgres",
-            "sql" : "CREATE DATABASE goodxtest WITH OWNER = postgres",
+            "sql" : "CREATE DATABASE tingus WITH OWNER = postgres",
             "schemas": [
                 {
                     "name": "global",

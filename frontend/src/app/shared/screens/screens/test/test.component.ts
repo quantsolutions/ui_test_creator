@@ -17,6 +17,7 @@ export class TestScreen extends Screen implements OnInit {
 
     constructor(private backend: BackendService) {
         super();
+        this.screenName = 'Test Cases';
     }
 
     ngOnInit() {
@@ -25,8 +26,8 @@ export class TestScreen extends Screen implements OnInit {
     }
 
     removeAction(action) {
-        let popup = new Confirm("Are you sure you wish to remove this action ?", {
-            header: "Remove action Confirmation"
+        const popup = new Confirm('Are you sure you wish to remove this action ?', {
+            header: 'Remove action Confirmation'
         }, (res) => {
             if (res) {
                 this.model.actions.splice(this.model.actions.indexOf(action), 1);
@@ -36,13 +37,13 @@ export class TestScreen extends Screen implements OnInit {
     }
 
     moveActionIndex(action, type) {
-        let currentActionIndex = this.model.actions.indexOf(action);
+        const currentActionIndex = this.model.actions.indexOf(action);
         console.log(currentActionIndex)
         if (type === 'decrease') {
-            let previousActionIndex = this.model.actions.indexOf(action) - 1;
+            const previousActionIndex = this.model.actions.indexOf(action) - 1;
             this.model.actions.splice(previousActionIndex, 2, action, this.model.actions[previousActionIndex])
         } else if (type === 'increase') {
-            let nextActionIndex = this.model.actions.indexOf(action) + 1;
+            const nextActionIndex = this.model.actions.indexOf(action) + 1;
             this.model.actions.splice(currentActionIndex, 2, this.model.actions[nextActionIndex], action)
         }
     }
@@ -53,9 +54,5 @@ export class TestScreen extends Screen implements OnInit {
 
     addAction() {
         this.model.addAction();
-    }
-
-    addScreenShot() {
-        this.model.addScreenShot();
     }
 }

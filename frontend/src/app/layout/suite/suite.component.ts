@@ -19,6 +19,7 @@ export class SuiteComponent {
     selectedSuites: Array<TestSuite> = [];
     openSuite: boolean = false;
     @ViewChild("suiteScreen") suiteScreen: screenRender;
+    @ViewChild("testResultScreen") testResultScreen: screenRender;
 
     constructor(private backend: BackendService) { }
 
@@ -40,7 +41,7 @@ export class SuiteComponent {
         let suite = this.selectedSuites.map(x => {
             return {name: x.name, type: 'suite'};
         })
-        this.backend.runTestSuite({ model: { tests: suite } });
+        this.testResultScreen.open({ model: { tests: suite } });
     }
 
     newTest() {
@@ -50,7 +51,7 @@ export class SuiteComponent {
 
     searchSuites(searchTerm) {
         if (searchTerm.length >= 3 || searchTerm.length === 0) {
-            this.backend.searchTests(searchTerm)
+            this.backend.searchSuites(searchTerm)
                 .then(res => {
                     console.log(res);
                     if (res.result && res.data) {

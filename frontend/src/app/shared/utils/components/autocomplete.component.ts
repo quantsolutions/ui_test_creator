@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { BackendService } from '@backend';
 
 @Component({
     selector: 'autocomplete',
@@ -7,10 +8,17 @@ import { Component, ElementRef, Input, OnInit, Output, EventEmitter } from '@ang
     },
     template: `
             <div class="input" style="width: 100%">
-              <input id="country" type="text" class="input form-control" [placeholder]="placeholder" [(ngModel)]="query" (keyup)="filter($event)" (keydown)="preventKey($event)" >
+              <input id="country" type="text" class="input form-control"
+                     [placeholder]="placeholder"
+                     [(ngModel)]="query"
+                     (keyup)="filter($event)"
+                     (keydown)="preventKey($event)">
             </div>
             <div *ngIf="filteredOptions.length > 0" class="suggestions">
-                <div class="item col-12" [ngClass]="{'selectedItem': item === selectedItem }"*ngFor="let item of filteredOptions" (click)="select(item)">
+                <div class="item col-12"
+                     [ngClass]="{'selectedItem': item === selectedItem }"
+                     *ngFor="let item of filteredOptions"
+                     (click)="select(item)">
                     {{item[optionText]}}
                 </div>
             </div>
@@ -40,18 +48,19 @@ import { Component, ElementRef, Input, OnInit, Output, EventEmitter } from '@ang
 
 export class AutocompleteComponent implements OnInit{
     @Input() options: Array<any> = [];
-    @Input() placeholder: string = "Start typing to search ...";
-    @Input() queryText: string = "";
-    @Input() filterOn: string = "description";
-    @Input() optionText: string = "description";
+    @Input() placeholder: string = 'Start typing to search ...';
+    @Input() queryText: string = '';
+    @Input() filterOn: string = 'description';
+    @Input() optionText: string = 'description';
     @Input() clear: boolean = true;
+    @Input() typeSearch: string = 'None';
     @Output() optionSelected: EventEmitter<any> = new EventEmitter();
     filteredOptions: Array<any> = [];
     elementRef;
     selectedItem: any = null;
-    query: string = "";
+    query: string;
 
-    constructor(myElement: ElementRef) {
+    constructor(myElement: ElementRef, private backend: BackendService) {
         this.elementRef = myElement;
     }
 
@@ -70,24 +79,27 @@ export class AutocompleteComponent implements OnInit{
         }
         if (key.keyCode === 40) {
             key.preventDefault();
-            let pos = this.filteredOptions.indexOf(this.selectedItem); 
+            const pos = this.filteredOptions.indexOf(this.selectedItem);
             if (pos < this.filteredOptions.length - 1) {
                 this.selectedItem = this.filteredOptions[pos + 1]
             }
         }
         if (key.keyCode === 38) {
             key.preventDefault();
-            let pos = this.filteredOptions.indexOf(this.selectedItem);
+            const pos = this.filteredOptions.indexOf(this.selectedItem);
             if (pos > 0) {
                 this.selectedItem = this.filteredOptions[pos - 1]
             }
-        }        
+        }
     }
 
     filter(key) {
         if (key.keyCode === 13 || key.keyCode === 39 || key.keyCode === 37) {
             key.preventDefault();
             return;
+        }
+        if (this.typeSearch === 'image') {
+            this.backend.getImages().then(res => this.options = res.data);
         }
         this.filteredOptions = this.options.filter(el => ((el[this.filterOn].toLowerCase()).indexOf(this.query.toLowerCase()) > -1));
     }
@@ -96,7 +108,7 @@ export class AutocompleteComponent implements OnInit{
         this.optionSelected.emit(item);
         this.filteredOptions = [];
         if(this.clear) {
-            this.query = "";
+            this.query = '';
         } else {
             this.query = item[this.optionText];
         }
@@ -104,11 +116,11 @@ export class AutocompleteComponent implements OnInit{
     }
 
     clearQuery() {
-        this.query = ""; 
+        this.query = '';
     }
 
     setQuery(term) {
-        this.query = term; 
+        this.query = term;
     }
 
     handleClick(event) {

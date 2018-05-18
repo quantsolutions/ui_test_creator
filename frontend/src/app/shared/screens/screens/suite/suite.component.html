@@ -4,7 +4,7 @@
     }
 </style>
 <div class="col-sm-12">
-    <h4>Suite Details</h4>
+    <h4 class="font-weight-bold">Suite Details</h4>
     <hr>
     <div class="row" style="max-height: 60vh;">
         <div class="col-sm-12 row">
@@ -31,10 +31,6 @@
             <div class="col-sm-4">
                 <autocomplete *ngIf="tests" (optionSelected)="addTestOrSuite($event)" [options]="tests" [placeholder]="'Search for tests to add...'"
                     [filterOn]="'name'" [optionText]="'name'"></autocomplete>
-            </div>
-            <div class="col-sm-12" style="margin-top: 10px;">
-                <button class="btn btn-success mr5" (click)="model.run()">
-                    <i class="fa fa-setting"></i> Run Suite</button>
             </div>
         </div>
         <div class="col-sm-12 row" style="margin-top: 10px;">

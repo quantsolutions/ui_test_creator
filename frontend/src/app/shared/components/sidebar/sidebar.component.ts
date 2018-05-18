@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { GlobalService } from '@global';
+import { version, releaseDate } from '@constants';
 
 @Component({
     selector: 'app-sidebar',
@@ -7,9 +8,12 @@ import { GlobalService } from '@global';
     styleUrls: ['./sidebar.component.scss'],
     providers: [GlobalService]
 })
+
 export class SidebarComponent {
     isActive = false;
     showMenu = '';
+    Version = version;
+    ReleaseDate = releaseDate;
 
     constructor(private globalService: GlobalService) { }
 

@@ -9,8 +9,9 @@
         <a routerLink="/test" [routerLinkActive]="['router-link-active']" class="list-group-item">
             <i class="fa fa-suitcase"></i>&nbsp;{{ 'Test Cases' }}
         </a>
-        <a (click)="onLogOut()" class="list-group-item" style="bottom: 0px">
+        <!-- <a (click)="onLogOut()" class="list-group-item" style="bottom: 0px">
             <i class="fa fa-fw fa-power-off"></i>&nbsp;{{ 'Logout' }}
-        </a>
+        </a> -->
     </ul>
+    <p style="position: absolute; left: 2px; bottom: 0%; color: aliceblue; z-index: 1001; font-size: 13px">Tingus V{{ Version }} Release Date {{ ReleaseDate }}</p>
 </nav>

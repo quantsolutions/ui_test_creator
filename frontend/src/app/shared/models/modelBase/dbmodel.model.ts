@@ -250,48 +250,48 @@ export abstract class DBModel {
         return JSON.stringify(this.values());
     }
 
-    /**
-     * WHEN YOU WANT TO SUBSCRIBE TO THE RESULT AND DO SOMETHING.
-     * Function to save the model. Updates the model after the save and returns an observable that you can subscribe to.
-     * @returns {observable} - Returns a observable of the response when done.
-     */
-    saveSubscribe(): Observable<any> {
-        if (this.saveModel) {
-            let model = {};
-            let fields = this.values(true);
-            model[this.saveKey] = fields;
-            let body = JSON.stringify(model);
-            // If you wish to update the model, need to wait for save to complete (non async).
-            return this.http.post(url + this._save_func, body, options)
-                .map(res => {
-                    let response_data = extractData(res);
-                    if (response_data.result) {
-                        this.update(response_data.data);
-                    }
-                    return response_data;
-                })
-        } else {
-            console.log('ERROR: ' + this._name + ' MODEL MAY NOT BE SAVED !');
-        }
-    }
+    // /**
+    //  * WHEN YOU WANT TO SUBSCRIBE TO THE RESULT AND DO SOMETHING.
+    //  * Function to save the model. Updates the model after the save and returns an observable that you can subscribe to.
+    //  * @returns {observable} - Returns a observable of the response when done.
+    //  */
+    // saveSubscribe(): Observable<any> {
+    //     if (this.saveModel) {
+    //         let model = {};
+    //         let fields = this.values(true);
+    //         model[this.saveKey] = fields;
+    //         let body = JSON.stringify(model);
+    //         // If you wish to update the model, need to wait for save to complete (non async).
+    //         return this.http.post(url + this._save_func, body, options)
+    //             .map(res => {
+    //                 let response_data = extractData(res);
+    //                 if (response_data.result) {
+    //                     this.update(response_data.data);
+    //                 }
+    //                 return response_data;
+    //             })
+    //     } else {
+    //         console.log('ERROR: ' + this._name + ' MODEL MAY NOT BE SAVED !');
+    //     }
+    // }
 
-    /**
-     * WHEN YOU DO NOT CARE ABOUT THE SUBSCRIBTION, THIS IS DONE AUTOMATICALLY AND JUST UPDATED.
-     * Function to save the model. Updates the model after the save.
-     * @returns {object} - The repsonse data.
-     */
-    saveUpdate() {
-        if (this.saveModel) {
-            let model = {};
-            let fields = this.values(true);
-            model[this.saveKey] = fields;
-            let body = JSON.stringify(model);
-            // If you wish to update the model, need to wait for save to complete (non async).
-            return this.saveSubscribe().subscribe();
-        } else {
-            console.log('ERROR: ' + this._name + ' MODEL MAY NOT BE SAVED !');
-        }
-    }
+    // /**
+    //  * WHEN YOU DO NOT CARE ABOUT THE SUBSCRIBTION, THIS IS DONE AUTOMATICALLY AND JUST UPDATED.
+    //  * Function to save the model. Updates the model after the save.
+    //  * @returns {object} - The repsonse data.
+    //  */
+    // saveUpdate() {
+    //     if (this.saveModel) {
+    //         let model = {};
+    //         let fields = this.values(true);
+    //         model[this.saveKey] = fields;
+    //         let body = JSON.stringify(model);
+    //         // If you wish to update the model, need to wait for save to complete (non async).
+    //         return this.saveSubscribe().subscribe();
+    //     } else {
+    //         console.log('ERROR: ' + this._name + ' MODEL MAY NOT BE SAVED !');
+    //     }
+    // }
 
     /**
      * Function to save the model.

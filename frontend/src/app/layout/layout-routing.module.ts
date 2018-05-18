@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LayoutComponent } from './layout.component';
-import { AuthGuard } from '../shared/guard/auth.guard'
+// import { AuthGuard } from '../shared/guard/auth.guard'
 import { Component } from '@angular/core/src/metadata/directives';
 import { TestComponent } from 'app/layout/test/test.component';
 import { SuiteComponent } from 'app/layout/suite/suite.component';
@@ -13,18 +13,18 @@ const routes: Routes = [
         children: [
             {
                 path: 'dashboard',
-                component:  DashboardComponent,
-                canActivate: [AuthGuard]
+                component: DashboardComponent,
+                // canActivate: [AuthGuard]
             },
             {
                 path: 'test',
-                component:  TestComponent,
-                canActivate: [AuthGuard]
+                component: TestComponent,
+                // canActivate: [AuthGuard]
             },
             {
                 path: 'suite',
                 component: SuiteComponent,
-                canActivate: [AuthGuard]
+                // canActivate: [AuthGuard]
             }
         ]
     }
@@ -34,4 +34,5 @@ const routes: Routes = [
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule]
 })
+
 export class LayoutRoutingModule { }

@@ -1,6 +1,10 @@
 export const wsURL = window.location.origin.includes('https') ? 'wss://' + window.location.host + '/ws' : 'ws://127.0.0.1:9000/ws';
 
-export const URL = '/goodxtest/';
+export const version = '0.1.1'
+
+export const releaseDate = '2018-05-18'
+
+export const URL = 'http://127.0.0.1:9000/';
 
 export class OPTIONTYPE {
     name: string;
