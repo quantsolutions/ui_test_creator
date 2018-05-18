@@ -9,13 +9,11 @@
 
 **Read before running:**
 
-* Postgresql DB Should be running (PostgreSQL 9.5 Tested)
-
-1. Extract zip folder Tingus.zip.
-2. Execute Tingus.exe (Remember if this is a new install run Tingus.exe --init in command line)
-3. Use the app by opening browser 127.0.0.1:9000
+1. Extract the downloaded zip folder Tingus-app-win32-x64.zip (Can be extracted anywhere)
+2. Execute Tingus-app.exe (You can make you own shortcut on desktop if you want too.)
 
 ## Development Manual
 
-* Angular 6
-* Python 3.5 (Should work on newer Pythons)
+* Angular 6.0.0
+* Electron 2.0.0
+* Python 3.5 (Should work on newer Python. Build version is Python 3.6 32 bit)
