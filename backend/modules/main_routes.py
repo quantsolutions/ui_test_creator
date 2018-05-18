@@ -27,7 +27,7 @@ class Main_Routes:
     def formatResponse(self, data):
         ret = {
             "result": 'HARDCODED VALUES RESULT',
-            "msg": 'HARDCED VALUES MSG',
+            "msg": 'HARDCODED VALUES MSG',
             "data": data
         }
 
@@ -104,15 +104,20 @@ class Main_Routes:
         # Load all the test before you begin to execute them. So that the tests are equally as fast.
         payload = await model.json()
         payload = payload['model']
+
+        return self.web.json_response(self.formatResponse(self._runTestSuite(payload)))
+
+    def _runTestSuite(self, model):
         suite_results = []
-        for index, test in enumerate(payload['tests']):
+        print('_runTestSuite Model: ', model)
+        for index, test in enumerate(model['tests']):
             if test['type'] == 'suite':
                 test_suite = self._load_test_suite(test['name'])
                 suite_results.append({
                     "name": test_suite["name"],
                     "index": index,
                     "type": "suite",
-                    "results": self.runTestSuite(test_suite)
+                    "results": self._runTestSuite(test_suite)
                 })
             elif test['type'] == 'test':
                 test_ = self._load_test(test['name'])
@@ -122,10 +127,15 @@ class Main_Routes:
                     "type": "test",
                     "results": self._run_test(test_)
                 })
-        return self.web.json_response(self.formatResponse(suite_results))
+        print("Test Results: ", suite_results)
+
+        return suite_results
 
     async def runTest(self, model):
-        self._run_test(model)
+        payload = await model.json()
+        payload = payload['model']
+
+        return self.web.json_response(self.formatResponse(self._run_test(payload)))
 
     def _run_test(self, model):
         test_result =  {
@@ -136,32 +146,32 @@ class Main_Routes:
         for index, action in enumerate(model['actions']):
             try:
                 if action['action'] == 'click':
-                    for k in range(int(action.get('repeat', '1') or '1')):
+                    for _ in range(int(action.get('repeat', '1') or '1')):
                         _click(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
                 if action['action'] == 'r_click':
-                    for k in range(int(action.get('repeat', '1') or '1')):
+                    for _ in range(int(action.get('repeat', '1') or '1')):
                         _rightClick(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
                 if action['action'] == 'doubleclick':
-                    for k in range(int(action.get('repeat', '1') or '1')):
+                    for _ in range(int(action.get('repeat', '1') or '1')):
                         _doubleClick(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'))
                 if action['action'] == 'wait':
-                    for k in range(int(action.get('repeat', '1') or '1')):
+                    for _ in range(int(action.get('repeat', '1') or '1')):
                         _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
                 if action['action'] == 'clickwait':
-                    for k in range(int(action.get('repeat', '1') or '1')):
+                    for _ in range(int(action.get('repeat', '1') or '1')):
                         _click(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay'])))
                 if action['action'] == 'type':
-                    for k in range(int(action.get('repeat', '1') or '1')):
+                    for _ in range(int(action.get('repeat', '1') or '1')):
                         pyautogui.typewrite(action['data'])
                 if action['action'] == 'keycombo':
                     keys = action['data'].split('+')
-                    for k in range(int(action.get('repeat', '1') or '1')):
+                    for _ in range(int(action.get('repeat', '1') or '1')):
                         pyautogui.hotkey(*keys)
                 if action['action'] == 'keypress':
-                    for k in range(int(action.get('repeat', '1') or '1')):
+                    for _ in range(int(action.get('repeat', '1') or '1')):
                         pyautogui.typewrite(action['data'])
                 if action['action'] == 'close':
-                    for k in range(int(action.get('repeat', '1') or '1')):
+                    for _ in range(int(action.get('repeat', '1') or '1')):
                         pyautogui.hotkey('alt', 'f4')
                 test_result["success_actions"].append({
                     "index": index,

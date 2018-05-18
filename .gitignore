@@ -13,6 +13,8 @@ frontend/npm-debug.log
 frontend/testem.log
 frontend/typings
 frontend/package-lock.json
+frontend/release-builds
+frontend/dist
 
 # e2e
 frontend/e2e/*.js
@@ -25,3 +27,6 @@ __pycache__
 
 # Project Files
 backend/save_files/
+backend/dist/
+backend/build_temp/
+backend/Tingus-Backend.spec

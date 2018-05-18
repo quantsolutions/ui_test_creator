@@ -1,17 +1,16 @@
 {
-  "name": "sb-admin-cli-update",
-  "version": "0.0.0",
+  "name": "tingus",
+  "version": "0.1.1",
   "license": "MIT",
   "main": "main.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --ec true",
     "build": "ng build --build-optimizer=false --prod",
-    "gitbuild": "ng build --prod --base /start-angular/SB-Admin-BS4-Angular-4/master/dist/",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "electron": "ng build && electron .",
+    "electron": "ng build --build-optimizer=false --prod && electron .",
     "electron-aot": "ng build --prod && electron ."
   },
   "private": true,

@@ -53,8 +53,8 @@
                             </select>
                         </td>
                         <td width="45%">
-                            <input class="form-control" *ngIf="!(['doubleclick', 'click', 'clickwait', 'rclick'].includes(action.action))" type="text" [(ngModel)]="action.data" />
-                            <autocomplete *ngIf="imageList && ['doubleclick', 'click', 'clickwait', 'rclick'].includes(action.action)" (optionSelected)="action.data = $event.name"
+                            <input class="form-control" *ngIf="!(['doubleclick', 'click', 'clickwait', 'rclick', 'wait'].includes(action.action))" type="text" [(ngModel)]="action.data" />
+                            <autocomplete *ngIf="imageList && ['doubleclick', 'click', 'clickwait', 'rclick', 'wait'].includes(action.action)" (optionSelected)="action.data = $event.name"
                                 [options]="imageList" [placeholder]="'Search for images to add ...'"
                                 [filterOn]="'name'" [clear]="false" [queryText]="action.data" [optionText]="'name'" [typeSearch]="'image'"></autocomplete>
                         </td>
