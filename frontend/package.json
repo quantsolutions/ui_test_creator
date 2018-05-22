@@ -1,7 +1,7 @@
 {
   "name": "tingus",
   "description": "Wonderfull testing application",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "main": "main.js",
   "author": "Keyboard Ninjas",
@@ -40,7 +40,7 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
+      "perMachine": true,
       "menuCategory": true,
       "installerIcon": "./keyboardninja_ElW_icon.ico",
       "uninstallerIcon": "./keyboardninja_ElW_icon.ico",
