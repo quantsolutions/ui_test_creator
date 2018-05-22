@@ -11,7 +11,7 @@ from lackey import rightClick as _rightClick
 from lackey import wait as _wait
 
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
-SAVE_FOLDER = os.path.normpath(os.getcwd() + '/save_files/')
+SAVE_FOLDER = os.path.normpath(os.getenv("PROGRAMDATA") + '/TingusData' + '/save_files/')
 
 try:
     with open("settings.json") as settings_file:

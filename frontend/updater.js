@@ -1,6 +1,8 @@
 // Modules
-const { dialog, BrowserWindow, ipcMain } = require('electron')
+const { app, dialog, BrowserWindow, ipcMain } = require('electron')
 const { autoUpdater } = require('electron-updater')
+const path = require('path')
+const url = require('url')
 
 // Enable logging
 autoUpdater.logger = require('electron-log')
@@ -42,11 +44,19 @@ exports.check = () => {
                 maximizable: false,
                 fullscreen: false,
                 fullscreenable: false,
-                resizable: false
+                resizable: false,
+                webPreferences: {
+                    allowRunningInsecureContent: true
+                }
             })
+            // progressWin.webContents.openDevTools()
 
             // Load progress HTML
-            progressWin.loadURL('file://${__dirname}/renderer/progress.html')
+            progressWin.loadURL(url.format({
+                pathname: path.join(__dirname, 'renderer/progress.html'),
+                protocol: 'file:',
+                slashes: true
+              }))
 
             // Handle win close
             progressWin.on('closed', () => {
