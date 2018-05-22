@@ -8,9 +8,13 @@
 * Linux Support is HIGH Prioirty!!! ( Not fun to comment out code every time I develop )
 
 **Read before running:**
+App can only be executed by one user at a time on one computer.
 
-1. Extract the downloaded zip folder Tingus-app-win32-x64.zip (Can be extracted anywhere)
-2. Execute Tingus-app.exe (You can make you own shortcut on desktop if you want too.)
+1. Download the tingus-setup-x.x.x.exe
+2. Execute the tingus-setup-x.x.x.exe
+3. Done!!! The app is installed and you can use it.
+
+save_files folder location under "C:\ProgramData\TingusData\save_files"
 
 ## Development Manual
 
