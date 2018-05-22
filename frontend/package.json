@@ -1,20 +1,62 @@
 {
   "name": "tingus",
-  "version": "0.1.1",
+  "description": "Wonderfull testing application",
+  "version": "0.2.0",
   "license": "MIT",
   "main": "main.js",
+  "author": "Keyboard Ninjas",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --ec true",
-    "build": "ng build --build-optimizer=false --prod",
+    "ng-build": "ng build --build-optimizer=false --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "electron": "ng build --build-optimizer=false --prod && electron .",
-    "electron-aot": "ng build --prod && electron ."
+    "electron-aot": "ng build --prod && electron .",
+    "win": "electron-builder -w",
+    "publish": "electron-builder build -w -p onTagOrDraft"
   },
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quantsolutions/ui_test_creator.git"
+  },
+  "build": {
+    "appId": "com.keyboardninjas.tingus",
+    "productName": "Tingus",
+    "copyright": "Copyright © 2018 ${author}",
+    "files": ["./dist", "./renderer", "main.js", "updater.js"],
+    "directories": {
+      "output": "release-builds"
+    },
+    "extraFiles": [{"from": "../backend/dist", "to": "."}, {"from": "../backend/kill_Backend.bat", "to": "./kill_Backend.bat"}, {"from": "../backend/settings.json", "to": "./settings.json"}],
+    "win": {
+      "publish": [
+        "github"
+      ],
+      "publisherName": "Keyboard Ninjas",
+      "verifyUpdateCodeSignature": false,
+      "icon": "./keyboardninja_ElW_icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "menuCategory": true,
+      "installerIcon": "./keyboardninja_ElW_icon.ico",
+      "uninstallerIcon": "./keyboardninja_ElW_icon.ico",
+      "installerSidebar": "",
+      "uninstallerSidebar": ""
+    }
+  },
   "dependencies": {
+    "electron-log": "^2.2.14",
+    "electron-updater": "^2.21.10",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1"
+  },
+  "devDependencies": {
+    "rxjs": "^6.1.0",
+    "core-js": "^2.4.1",
     "@angular/animations": "6.0.0",
     "@angular/common": "6.0.0",
     "@angular/compiler": "6.0.0",
@@ -24,14 +66,6 @@
     "@angular/platform-browser": "6.0.0",
     "@angular/platform-browser-dynamic": "6.0.0",
     "@angular/router": "6.0.0",
-    "core-js": "^2.4.1",
-    "font-awesome": "^4.7.0",
-    "jquery": "^3.2.1",
-    "rxjs": "^6.1.0",
-    "zone.js": "^0.8.26",
-    "ng2-charts": "^1.6.0"
-  },
-  "devDependencies": {
     "@angular-devkit/build-angular": "~0.6.0",
     "@angular/cli": "6.0.0",
     "@angular/compiler-cli": "6.0.0",
@@ -39,7 +73,7 @@
     "@types/node": "~6.0.60",
     "codelyzer": "~3.0.1",
     "electron": "2.0.0",
-    "electron-packager": "^12.0.2",
+    "electron-builder": "^20.13.4",
     "jasmine-core": "~2.6.2",
     "jasmine-spec-reporter": "~4.1.0",
     "karma": "~1.7.0",
@@ -51,6 +85,7 @@
     "protractor": "~5.1.2",
     "ts-node": "~3.0.4",
     "tslint": "~5.3.2",
-    "typescript": "2.7.2"
+    "typescript": "2.7.2",
+    "zone.js": "^0.8.26"
   }
 }

@@ -30,3 +30,4 @@ backend/save_files/
 backend/dist/
 backend/build_temp/
 backend/Tingus-Backend.spec
+frontend/private/GH_TOKEN.txt
