@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Downloading Tingus Update</title>
+</head>
+
+<body>
+    <progres style="width: 100%" value="0" max="100">
+        </progress>
+</body>
+
+<script>
+    // jQuery
+    $ = require('jquery')
+    // Require IPC
+    const { ipcRenderer } = require('electron')
+
+    // Request progress every second
+    setInterval(() => {
+        // Request a sync response via IPC
+        let progress = ipcRenderer.sendSync('download-progress-request')
+
+        // Update progress element
+        $('progress').val(progress)
+    }, 1000)
+</script>
+
+</html>
