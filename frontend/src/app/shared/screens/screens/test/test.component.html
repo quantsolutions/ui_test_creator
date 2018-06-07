@@ -42,7 +42,7 @@
                 </thead>
             </table>
         </div>
-        <div class="col-sm-12 row" style="max-height: 30vh; overflow-y: auto;">
+        <div class="col-sm-12 row" style="max-height: 30vh; overflow-y: scroll;">
             <table>
                 <tbody>
                     <tr *ngFor="let action of model.actions; let i = index; let firstIndex = first; let lastIndex = last;">
@@ -53,13 +53,13 @@
                             </select>
                         </td>
                         <td width="45%">
-                            <input class="form-control" *ngIf="!(['doubleclick', 'click', 'clickwait', 'rclick', 'wait'].includes(action.action))" type="text" [(ngModel)]="action.data" />
-                            <autocomplete *ngIf="imageList && ['doubleclick', 'click', 'clickwait', 'rclick', 'wait'].includes(action.action)" (optionSelected)="action.data = $event.name"
+                            <input class="form-control" *ngIf="!(['doubleclick', 'click', 'rclick', 'wait'].includes(action.action))" type="text" [(ngModel)]="action.data" />
+                            <autocomplete *ngIf="imageList && ['doubleclick', 'click', 'rclick', 'wait'].includes(action.action)" (optionSelected)="action.data = $event.name"
                                 [options]="imageList" [placeholder]="'Search for images to add ...'"
                                 [filterOn]="'name'" [clear]="false" [queryText]="action.data" [optionText]="'name'" [typeSearch]="'image'"></autocomplete>
                         </td>
                         <td width="10%">
-                            <input class="form-control" step="1" type="number" [disabled]="!['wait', 'clickwait'].includes(action.action)" [(ngModel)]="action.delay"
+                            <input class="form-control" step="1" type="number" [disabled]="!['doubleclick', 'click', 'rclick', 'wait'].includes(action.action)" [(ngModel)]="action.delay"
                             />
                         </td>
                         <td width="10%">

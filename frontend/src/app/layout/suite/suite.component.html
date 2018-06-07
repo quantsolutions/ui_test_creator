@@ -6,8 +6,8 @@
             <div class="col-sm-6">
                 <input #searchTerm (input)="searchSuites(searchTerm.value)" class="input form-control" type="text" placeholder="Search suites by name ..."/>
             </div>
-            <a class="btn rounded-btn" (click)="newTest()" style="color: white;"><i class="fa fa-plus"></i> New Suite</a>
-            <a class="btn rounded-btn" (click)="runTestSuite()" style="color: white;"><i class="fa fa-plus"></i> Run Selected Suites</a>
+            <button class="btn rounded-btn" (click)="newTest()" style="color: white;"><i class="fa fa-plus"></i> New Suite</button>
+            <button class="btn rounded-btn" [disabled]="selectedSuites.length <= 0"  (click)="runTestSuite()" style="color: white;"><i class="fa fa-plus"></i> Run Selected Suites</button>
         </div>
     </div>
     <hr>
@@ -18,8 +18,8 @@
                     <thead>
                         <th width="10%">Name</th>
                         <th width="20%">Description</th>
-                        <th width="10%">Select</th>                        
-                        <th width="10%">Order</th>                        
+                        <th width="10%">Select</th>
+                        <th width="10%">Order</th>
                     </thead>
                 </table>
             </div>

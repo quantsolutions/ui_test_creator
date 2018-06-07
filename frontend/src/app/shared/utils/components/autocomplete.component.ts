@@ -27,8 +27,8 @@ import { BackendService } from '@backend';
         .suggestions {
             border: 1px solid #ababab;
             border-radius: 5px;
-            position: fixed;
-            z-index: 2000;
+            position: absolute;
+            z-index: 6000;
             background-color: white;
         }
         .item:hover {
