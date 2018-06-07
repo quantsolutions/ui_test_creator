@@ -1,8 +1,8 @@
 export const wsURL = window.location.origin.includes('https') ? 'wss://' + window.location.host + '/ws' : 'ws://127.0.0.1:9000/ws';
 
-export const version = '0.2.1'
+export const version = '0.2.2'
 
-export const releaseDate = '2018-05-22'
+export const releaseDate = '2018-06-07'
 
 export const URL = 'http://127.0.0.1:9000/';
 

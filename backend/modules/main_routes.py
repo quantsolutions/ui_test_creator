@@ -158,13 +158,13 @@ class Main_Routes:
                 try:
                     if action['action'] == 'click':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _click(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _click(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay'])))
                     if action['action'] == 'r_click':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _rightClick(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _rightClick(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay'])))
                     if action['action'] == 'doubleclick':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _doubleClick(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _doubleClick(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay'])))
                     if action['action'] == 'wait':
                         for _ in range(int(action.get('repeat', '1') or '1')):
                             _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
