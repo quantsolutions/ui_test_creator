@@ -2,6 +2,7 @@ import argparse
 import errno
 import logging
 import os
+import sys
 
 import aiohttp
 import aiohttp_cors
@@ -12,7 +13,11 @@ logging.basicConfig(format="%(asctime)s %(message)s")
 
 logging.info('Check if save folders exist started...')
 # Create Save Folders
-save_folder_path = os.path.normpath(os.getenv("PROGRAMDATA") + '/TingusData' +'/save_files/')
+if sys.platform == "linux" or sys.platform == "linux2":
+    save_folder_path = os.path.normpath(os.getcwd() + '/TingusData' +'/save_files/')
+else:
+    save_folder_path = os.path.normpath(os.getenv("PROGRAMDATA") + '/TingusData' +'/save_files/')
+
 folder_names = ['images', 'tests', 'suites']
 for folder_name in folder_names:
     path = os.path.normpath(save_folder_path + '/' + folder_name + '/')

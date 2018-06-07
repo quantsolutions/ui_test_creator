@@ -1,8 +1,8 @@
 export const wsURL = window.location.origin.includes('https') ? 'wss://' + window.location.host + '/ws' : 'ws://127.0.0.1:9000/ws';
 
-export const version = '0.2.1'
+export const version = '0.2.2'
 
-export const releaseDate = '2018-05-22'
+export const releaseDate = '2018-06-07'
 
 export const URL = 'http://127.0.0.1:9000/';
 
@@ -19,15 +19,12 @@ export class SUITETEST {
 }
 
 export const ACTIONS = [
-    { name: 'Right Click', value: 'rclick', allow_delay: false },
     { name: 'Click', value: 'click', allow_delay: false },
-    { name: 'Wait', value: 'wait', allow_delay: true },
-    { name: 'Click and Wait', value: 'clickwait', allow_delay: true },
-    { name: 'Keyboard Input', value: 'type', allow_delay: false },
-    { name: 'Press Key', value: 'keypress', allow_delay: false },
-    { name: 'Close', value: 'close', allow_delay: false },
+    { name: 'Right Click', value: 'rclick', allow_delay: false },
     { name: 'Double Click', value: 'doubleclick', allow_delay: false },
-    { name: 'Key Combinations', value: 'keycombo', allow_delay: false }
+    { name: 'Wait', value: 'wait', allow_delay: true },
+    { name: 'Keyboard Input', value: 'type', allow_delay: false },
+    { name: 'Hotkey', value: 'keycombo', allow_delay: false }
 ];
 
 export const KEYS = [
