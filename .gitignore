@@ -1,5 +1,5 @@
 # Dependencies
-frontend/node_modules
+*/node_modules
 
 # IDE - VSCode
 .vscode/
@@ -26,8 +26,9 @@ frontend/e2e/*.map
 __pycache__
 
 # Project Files
-backend/save_files/
+backend/TingusData/
 backend/dist/
 backend/build_temp/
 backend/Tingus-Backend.spec
 frontend/private/GH_TOKEN.txt
+
