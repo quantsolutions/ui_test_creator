@@ -54,7 +54,9 @@ app.add_routes([aiohttp.web.post('/getTestsCount', main_routes_class.getTestsCou
                 aiohttp.web.post('/runTestSuite', main_routes_class.runTestSuite),
                 aiohttp.web.post('/runTest', main_routes_class.runTest),
                 aiohttp.web.post('/searchTests', main_routes_class.searchTests),
-                aiohttp.web.post('/searchSuites', main_routes_class.searchSuites)])
+                aiohttp.web.post('/searchSuites', main_routes_class.searchSuites),
+                aiohttp.web.post('/screenshotTool', main_routes_class.screenshotTool)
+                ])
 
 cors = aiohttp_cors.setup(app, defaults={
 "*": aiohttp_cors.ResourceOptions(

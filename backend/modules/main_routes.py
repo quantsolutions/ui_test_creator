@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 import time
+from subprocess import call
 
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
@@ -37,6 +38,13 @@ class Main_Routes:
         }
 
         return ret
+
+    async def screenshotTool(self, request):
+        payload = await request.json()
+        print(payload)
+        if payload >= 1:
+            time.sleep(payload)
+        call(['../../Screenshot_Tool.exe'])
 
     async def getTestsCount(self, request):
         return self.web.json_response(self.formatResponse(len(os.listdir(os.path.normpath(SAVE_FOLDER + '/tests/')))))

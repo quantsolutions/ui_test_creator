@@ -14,6 +14,7 @@ export class TestScreen extends Screen implements OnInit {
     @ViewChild('nameInput') nameInput: ElementRef;
     model: Test;
     imageList: Array<{ name: string }> = [];
+    delay = 0;
 
     constructor(private backend: BackendService) {
         super();
@@ -46,6 +47,10 @@ export class TestScreen extends Screen implements OnInit {
             const nextActionIndex = this.model.actions.indexOf(action) + 1;
             this.model.actions.splice(currentActionIndex, 2, this.model.actions[nextActionIndex], action)
         }
+    }
+
+    newImage(delay) {
+        this.backend.screenshotTool(delay);
     }
 
     filterTestName() {

@@ -26,6 +26,10 @@
         <div class="col-sm-12 row" style="margin-top: 10px;">
             <button class="btn btn-primary ml5" (click)="addAction()">
                 <i class="fa fa-plus"></i> Add Action </button>
+            <button class="btn btn-success ml5" (click)="newImage()">
+                <i class="fa fa-image"></i> New Image
+            </button>
+            <label class="ml5">New Image Delay:<input class="ml5" type="number" style="width: 40px; text-align: center" [(ngModel)]="delay"/></label>
         </div>
         <div class="col-sm-12 row" style="margin-top: 10px;">
             <table class="table table-striped">
