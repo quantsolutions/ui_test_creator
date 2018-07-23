@@ -1,0 +1,1 @@
+"C:\Program Files (x86)\Python36-32\Scripts\pyinstaller.exe" -y --clean --workpath .\build_temp --name Screenshot_Tool --onedir --uac-uiaccess --hidden-import PyQt5.sip --hidden-import PyQt5 --hidden-import Pillow main.py

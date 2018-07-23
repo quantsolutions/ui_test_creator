@@ -39,10 +39,8 @@ export class TestComponent {
         });
     }
 
-    runTestSuite() {
-        let test = this.selectedTests.map(x => {
-            return { name: x.name, type: 'test' };
-        })
+    runTestSuite(event) {
+        let test = this.selectedTests.map(x => ({ name: x.name, type: 'test' }));
         this.testResultScreen.open({ model: { tests: test } });
     }
 

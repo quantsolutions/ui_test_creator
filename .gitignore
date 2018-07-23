@@ -28,6 +28,9 @@ __pycache__
 # Project Files
 backend/TingusData/
 backend/dist/
+apps/Screenshot_Tool/dist/
+apps/Screenshot_Tool/build_temp/
+apps/Screenshot_Tool/Screenshot_Tool.spec
 backend/build_temp/
 backend/Tingus-Backend.spec
 frontend/private/GH_TOKEN.txt

@@ -49,8 +49,8 @@ export class TestScreen extends Screen implements OnInit {
         }
     }
 
-    newImage(delay) {
-        this.backend.screenshotTool(delay);
+    newImage() {
+        this.backend.screenshotTool(this.delay);
     }
 
     filterTestName() {

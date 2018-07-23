@@ -1,15 +1,20 @@
+import argparse
 import sys
+import os
 import json
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QRubberBand, QDialog, QLineEdit, QPushButton, QInputDialog, QDesktopWidget
 from PyQt5.QtGui import QIcon, QPixmap, QCursor
 from PIL import ImageGrab, ImageQt
+from PyQt5 import sip
 
 
 class App(QWidget):
-    def __init__(self):
+    def __init__(self, save_path):
         super().__init__()
+
+        self.save_path = save_path
         # Destkop Screenshot
         desktop_capture = ImageGrab.grab()
         desktop_capture.save('desktop_capture_temp.png')
@@ -45,15 +50,30 @@ class App(QWidget):
         if key == QtCore.Qt.Key_Return or key == QtCore.Qt.Key_Enter:
             self.hide()
             self.getImageName()
-            self.cropQPixmap.save(self.imageName + '.png')
+            if self.save_path == 'None':
+                self.cropQPixmap.save(os.path.normpath(self.imageName + '.png'))
+            else:
+                self.cropQPixmap.save(os.path.normpath(self.save_path + '/' + self.imageName + '.png'))
             try:
                 self.offset_pos
             except AttributeError:
-                pass
+                if self.save_path == 'None':
+                    with open(os.path.normpath(self.imageName + '.json'), 'w') as outfile:
+                        image_data = {'clickOffset': [0, 0]}
+                        json.dump(image_data, outfile, indent=4)
+                else:
+                    with open(os.path.normpath(self.save_path + '/' + self.imageName + '.json'), 'w') as outfile:
+                        image_data = {'clickOffset': [0, 0]}
+                        json.dump(image_data, outfile, indent=4)
             else:
-                with open(self.imageName + '.json', 'w') as outfile:
-                    image_data = {'clickOffset': [self.offset_pos[0], self.offset_pos[1]]}
-                    json.dump(image_data, outfile)
+                if self.save_path == 'None':
+                    with open(os.path.normpath(self.imageName + '.json'), 'w') as outfile:
+                        image_data = {'clickOffset': [self.offset_pos[0], self.offset_pos[1]]}
+                        json.dump(image_data, outfile, indent=4)
+                else:
+                    with open(os.path.normpath(self.save_path + '/' + self.imageName + '.json'), 'w') as outfile:
+                        image_data = {'clickOffset': [self.offset_pos[0], self.offset_pos[1]]}
+                        json.dump(image_data, outfile, indent=4)
             self.close()
         elif key == QtCore.Qt.Key_Escape:
             self.close()
@@ -65,11 +85,9 @@ class App(QWidget):
             self.currentQRubberBand.setGeometry(QtCore.QRect(self.originQPoint, QtCore.QSize()))
             self.currentQRubberBand.show()
         elif self.area_defined == True:
-            print(eventQMouseEvent.pos())            
             self.offset_label.move((eventQMouseEvent.pos().x() - self.offset_label.geometry().width()), (eventQMouseEvent.pos().y() - self.offset_label.geometry().height()))
-            print(self.offset_label.geometry())
             click_location = [eventQMouseEvent.pos().x(), eventQMouseEvent.pos().y()]
-            self.offset_pos = [(click_location[0] - self.selected_area_center[0]), (~ (click_location[1] - self.selected_area_center[1]) + 1)]
+            self.offset_pos = [(click_location[0] - self.selected_area_center[0]), (click_location[1] - self.selected_area_center[1])]
 
     def mouseMoveEvent(self, eventQMouseEvent):
         if self.area_defined == False:
@@ -88,6 +106,14 @@ class App(QWidget):
             self.imageName = text
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Tingus Start Options.')
+    parser.add_argument('--save', help='Save location of image', type=str)
+    args = parser.parse_args()
+
     app = QApplication(sys.argv)
-    ex = App()
+    if args.save:
+        ex = App(args.save)
+    else:
+        ex = App('None')
+
     sys.exit(app.exec_())
