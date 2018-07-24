@@ -11,6 +11,10 @@ from modules import main_routes
 
 logging.basicConfig(format="%(asctime)s %(message)s")
 
+SERVER_STATE = {
+    'mode': 'production'
+}
+
 logging.info('Check if save folders exist started...')
 # Create Save Folders
 if sys.platform == "linux" or sys.platform == "linux2":
@@ -35,12 +39,12 @@ parser.add_argument('--dev', action='store_true', help='If you are going to deve
 args = parser.parse_args()
 
 if args.dev:
-    # Should start server and not try to serve page.
-    pass
+    SERVER_STATE['mode'] = 'development'
+    logging.info('Server State: Mode - Development')
 
 logging.info('Starting Web Server...')
 # Call the Class with all the Routes
-main_routes_class = main_routes.Main_Routes(aiohttp.web)
+main_routes_class = main_routes.Main_Routes(aiohttp.web, SERVER_STATE)
 app = aiohttp.web.Application()
 app.add_routes([aiohttp.web.post('/getTestsCount', main_routes_class.getTestsCount),
                 aiohttp.web.post('/getSuitesCount', main_routes_class.getSuitesCount),
@@ -54,7 +58,9 @@ app.add_routes([aiohttp.web.post('/getTestsCount', main_routes_class.getTestsCou
                 aiohttp.web.post('/runTestSuite', main_routes_class.runTestSuite),
                 aiohttp.web.post('/runTest', main_routes_class.runTest),
                 aiohttp.web.post('/searchTests', main_routes_class.searchTests),
-                aiohttp.web.post('/searchSuites', main_routes_class.searchSuites)])
+                aiohttp.web.post('/searchSuites', main_routes_class.searchSuites),
+                aiohttp.web.post('/screenshotTool', main_routes_class.screenshotTool)
+                ])
 
 cors = aiohttp_cors.setup(app, defaults={
 "*": aiohttp_cors.ResourceOptions(

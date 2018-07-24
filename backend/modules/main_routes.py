@@ -1,13 +1,15 @@
 import errno
+import asyncio
 import json
 import logging
 import os
 import sys
 import time
+from subprocess import call
 
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
-if sys.platform == "linux" or sys.platform == "linux2":
+if sys.platform.startswith('linux'):
     logging.info("Linux OS Detected, running test will be disabled.")
     SAVE_FOLDER = os.path.normpath(os.getcwd() + '/TingusData' + '/save_files')
 else:
@@ -16,6 +18,7 @@ else:
     from lackey import doubleClick as _doubleClick
     from lackey import rightClick as _rightClick
     from lackey import wait as _wait
+    from lackey import Pattern
     SAVE_FOLDER = os.path.normpath(os.getenv("PROGRAMDATA") + '/TingusData' + '/save_files/')
 
 try:
@@ -25,8 +28,9 @@ except:
     raise Exception("NO SETTINGS JSON FILE FOUND")
 
 class Main_Routes:
-    def __init__(self, web):
+    def __init__(self, web, server_state):
         self.web = web
+        self.server_state = server_state
         self.FileHandling = FileHandling()
 
     def formatResponse(self, data):
@@ -37,6 +41,21 @@ class Main_Routes:
         }
 
         return ret
+
+    async def screenshotTool(self, request):
+        payload = await request.json()
+        delay = payload['delay']
+
+        if delay >= 1:
+            await asyncio.sleep(delay)
+
+        if self.server_state['mode'] == 'development':
+            if sys.platform == 'win32':
+                call(['py', '-3', '../apps/Screenshot_Tool/main.py', '--save', os.path.normpath(SAVE_FOLDER + '/images/')])
+        else:
+            call(['./Screenshot_Tool/Screenshot_Tool.exe', '--save', os.path.normpath(SAVE_FOLDER + '/images/')])
+
+        return self.web.json_response("Done")
 
     async def getTestsCount(self, request):
         return self.web.json_response(self.formatResponse(len(os.listdir(os.path.normpath(SAVE_FOLDER + '/tests/')))))
@@ -67,7 +86,8 @@ class Main_Routes:
     async def getImages(self, request):
         images = []
         for file in os.listdir(os.path.normpath(SAVE_FOLDER + '/images/')):
-            images.append({"name": file[:-4]})
+            if not file.endswith('.json'):
+                images.append({"name": file[:-4]})
         return self.web.json_response(self.formatResponse(images))
 
     async def saveTest(self, model):
@@ -155,22 +175,28 @@ class Main_Routes:
             }
             time.sleep(SETTINGS_FILE.get("testSettings", {}).get("runTestDelay", 5))
             for index, action in enumerate(model['actions']):
+                if action['action'] in ['click', 'r_click', 'doubleclick', 'wait', 'clickwait']:
+                    image_meta = ImageJson(action['data'])
                 try:
                     if action['action'] == 'click':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _click(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay'])))
+                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _click(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
                     if action['action'] == 'r_click':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _rightClick(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay'])))
+                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _rightClick(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
                     if action['action'] == 'doubleclick':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _doubleClick(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay'])))
+                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _doubleClick(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
                     if action['action'] == 'wait':
                         for _ in range(int(action.get('repeat', '1') or '1')):
                             _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
                     if action['action'] == 'clickwait':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _click(_wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay'])))
+                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _click(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
                     if action['action'] == 'type':
                         for _ in range(int(action.get('repeat', '1') or '1')):
                             pyautogui.typewrite(action['data'])
@@ -246,3 +272,15 @@ class FileHandling:
         '''
         self._mkdir_p(os.path.dirname(path))
         return path
+
+
+class ImageJson:
+    def __init__(self, image_name):
+        self.image_meta = self._read_json(image_name)
+
+    def _read_json(self, image_name):
+        with open(os.path.normpath(SAVE_FOLDER + '/images/' + image_name + '.json')) as f:
+            return json.load(f)
+
+    def get_click_offset(self):
+        return self.image_meta['clickOffset']

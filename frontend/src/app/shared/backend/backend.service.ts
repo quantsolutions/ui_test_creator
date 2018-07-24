@@ -85,6 +85,10 @@ export class BackendService {
         return this.post('getImages');
     }
 
+    screenshotTool(delay) {
+        return this.post('screenshotTool', {delay: delay});
+    }
+
     getTests() {
         return this.post('getTests');
     }

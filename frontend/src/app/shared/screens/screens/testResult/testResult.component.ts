@@ -23,7 +23,7 @@ export class TestResultScreen extends Screen implements OnInit {
 
     ngOnInit() {
         this.backend.runTestSuite(this.model).then(res => {
-            this.results = this.traverseTests(res.data);          
+            this.results = this.traverseTests(res.data);
         });
     }
 
