@@ -22,7 +22,7 @@ class App(QWidget):
         QApplication.setOverrideCursor(
             QCursor(QtCore.Qt.CrossCursor)
         )
-
+        self.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint)
         self.area_defined = False
         self.imageName = None
         self.selected_area_center = None

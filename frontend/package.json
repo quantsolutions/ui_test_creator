@@ -1,7 +1,7 @@
 {
     "name": "tingus",
     "description": "Wonderfull testing application",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "license": "MIT",
     "main": "main.js",
     "author": "Keyboard Ninjas",
