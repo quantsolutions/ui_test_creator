@@ -175,14 +175,14 @@ class Main_Routes:
             }
             time.sleep(SETTINGS_FILE.get("testSettings", {}).get("runTestDelay", 5))
             for index, action in enumerate(model['actions']):
-                if action['action'] in ['click', 'r_click', 'doubleclick', 'wait', 'clickwait']:
+                if action['action'] in ['click', 'rclick', 'doubleclick', 'wait', 'clickwait']:
                     image_meta = ImageJson(action['data'])
                 try:
                     if action['action'] == 'click':
                         for _ in range(int(action.get('repeat', '1') or '1')):
                             _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
                             _click(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
-                    if action['action'] == 'r_click':
+                    if action['action'] == 'rclick':
                         for _ in range(int(action.get('repeat', '1') or '1')):
                             _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
                             _rightClick(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
