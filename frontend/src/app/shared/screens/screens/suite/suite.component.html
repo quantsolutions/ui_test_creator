@@ -55,7 +55,10 @@
                         <td width="40%">
                             {{test.name}}
                         </td>
-                        <td width="40%">
+                        <td width="40%" *ngIf="!test.type">
+                            test
+                        </td>
+                        <td width="40%" *ngIf="test.type">
                             {{test.type}}
                         </td>
                         <td width="10%">

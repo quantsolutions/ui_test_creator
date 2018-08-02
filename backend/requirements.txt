@@ -1,3 +1,4 @@
+aiohttp
 aiohttp_cors
 pyautogui
 lackey

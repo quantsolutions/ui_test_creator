@@ -16,7 +16,7 @@ export class Action extends DBModel {
     description: string = '';   // Describe what the test must do.
     action: string = '';        // The action that must be performed. 
     data: string = '';          // Data associated with the action.
-    delay: string = '';         // Time to delay the action with.
+    delay: number = 0;         // Time to delay the action with.
     repeat: number = 1;         // Amount of times to repeat this action.
 
     actionOptions: Array<OPTIONTYPE> = ACTIONS; // List of actions that can be performed options.

@@ -46,7 +46,7 @@ import { BackendService } from '@backend';
     `]
 })
 
-export class AutocompleteComponent implements OnInit{
+export class AutocompleteComponent implements OnInit {
     @Input() options: Array<any> = [];
     @Input() placeholder: string = 'Start typing to search ...';
     @Input() queryText: string = '';
@@ -97,9 +97,6 @@ export class AutocompleteComponent implements OnInit{
         if (key.keyCode === 13 || key.keyCode === 39 || key.keyCode === 37) {
             key.preventDefault();
             return;
-        }
-        if (this.typeSearch === 'image') {
-            this.backend.getImages().then(res => this.options = res.data);
         }
         this.filteredOptions = this.options.filter(el => ((el[this.filterOn].toLowerCase()).indexOf(this.query.toLowerCase()) > -1));
     }

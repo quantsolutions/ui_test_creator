@@ -3,11 +3,12 @@ import errno
 import logging
 import os
 import sys
+import io
+import json
 
 import aiohttp
 import aiohttp_cors
 
-from modules import main_routes
 
 logging.basicConfig(format="%(asctime)s %(message)s")
 
@@ -33,6 +34,20 @@ for folder_name in folder_names:
         else:
             raise
 
+if os.path.isfile(os.path.normpath(save_folder_path + '/settings.json')) and os.access(os.path.normpath(save_folder_path + '/settings.json'), os.R_OK):
+        # checks if file exists
+        logging.info("settings.json file exists and is readable")
+else:
+    logging.info("settings.json file is missing or is not readable, creating file...")
+    with io.open(os.path.normpath(save_folder_path + '/settings.json'), 'w') as setting_file:
+        setting_file.write(json.dumps({
+            "testSettings": {
+                "runTestDelay": 2,
+                "actionDelayOffset": 0
+                }
+            }, indent=4))
+    setting_file.close()
+
 parser = argparse.ArgumentParser(description='Tingus Start Options.')
 parser.add_argument('--dev', action='store_true', help='If you are going to develop and want to make things easier.')
 
@@ -41,6 +56,8 @@ args = parser.parse_args()
 if args.dev:
     SERVER_STATE['mode'] = 'development'
     logging.info('Server State: Mode - Development')
+
+from modules import main_routes
 
 logging.info('Starting Web Server...')
 # Call the Class with all the Routes

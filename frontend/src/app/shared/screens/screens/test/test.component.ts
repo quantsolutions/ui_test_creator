@@ -1,9 +1,9 @@
-import { NgModule, Component, Input, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { BackendService } from '@backend';
 import * as $ from 'jquery';
-import { AutocompleteComponent, Confirm } from '@utils';
+import { Confirm } from '@utils';
 import { Test } from '@models';
-import { Screen } from '@screens';
+import { Screen, ImagesScreen, screenRender } from '@screens';
 
 @Component({
     selector: 'test-screen',
@@ -12,18 +12,19 @@ import { Screen } from '@screens';
 
 export class TestScreen extends Screen implements OnInit {
     @ViewChild('nameInput') nameInput: ElementRef;
+    @ViewChild('imagesScreen') imagesScreen: screenRender;
+
     model: Test;
     imageList: Array<{ name: string }> = [];
     delay = 0;
 
     constructor(private backend: BackendService) {
         super();
-        this.screenName = 'Test Cases';
+        this.screenName = 'Test Case Screen';
     }
 
     ngOnInit() {
         this.nameInput.nativeElement.focus();
-        this.backend.getImages().then(res => this.imageList = res.data);
     }
 
     removeAction(action) {
@@ -42,10 +43,10 @@ export class TestScreen extends Screen implements OnInit {
         console.log(currentActionIndex)
         if (type === 'decrease') {
             const previousActionIndex = this.model.actions.indexOf(action) - 1;
-            this.model.actions.splice(previousActionIndex, 2, action, this.model.actions[previousActionIndex])
+            this.model.actions.splice(previousActionIndex, 2, action, this.model.actions[previousActionIndex]);
         } else if (type === 'increase') {
             const nextActionIndex = this.model.actions.indexOf(action) + 1;
-            this.model.actions.splice(currentActionIndex, 2, this.model.actions[nextActionIndex], action)
+            this.model.actions.splice(currentActionIndex, 2, this.model.actions[nextActionIndex], action);
         }
     }
 
@@ -59,5 +60,15 @@ export class TestScreen extends Screen implements OnInit {
 
     addAction() {
         this.model.addAction();
+    }
+
+    Images(action) {
+        this.imagesScreen.open(action.data, {
+            save: model => {
+                if (model !== null) {
+                    action.data = model;
+                }
+            }
+        })
     }
 }
