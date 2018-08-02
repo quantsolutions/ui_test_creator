@@ -1,3 +1,4 @@
+<screen-render #imagesScreen [type]="'ImagesScreen'"></screen-render>
 <style>
     .ml5 {
         margin-left: 10px;
@@ -12,7 +13,13 @@
                 <span>Name </span>
             </div>
             <div class="col-sm-10">
-                <input #nameInput class="input input-sm form-control" (blur)="filterTestName()" [(ngModel)]="model.name" />
+                <input #nameInput class="input input-sm form-control" (blur)="filterTestName()" [(ngModel)]="model.name"/>
+            </div>
+        </div>
+        <div class="col-sm-12 row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <i><small>Hint: If you give the test a new name, it will be cloned and not renamed</small></i>
             </div>
         </div>
         <div class="col-sm-12 row" style="margin-top: 10px;">
@@ -58,9 +65,12 @@
                         </td>
                         <td width="45%">
                             <input class="form-control" *ngIf="!(['doubleclick', 'click', 'rclick', 'wait'].includes(action.action))" type="text" [(ngModel)]="action.data" />
-                            <autocomplete *ngIf="imageList && ['doubleclick', 'click', 'rclick', 'wait'].includes(action.action)" (optionSelected)="action.data = $event.name"
-                                [options]="imageList" [placeholder]="'Search for images to add ...'"
-                                [filterOn]="'name'" [clear]="false" [queryText]="action.data" [optionText]="'name'" [typeSearch]="'image'"></autocomplete>
+                            <div *ngIf="['doubleclick', 'click', 'rclick', 'wait'].includes(action.action)">
+                                <button class="btn btn-info" (click)="Images(action)">
+                                    <i class="fa fa-image"></i>
+                                </button>
+                                <strong> Image Name: </strong>{{action.data}}
+                            </div>
                         </td>
                         <td width="10%">
                             <input class="form-control" step="1" type="number" [disabled]="!['doubleclick', 'click', 'rclick', 'wait'].includes(action.action)" [(ngModel)]="action.delay"

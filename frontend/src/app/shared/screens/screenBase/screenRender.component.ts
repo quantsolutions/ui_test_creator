@@ -17,8 +17,8 @@ import * as $ from 'jquery';
 export class screenRender {
     @Input('type') type: any;                                                    // The type of screen, must be defined in screenModels.
     @ViewChild('layout', { read: ViewContainerRef }) layout: ViewContainerRef;   // The layout where the screen layout should be applied.
-    @Output() saved: EventEmitter<string> = new EventEmitter();                  // Emit the saved event once saved for any screen that is subscribed.
-    @Output() closed: EventEmitter<string> = new EventEmitter();                 // Emit the closed event once closed for any screen that is subscribed.
+    @Output() saved: EventEmitter<any> = new EventEmitter();                  // Emit the saved event once saved for any screen that is subscribed.
+    @Output() closed: EventEmitter<any> = new EventEmitter();                 // Emit the closed event once closed for any screen that is subscribed.
     screenName: string = "Renderer";                                             // Name that should be displayed on the screen header.
     component: Screen;                                                           // Basically the screen.
     screens: any = screenTypes;                                                  // Object containing all the screen and their types.
@@ -30,7 +30,6 @@ export class screenRender {
     constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
 
     /**
-     * 
      * @param model - The model to open the screen with.
      * @param callbacks - Optional. Callbacks that should be called upon close and save.
      */
@@ -44,6 +43,7 @@ export class screenRender {
             this.screenName = this.component.screenName;
             this.options = this.component.options;
             this.component.model = model;
+            this.callbacks = callbacks || {};
             if (this.callbacks.rendered) {
                 this.callbacks.rendered();
             }
@@ -65,7 +65,14 @@ export class screenRender {
                 if (this.callbacks.save) {
                     this.callbacks.save(this.component.model.values());
                 }
-            }, 500);
+            }, 300);
+        } else if (this.component.noModel && this.options.save) {
+            setTimeout(() => {
+                this.saved.emit(this.component.model)
+                if (this.callbacks.save) {
+                    this.callbacks.save(this.component.model);
+                }
+            }, 300);
         }
     }
 
@@ -108,20 +115,20 @@ export class screenRender {
      * Let the screen fade out by applying the classes.
      */
     fadeOut() {
-        $(".card-screen").removeClass("fadeIn2");
-        $(".backdrop-screen").removeClass("fadeIn1");
-        $(".card-screen").addClass("fadeOut2");
-        $(".backdrop-screen").addClass("fadeOut1");
+        $(".card-screen").last().removeClass("fadeIn2");
+        $(".backdrop-screen").last().removeClass("fadeIn1");
+        $(".card-screen").last().addClass("fadeOut2");
+        $(".backdrop-screen").last().addClass("fadeOut1");
     }
 
     /**
      * Let the screen fade in by applying the classes.
      */
     fadeIn() {
-        $(".card-screen").removeClass("fadeOut2");
-        $(".backdrop-screen").removeClass("fadeOut1");
-        $(".card-screen").addClass("fadeIn2");
-        $(".backdrop-screen").addClass("fadeIn1");
+        $(".card-screen").last().removeClass("fadeOut2");
+        $(".backdrop-screen").last().removeClass("fadeOut1");
+        $(".card-screen").last().addClass("fadeIn2");
+        $(".backdrop-screen").last().addClass("fadeIn1");
     }
 
 }

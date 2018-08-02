@@ -1,7 +1,7 @@
 {
     "name": "tingus",
     "description": "Wonderfull testing application",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "license": "MIT",
     "main": "main.js",
     "author": "Keyboard Ninjas",
@@ -17,7 +17,7 @@
         "electron-aot": "ng build --prod && electron .",
         "win": "electron-builder -w",
         "publish": "electron-builder build -w -p onTagOrDraft"
-    },
+        },
     "repository": {
         "type": "git",
         "url": "https://github.com/quantsolutions/ui_test_creator.git"
@@ -47,10 +47,6 @@
             {
                 "from": "../backend/kill_Backend.bat",
                 "to": "./kill_Backend.bat"
-            },
-            {
-                "from": "../backend/settings.json",
-                "to": "./settings.json"
             }
         ],
         "win": {

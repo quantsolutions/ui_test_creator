@@ -6,6 +6,7 @@ import os
 import sys
 import time
 from subprocess import call
+import base64
 
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
@@ -22,7 +23,7 @@ else:
     SAVE_FOLDER = os.path.normpath(os.getenv("PROGRAMDATA") + '/TingusData' + '/save_files/')
 
 try:
-    with open("settings.json") as settings_file:
+    with open(os.path.normpath(SAVE_FOLDER + '/settings.json')) as settings_file:
         SETTINGS_FILE = json.load(settings_file)
 except:
     raise Exception("NO SETTINGS JSON FILE FOUND")
@@ -84,10 +85,23 @@ class Main_Routes:
         return tests
 
     async def getImages(self, request):
+        payload = await request.json()
+        data = payload['get_method']
+        method = data['method']
+        value = data['value']
         images = []
-        for file in os.listdir(os.path.normpath(SAVE_FOLDER + '/images/')):
-            if not file.endswith('.json'):
-                images.append({"name": file[:-4]})
+        if method == 'last':
+            for file in os.listdir(os.path.normpath(SAVE_FOLDER + '/images/')):
+                if file.endswith('.png'):
+                    with open(os.path.normpath(SAVE_FOLDER + '/images/' + file), 'rb') as image_file:
+                        encoded_string = base64.b64encode(image_file.read())
+                    images.append({"name": os.path.splitext(file)[0], "image_base64": "data:image/png;base64," + encoded_string.decode("utf-8")})
+                    image_file.close()
+        elif method == 'specific_name':
+            pass
+        elif method == 'specific':
+            pass
+
         return self.web.json_response(self.formatResponse(images))
 
     async def saveTest(self, model):
@@ -177,25 +191,26 @@ class Main_Routes:
             for index, action in enumerate(model['actions']):
                 if action['action'] in ['click', 'rclick', 'doubleclick', 'wait', 'clickwait']:
                     image_meta = ImageJson(action['data'])
+                    action_delay = int(action['delay']) + SETTINGS_FILE.get("testSettings", {}).get('actionDelayOffset', 0)
                 try:
                     if action['action'] == 'click':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
                             _click(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
                     if action['action'] == 'rclick':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
                             _rightClick(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
                     if action['action'] == 'doubleclick':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
                             _doubleClick(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
                     if action['action'] == 'wait':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
                     if action['action'] == 'clickwait':
                         for _ in range(int(action.get('repeat', '1') or '1')):
-                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), int(action['delay']))
+                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
                             _click(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
                     if action['action'] == 'type':
                         for _ in range(int(action.get('repeat', '1') or '1')):

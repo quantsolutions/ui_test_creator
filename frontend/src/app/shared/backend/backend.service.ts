@@ -81,8 +81,8 @@ export class BackendService {
         return this.post('searchSuites', {search_term: searchterm});
     }
 
-    getImages() {
-        return this.post('getImages');
+    getImages(values) {
+        return this.post('getImages', {get_method: values});
     }
 
     screenshotTool(delay) {

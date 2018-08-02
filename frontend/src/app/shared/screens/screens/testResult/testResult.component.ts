@@ -1,7 +1,7 @@
 import { NgModule, Component, Input, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { BackendService } from '@backend';
 import * as $ from 'jquery';
-import { AutocompleteComponent, Confirm } from '@utils';
+import { Confirm } from '@utils';
 import { Test } from '@models';
 import { Screen } from '@screens';
 import { wsURL, ACTIONS } from '@constants';
