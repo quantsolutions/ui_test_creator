@@ -91,7 +91,7 @@ app.on('ready', () => {
     createWindow();
 
     // Check for update after x seconds
-    setTimeout(updater.check, 2000);
+    setTimeout(updater.check, 1500);
 });
 
 // Quit when all windows are closed.
