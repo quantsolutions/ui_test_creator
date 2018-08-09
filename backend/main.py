@@ -10,7 +10,7 @@ import aiohttp
 import aiohttp_cors
 
 
-logging.basicConfig(format="%(asctime)s %(message)s")
+logging.basicConfig(format="%(asctime)s %(message)s", level='INFO')
 
 SERVER_STATE = {
     'mode': 'production'

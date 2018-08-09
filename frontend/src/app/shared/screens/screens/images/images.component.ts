@@ -12,7 +12,7 @@ export class ImagesScreen extends Screen implements OnInit {
 
     backendImages: any;
     frontendImages: any;
-    selectedImageBase64: any;
+    selectedImageBase64: any = 'None';
     constructor(private backend: BackendService) {
         super();
         this.screenName = 'Image Browser'
