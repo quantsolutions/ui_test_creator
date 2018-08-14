@@ -9,6 +9,7 @@ import { DashboardComponent } from 'app/layout/dashboard/dashboard.component';
 import { ScreenModule } from '@screens';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BackendService } from '@backend';
+import { CommandActionComponent } from './commandAction/command-action.component';
 
 @NgModule({
     imports: [
@@ -24,7 +25,8 @@ import { BackendService } from '@backend';
         SidebarComponent,
         TestComponent,
         SuiteComponent,
-        DashboardComponent
+        DashboardComponent,
+        CommandActionComponent,
     ],
     providers: [BackendService]
 })

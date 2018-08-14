@@ -1,0 +1,35 @@
+<screen-render #commandActionScreen [type]="'CommandActionScreen'"></screen-render>
+<div class="content" [@routerTransition]>
+    <div class="content layout-header">
+        <div class="row justify-content-center" style="margin-bottom: 10px;">
+            <div class="col-sm-6">
+                <input #searchTerm (input)="searchTests(searchTerm.value)" class="input form-control" type="text" placeholder="Search actions by name ..."
+                />
+            </div>
+            <button class="btn rounded-btn" (click)="newCommandAction()" style="color: white;">
+                <i class="fa fa-plus"></i> New Command Action</button>
+        </div>
+    </div>
+    <div class="content layout-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let command of commandActionList">
+                            <td>{{command.name}}</td>
+                            <td>{{command.description}}</td>
+                            <td>{{command.type}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

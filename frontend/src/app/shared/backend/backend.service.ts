@@ -107,6 +107,10 @@ export class BackendService {
         return this.post('getSuites');
     }
 
+    getCommandActions() {
+        return {name: 'Start GoodX', description: 'Batch files that starts the GoodX 8', type: 'commandline'}
+    }
+
     runTestSuite(model) {
         return this.post('runTestSuite', model);
     }

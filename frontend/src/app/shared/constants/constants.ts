@@ -18,6 +18,10 @@ export class SUITETEST {
     order: number;
 }
 
+export const COMMANDTYPES = [
+    { name: 'Batch', value: 'batch'},
+];
+
 export const ACTIONS = [
     { name: 'Click', value: 'click', allow_delay: false },
     { name: 'Right Click', value: 'rclick', allow_delay: false },
