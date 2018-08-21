@@ -1,4 +1,4 @@
-import { SuiteScreen, TestScreen, TestResultScreen, ImagesScreen } from '@screens';
+import { SuiteScreen, TestScreen, TestResultScreen, ImagesScreen, CommandActionScreen, CommandActionBrowserScreen } from '@screens';
 
 /**
  * All the screens are listed bellow
@@ -8,4 +8,6 @@ export const screenTypes = {
     TestScreen: TestScreen,
     TestResultScreen: TestResultScreen,
     ImagesScreen: ImagesScreen,
+    CommandActionScreen: CommandActionScreen,
+    CommandActionBrowserScreen: CommandActionBrowserScreen,
 }

@@ -23,7 +23,7 @@ if sys.platform == "linux" or sys.platform == "linux2":
 else:
     save_folder_path = os.path.normpath(os.getenv("PROGRAMDATA") + '/TingusData' +'/save_files/')
 
-folder_names = ['images', 'tests', 'suites']
+folder_names = ['images', 'tests', 'suites', 'command_actions']
 for folder_name in folder_names:
     path = os.path.normpath(save_folder_path + '/' + folder_name + '/')
     try:
@@ -68,14 +68,16 @@ app.add_routes([aiohttp.web.post('/getTestsCount', main_routes_class.getTestsCou
                 aiohttp.web.post('/getTests', main_routes_class.getTests),
                 aiohttp.web.post('/getSuites', main_routes_class.getSuites),
                 aiohttp.web.post('/getImages', main_routes_class.getImages),
+                aiohttp.web.post('/getCommandActions', main_routes_class.getCommandActions),
                 aiohttp.web.post('/saveTest', main_routes_class.saveTest),
                 aiohttp.web.post('/saveTestSuite', main_routes_class.saveTestSuite),
+                aiohttp.web.post('/saveCommandAction', main_routes_class.saveCommandAction),
                 aiohttp.web.post('/loadTestSuite', main_routes_class.loadTestSuite),
                 aiohttp.web.post('/loadTest', main_routes_class.loadTest),
-                aiohttp.web.post('/runTestSuite', main_routes_class.runTestSuite),
                 aiohttp.web.post('/runTest', main_routes_class.runTest),
                 aiohttp.web.post('/searchTests', main_routes_class.searchTests),
                 aiohttp.web.post('/searchSuites', main_routes_class.searchSuites),
+                aiohttp.web.post('/searchCommandActions', main_routes_class.searchCommandActions),
                 aiohttp.web.post('/screenshotTool', main_routes_class.screenshotTool)
                 ])
 

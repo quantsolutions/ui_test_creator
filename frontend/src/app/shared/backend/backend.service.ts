@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Headers, Http, RequestMethod, RequestOptions, Response } from '@angular/http';
 import { Router } from '@angular/router';
 // import 'rxjs/add/operator/toPromise';
-import { Observable } from 'rxjs';
+// import { Observable } from 'rxjs';
 // import 'rxjs/add/operator/map';
 import { handleError, extractData, deleteCookie } from '@backend';
 import { URL } from '@constants';
@@ -41,8 +41,8 @@ export class BackendService {
 
     // /**
     //  * The same as the above function, accept it returns a observable on which you can subscribe and wait until data is returned (NON ASYNC).
-    //  * @param request 
-    //  * @param parameters 
+    //  * @param request
+    //  * @param parameters
     //  */
     // protected serverObservePost(request: string, parameters: any = {}): Observable<any> {
     //     let body = JSON.stringify(parameters);
@@ -81,6 +81,10 @@ export class BackendService {
         return this.post('searchSuites', {search_term: searchterm});
     }
 
+    searchCommandActions(searchterm) {
+        return this.post('searchCommandActions', {search_term: searchterm});
+    }
+
     getImages(values) {
         return this.post('getImages', {get_method: values});
     }
@@ -107,8 +111,12 @@ export class BackendService {
         return this.post('getSuites');
     }
 
+    getCommandActions() {
+        return this.post('getCommandActions')
+    }
+
     runTestSuite(model) {
-        return this.post('runTestSuite', model);
+        return this.post('runTest', model);
     }
 
     /**

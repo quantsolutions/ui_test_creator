@@ -1,4 +1,5 @@
 <screen-render #imagesScreen [type]="'ImagesScreen'"></screen-render>
+<screen-render #commandActionBrowserScreen [type]="'CommandActionBrowserScreen'"></screen-render>
 <style>
     .ml5 {
         margin-left: 10px;
@@ -38,7 +39,7 @@
             </button>
             <label class="ml5">New Image Delay:<input class="ml5" type="number" style="width: 40px; text-align: center" [(ngModel)]="delay"/></label>
         </div>
-        <div class="col-sm-12 row" style="margin-top: 10px;">
+        <div class="col-sm-12 row" style="margin-top: 10px;overflow-y: scroll; width: 100%;max-height: 30vh;">
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -51,25 +52,28 @@
                         <th width="5%"></th>
                     </tr>
                 </thead>
-            </table>
-        </div>
-        <div class="col-sm-12 row" style="max-height: 30vh; overflow-y: scroll;">
-            <table>
                 <tbody>
                     <tr *ngFor="let action of model.actions; let i = index; let firstIndex = first; let lastIndex = last;">
-                        <td class="ml5" width="5%">{{i+1}}</td>
+                        <td width="5%">{{i+1}}</td>
                         <td width="20%">
                             <select class="form-control" [(ngModel)]="action.action">
                                 <option *ngFor="let option of action.actionOptions" [ngValue]="option.value">{{option.name}}</option>
                             </select>
                         </td>
                         <td width="45%">
-                            <input class="form-control" *ngIf="!(['doubleclick', 'click', 'rclick', 'wait'].includes(action.action))" type="text" [(ngModel)]="action.data" />
+                            <input class="form-control" *ngIf="!(['doubleclick', 'click', 'rclick', 'wait', 'command'].includes(action.action))" type="text" [(ngModel)]="action.data" />
                             <div *ngIf="['doubleclick', 'click', 'rclick', 'wait'].includes(action.action)">
                                 <button class="btn btn-info" (click)="Images(action)">
                                     <i class="fa fa-image"></i>
                                 </button>
                                 <strong> Image Name: </strong>{{action.data}}
+                            </div>
+                            <div *ngIf="['command'].includes(action.action)">
+                                <button class="btn btn-info" (click)="commandActionScreenOpen(action)">
+                                    <i class="fa fa-flash"></i>
+                                </button>
+                                <strong> Command Action Name: </strong>{{action.data}}
+
                             </div>
                         </td>
                         <td width="10%">

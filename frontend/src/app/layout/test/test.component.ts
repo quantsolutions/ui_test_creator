@@ -19,8 +19,8 @@ export class TestComponent {
     selectedTest: Test = null;
     selectedTests: Array<Test> = [];
     openTest: boolean = false;
-    @ViewChild("testScreen") testScreen: screenRender;
-    @ViewChild("testResultScreen") testResultScreen: screenRender;
+    @ViewChild('testScreen') testScreen: screenRender;
+    @ViewChild('testResultScreen') testResultScreen: screenRender;
 
     constructor(private backend: BackendService) { }
 

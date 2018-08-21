@@ -5,8 +5,9 @@ export abstract class Screen {
     options = {                          // Options of the Screen.
         width: '900px',
         height: '900px',
-        save: true,                       // Save button.
-        close: true,                      // Close button.
+        save: true,                      // Save button.
+        close: true,                     // Close button.
+        closeConfirm: true
     }
 }
 
