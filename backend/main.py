@@ -74,10 +74,10 @@ app.add_routes([aiohttp.web.post('/getTestsCount', main_routes_class.getTestsCou
                 aiohttp.web.post('/saveCommandAction', main_routes_class.saveCommandAction),
                 aiohttp.web.post('/loadTestSuite', main_routes_class.loadTestSuite),
                 aiohttp.web.post('/loadTest', main_routes_class.loadTest),
-                # aiohttp.web.post('/runTestSuite', main_routes_class.runTestSuite),
                 aiohttp.web.post('/runTest', main_routes_class.runTest),
                 aiohttp.web.post('/searchTests', main_routes_class.searchTests),
                 aiohttp.web.post('/searchSuites', main_routes_class.searchSuites),
+                aiohttp.web.post('/searchCommandActions', main_routes_class.searchCommandActions),
                 aiohttp.web.post('/screenshotTool', main_routes_class.screenshotTool)
                 ])
 

@@ -81,6 +81,10 @@ export class BackendService {
         return this.post('searchSuites', {search_term: searchterm});
     }
 
+    searchCommandActions(searchterm) {
+        return this.post('searchCommandActions', {search_term: searchterm});
+    }
+
     getImages(values) {
         return this.post('getImages', {get_method: values});
     }

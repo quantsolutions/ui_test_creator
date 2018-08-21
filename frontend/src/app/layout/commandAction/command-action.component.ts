@@ -33,7 +33,7 @@ export class CommandActionComponent implements OnInit {
 
     searchCommandActions(searchTerm) {
         if (searchTerm.length >= 3) {
-            this.backend.searchTests(searchTerm)
+            this.backend.searchCommandActions(searchTerm)
                 .then(res => {
                     if (res.result && res.data) {
                         this.commandActionList = res.data.map(x => new CommandAction(x));

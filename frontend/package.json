@@ -1,7 +1,7 @@
 {
     "name": "tingus",
     "description": "Wonderfull testing application",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "license": "MIT",
     "main": "main.js",
     "author": "Keyboard Ninjas",
@@ -38,6 +38,10 @@
         "extraFiles": [
             {
                 "from": "../backend/dist",
+                "to": "."
+            },
+            {
+                "from": "../apps/test_runner/dist",
                 "to": "."
             },
             {

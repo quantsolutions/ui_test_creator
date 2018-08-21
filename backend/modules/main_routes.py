@@ -107,11 +107,14 @@ class Main_Routes:
         return self.web.json_response(self.formatResponse(images))
 
     async def getCommandActions(self, model):
+        return self.web.json_response(self.formatResponse(self._getCommandActions()))
+
+    def _getCommandActions(self):
         commandActions = []
         for file in os.listdir(os.path.normpath(SAVE_FOLDER + '/command_actions/')):
             commandActions.append(json.load(open(os.path.normpath(SAVE_FOLDER + '/command_actions/' + file))))
 
-        return self.web.json_response(self.formatResponse(commandActions))
+        return commandActions
 
     async def saveTest(self, model):
         payload = await model.json()
@@ -302,6 +305,16 @@ class Main_Routes:
             if suite['name'].lower().find(payload.lower()) > -1:
                 suites_.append(suite)
         return self.web.json_response(self.formatResponse(suites_))
+
+    async def searchCommandActions(self, search_term):
+        payload = await search_term.json()
+        payload = payload['search_term']
+        commandActions = self._getCommandActions()
+        commands_ = []
+        for cmd in commandActions:
+            if cmd['name'].lower().find(payload.lower()) > -1:
+                commands_.append(cmd)
+        return self.web.json_response(self.formatResponse(commands_))
 
     def _runCommandAction(self, commandActionName):
         json_data = open(os.path.normpath(SAVE_FOLDER + '/command_actions/' + commandActionName + '.json'))
