@@ -44,7 +44,6 @@ export class ImagesScreen extends Screen implements OnInit {
 
     searchImages(searchTerm) {
         if (searchTerm.length >= 1) {
-            console.log(this.backendImages)
             this.frontendImages = this.backendImages.filter(img => img.name.includes(searchTerm));
         } else {
             this.frontendImages = this.backendImages;

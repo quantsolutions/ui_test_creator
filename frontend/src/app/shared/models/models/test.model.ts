@@ -21,6 +21,7 @@ export class Test extends DBModel {
     actions: Array<Action> = [];    // The action that must be performed.
     selected: boolean = false;      // Have the test been selected.
 
+
     /**
      * Constructor of the Patient Class.
      * @param data Data to initialize the class with.

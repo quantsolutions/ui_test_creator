@@ -13,8 +13,15 @@ export class CommandActionScreen extends Screen implements OnInit {
     constructor(private backend: BackendService) {
         super();
         this.screenName = 'Command Action - Edit Screen';
+        this.options.closeConfirm = false;
     }
-    ngOnInit(): void {
 
+    ngOnInit(): void {
+        console.log(this.model)
     }
+
+    filterCommandActionName() {
+        this.model.name = this.model.name.split(' ').map(x => x.toLowerCase()).join('_');
+    }
+
 }

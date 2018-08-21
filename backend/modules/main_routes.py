@@ -14,12 +14,14 @@ if sys.platform.startswith('linux'):
     logging.info("Linux OS Detected, running test will be disabled.")
     SAVE_FOLDER = os.path.normpath(os.getcwd() + '/TingusData' + '/save_files')
 else:
-    import pyautogui
-    from lackey import click as _click
-    from lackey import doubleClick as _doubleClick
-    from lackey import rightClick as _rightClick
-    from lackey import wait as _wait
-    from lackey import Pattern
+    # import pyautogui
+    # from lackey import click as _click
+    # from lackey import doubleClick as _doubleClick
+    # from lackey import rightClick as _rightClick
+    # from lackey import wait as _wait
+    # from lackey import waitVanish
+    # from lackey import Pattern
+    # import psycopg2
     SAVE_FOLDER = os.path.normpath(os.getenv("PROGRAMDATA") + '/TingusData' + '/save_files/')
 
 try:
@@ -104,11 +106,26 @@ class Main_Routes:
 
         return self.web.json_response(self.formatResponse(images))
 
+    async def getCommandActions(self, model):
+        commandActions = []
+        for file in os.listdir(os.path.normpath(SAVE_FOLDER + '/command_actions/')):
+            commandActions.append(json.load(open(os.path.normpath(SAVE_FOLDER + '/command_actions/' + file))))
+
+        return self.web.json_response(self.formatResponse(commandActions))
+
     async def saveTest(self, model):
         payload = await model.json()
         payload = payload['model']
         with self.FileHandling.safe_open_w(os.path.normpath(SAVE_FOLDER + '/tests/' + payload['name'] + '.json')) as fp:
+            payload['test_type'] = 'testcase'
             json.dump(payload, fp, indent=4)
+
+        return self.web.json_response({'Status': 'Saved'})
+
+    async def saveCommandAction(self, model):
+        payload = await model.json()
+        with self.FileHandling.safe_open_w(os.path.normpath(SAVE_FOLDER + '/command_actions/' + payload['name'] + '.json')) as fp:
+            json.dump(payload, fp,  indent=4)
 
         return self.web.json_response({'Status': 'Saved'})
 
@@ -116,6 +133,7 @@ class Main_Routes:
         payload = await model.json()
         payload = payload['model']
         with self.FileHandling.safe_open_w(os.path.normpath(SAVE_FOLDER + '/suites/' + payload['name'] + '.json')) as fp:
+            payload['test_type'] = 'testsuite'
             json.dump(payload, fp, indent=4)
 
         return self.web.json_response({'Status': 'Saved'})
@@ -138,106 +156,132 @@ class Main_Routes:
         json_data = open(os.path.normpath(SAVE_FOLDER + '/tests/' + test_name + '.json'))
         return json.load(json_data)
 
-    async def runTestSuite(self, model):
+    async def runTest(self, model):
         # sorted(list_to_be_sorted, key=lambda k: k['order'])
         # Load all the test before you begin to execute them. So that the tests are equally as fast.
         payload = await model.json()
         payload = payload['model']
 
-        return self.web.json_response(self.formatResponse(self._runTestSuite(payload)))
+        test_result = []
 
-    if sys.platform == "linux" or sys.platform == "linux2":
-        logging.info("Run Test Suite disabled")
-    else:
-        def _runTestSuite(self, model):
-            suite_results = []
-            print('_runTestSuite Model: ', model)
-            for index, test in enumerate(model['tests']):
-                if test['type'] == 'suite':
-                    test_suite = self._load_test_suite(test['name'])
-                    suite_results.append({
-                        "name": test_suite["name"],
-                        "index": index,
-                        "type": "suite",
-                        "results": self._runTestSuite(test_suite)
-                    })
-                elif test['type'] == 'test':
-                    test_ = self._load_test(test['name'])
-                    suite_results.append({
-                        "name": test_["name"],
-                        "index": index,
-                        "type": "test",
-                        "results": self._run_test(test_)
-                    })
-            print("Test Results: ", suite_results)
+        for test in payload['tests']:
+            log_name = time.strftime('%Y%m%d_%H%M_%S')
+            print(test)
+            if self.server_state['mode'] == 'development':
+                if sys.platform == 'win32':
+                    call(['py', '-3', '../apps/test_runner/main.py', '--log_name', log_name, test['name'], test['type']])
+            else:
+                call(['./test_runner/test_runner.exe', '--log_name', log_name, test['name'], test['type']])
 
-            return suite_results
+            test_result.extend(json.load(open(os.path.normpath(SAVE_FOLDER + '/logs/' + log_name + '.json'))))
 
-    async def runTest(self, model):
-        payload = await model.json()
-        payload = payload['model']
+        return self.web.json_response(self.formatResponse(test_result))
 
-        return self.web.json_response(self.formatResponse(self._run_test(payload)))
+    # if sys.platform == "linux" or sys.platform == "linux2":
+    #     logging.info("Run Test Suite disabled")
+    # else:
+    #     def _runTestSuite(self, model):
+    #         suite_results = []
+    #         for index, test in enumerate(model['tests']):
+    #             if test['type'] == 'suite':
+    #                 test_suite = self._load_test_suite(test['name'])
+    #                 suite_results.append({
+    #                     "name": test_suite["name"],
+    #                     "index": index,
+    #                     "type": "suite",
+    #                     "results": self._runTestSuite(test_suite)
+    #                 })
+    #             elif test['type'] == 'test':
+    #                 test_ = self._load_test(test['name'])
+    #                 suite_results.append({
+    #                     "name": test_["name"],
+    #                     "index": index,
+    #                     "type": "test",
+    #                     "results": self._run_test(test_)
+    #                 })
 
-    if sys.platform == "linux" or sys.platform == "linux2":
-        logging.info("Run Test Suite disabled")
-    else:
-        def _run_test(self, model):
-            test_result =  {
-                "failed_actions": [],
-                "success_actions": []
-            }
-            time.sleep(SETTINGS_FILE.get("testSettings", {}).get("runTestDelay", 5))
-            for index, action in enumerate(model['actions']):
-                if action['action'] in ['click', 'rclick', 'doubleclick', 'wait', 'clickwait']:
-                    image_meta = ImageJson(action['data'])
-                    action_delay = int(action['delay']) + SETTINGS_FILE.get("testSettings", {}).get('actionDelayOffset', 0)
-                try:
-                    if action['action'] == 'click':
-                        for _ in range(int(action.get('repeat', '1') or '1')):
-                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-                            _click(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
-                    if action['action'] == 'rclick':
-                        for _ in range(int(action.get('repeat', '1') or '1')):
-                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-                            _rightClick(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
-                    if action['action'] == 'doubleclick':
-                        for _ in range(int(action.get('repeat', '1') or '1')):
-                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-                            _doubleClick(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
-                    if action['action'] == 'wait':
-                        for _ in range(int(action.get('repeat', '1') or '1')):
-                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-                    if action['action'] == 'clickwait':
-                        for _ in range(int(action.get('repeat', '1') or '1')):
-                            _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-                            _click(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
-                    if action['action'] == 'type':
-                        for _ in range(int(action.get('repeat', '1') or '1')):
-                            pyautogui.typewrite(action['data'])
-                    if action['action'] == 'keycombo':
-                        keys = action['data'].split('+')
-                        for _ in range(int(action.get('repeat', '1') or '1')):
-                            pyautogui.hotkey(*keys)
-                    if action['action'] == 'keypress':
-                        for _ in range(int(action.get('repeat', '1') or '1')):
-                            pyautogui.typewrite(action['data'])
-                    if action['action'] == 'close':
-                        for _ in range(int(action.get('repeat', '1') or '1')):
-                            pyautogui.hotkey('alt', 'f4')
-                    test_result["success_actions"].append({
-                        "index": index,
-                        "action": action["action"],
-                        "data": action["data"]
-                    })
-                except Exception as ex:
-                    test_result["failed_actions"].append({
-                        "index": index,
-                        "action": action["action"],
-                        "data": action["data"],
-                        "error": str(ex.__doc__)
-                    })
-            return test_result
+    #         return suite_results
+
+    # async def runTest(self, model):
+    #     payload = await model.json()
+    #     payload = payload['model']
+
+    #     return self.web.json_response(self.formatResponse(self._run_test(payload)))
+
+    # if sys.platform == "linux" or sys.platform == "linux2":
+    #     logging.info("Run Test Suite disabled")
+    # else:
+    #     def _run_test(self, model):
+    #         test_result =  {
+    #             "failed_actions": [],
+    #             "success_actions": []
+    #         }
+    #         time.sleep(SETTINGS_FILE.get("testSettings", {}).get("runTestDelay", 5))
+    #         for index, action in enumerate(model['actions']):
+    #             if action['action'] in ['click', 'rclick', 'doubleclick', 'wait', 'clickwait', 'waitvanish']:
+    #                 image_meta = ImageJson(action['data'])
+    #                 action_delay = int(action['delay']) + SETTINGS_FILE.get("testSettings", {}).get('actionDelayOffset', 0)
+    #             try:
+    #                 if action['action'] == 'click':
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
+    #                         _click(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
+    #                 elif action['action'] == 'rclick':
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
+    #                         _rightClick(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
+    #                 elif action['action'] == 'doubleclick':
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
+    #                         _doubleClick(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
+    #                 elif action['action'] == 'wait':
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
+    #                 elif action['action'] == 'clickwait':
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
+    #                         _click(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
+    #                 elif action['action'] == 'type':
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         pyautogui.typewrite(action['data'])
+    #                 elif action['action'] == 'keycombo':
+    #                     keys = action['data'].split('+')
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         pyautogui.hotkey(*keys)
+    #                 elif action['action'] == 'keypress':
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         pyautogui.typewrite(action['data'])
+    #                 elif action['action'] == 'typetab':
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         pyautogui.typewrite(action['data'])
+    #                         pyautogui.hotkey('tab')
+    #                 elif action['action'] == 'sleep':
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         time.sleep(int(action['data']))
+    #                 elif action['action'] == 'close':
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         pyautogui.hotkey('alt', 'f4')
+    #                 elif action['action'] == 'command':
+    #                     for _ in range(int(action.get('repeat', '1'))):
+    #                         self._runCommandAction(action['data'])
+    #                 # elif action['action'] == 'waitvanish':
+    #                 #     for _ in range(int(action.get('repeat', '1'))):
+    #                 #         waitVanish(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
+
+    #                 test_result["success_actions"].append({
+    #                     "index": index,
+    #                     "action": action["action"],
+    #                     "data": action["data"]
+    #                 })
+    #             except Exception as ex:
+    #                 logging.error(ex)
+    #                 test_result["failed_actions"].append({
+    #                     "index": index,
+    #                     "action": action["action"],
+    #                     "data": action["data"],
+    #                     "error": str(ex.__doc__)
+    #                 })
+    #         return test_result
 
     async def searchTests(self, search_term):
         payload = await search_term.json()
@@ -258,6 +302,16 @@ class Main_Routes:
             if suite['name'].lower().find(payload.lower()) > -1:
                 suites_.append(suite)
         return self.web.json_response(self.formatResponse(suites_))
+
+    def _runCommandAction(self, commandActionName):
+        json_data = open(os.path.normpath(SAVE_FOLDER + '/command_actions/' + commandActionName + '.json'))
+        data = json.load(json_data)
+        if data['type'] == 'batch':
+            os.system(data['data'])
+        # elif data['type'] == 'pgsql':
+        #     conn = psycopg2.connect('dbname={dbname} user={user} password={password} host={host} port={port}'.format(dbname=data['dbname'], user=data['user'], password=data['password'], host=['host'], port=['port']))
+        #     cur = conn.cursor()
+        #     cur.execute(data['data'])
 
 
 class FileHandling:

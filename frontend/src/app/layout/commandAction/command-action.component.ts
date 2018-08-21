@@ -20,16 +20,15 @@ export class CommandActionComponent implements OnInit {
     constructor(private backend: BackendService) { }
 
     ngOnInit() {
-        this.refreshCommandActions()
+        this.refreshCommandActions();
     }
 
     refreshCommandActions(): void {
-        // this.backend.getTests().then(e => {
-        //     if (e.result && e.data) {
-        //         this.commandActionList = e.data.map(x => new CommandAction(x));
-        //     }
-        // });
-        this.commandActionList.push(new CommandAction(this.backend.getCommandActions()))
+        this.backend.getCommandActions().then(e => {
+            if (e.result && e.data) {
+                this.commandActionList = e.data.map(x => new CommandAction(x));
+            }
+        });
     }
 
     searchCommandActions(searchTerm) {
@@ -48,6 +47,11 @@ export class CommandActionComponent implements OnInit {
     newCommandAction() {
         this.selectedCommandAction = new CommandAction();
         this.commandActionScreen.open(this.selectedCommandAction);
+        this.refreshCommandActions()
     }
 
+    openCommandAction(command) {
+        this.commandActionScreen.open(command);
+        this.refreshCommandActions()
+    }
 }

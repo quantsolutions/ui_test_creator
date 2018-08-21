@@ -23,9 +23,9 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let command of commandActionList">
-                            <td>{{command.name}}</td>
-                            <td>{{command.description}}</td>
-                            <td>{{command.type}}</td>
+                            <td (click)="openCommandAction(command)">{{command.name}}</td>
+                            <td (click)="openCommandAction(command)">{{command.description}}</td>
+                            <td (click)="openCommandAction(command)">{{command.type}}</td>
                         </tr>
                     </tbody>
                 </table>

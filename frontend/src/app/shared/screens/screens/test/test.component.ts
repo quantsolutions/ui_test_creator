@@ -13,6 +13,7 @@ import { Screen, ImagesScreen, screenRender } from '@screens';
 export class TestScreen extends Screen implements OnInit {
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('imagesScreen') imagesScreen: screenRender;
+    @ViewChild('commandActionBrowserScreen') commandActionBrowserScreen: screenRender;
 
     model: Test;
     imageList: Array<{ name: string }> = [];
@@ -64,6 +65,16 @@ export class TestScreen extends Screen implements OnInit {
 
     Images(action) {
         this.imagesScreen.open(action.data, {
+            save: model => {
+                if (model !== null) {
+                    action.data = model;
+                }
+            }
+        })
+    }
+
+    commandActionScreenOpen(action) {
+        this.commandActionBrowserScreen.open(action.data, {
             save: model => {
                 if (model !== null) {
                     action.data = model;

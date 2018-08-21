@@ -9,7 +9,6 @@ export const URL = 'http://127.0.0.1:9000/';
 export class OPTIONTYPE {
     name: string;
     value: string;
-    allow_delay: boolean;
 }
 
 export class SUITETEST {
@@ -23,12 +22,16 @@ export const COMMANDTYPES = [
 ];
 
 export const ACTIONS = [
-    { name: 'Click', value: 'click', allow_delay: false },
-    { name: 'Right Click', value: 'rclick', allow_delay: false },
-    { name: 'Double Click', value: 'doubleclick', allow_delay: false },
-    { name: 'Wait', value: 'wait', allow_delay: true },
-    { name: 'Keyboard Input', value: 'type', allow_delay: false },
-    { name: 'Hotkey', value: 'keycombo', allow_delay: false }
+    { name: 'Click', value: 'click' },
+    { name: 'Right Click', value: 'rclick' },
+    { name: 'Double Click', value: 'doubleclick' },
+    { name: 'Wait', value: 'wait' },
+    { name: 'Keyboard Input', value: 'type' },
+    { name: 'Hotkey', value: 'keycombo' },
+    { name: 'Command', value: 'command' },
+    { name: 'Type & Tab', value: 'typetab' },
+    { name: 'Sleep', value: 'sleep' },
+    // { name: 'Wait Until Vanish', value: 'waitvanish' }
 ];
 
 export const KEYS = [

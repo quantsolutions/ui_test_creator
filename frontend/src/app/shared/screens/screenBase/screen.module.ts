@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TestScreen, SuiteScreen, screenRender, TestResultScreen, ImagesScreen, CommandActionScreen } from '@screens';
+import { TestScreen, SuiteScreen, screenRender, TestResultScreen, ImagesScreen, CommandActionScreen, CommandActionBrowserScreen } from '@screens';
 import { FormsModule } from '@angular/forms';
 import { BackendService } from '@backend';
 import { AutocompleteComponent } from '@utils';
@@ -18,6 +18,7 @@ import { AutocompleteComponent } from '@utils';
         AutocompleteComponent,
         ImagesScreen,
         CommandActionScreen,
+        CommandActionBrowserScreen,
     ],
     providers: [
         BackendService
@@ -28,6 +29,7 @@ import { AutocompleteComponent } from '@utils';
         TestResultScreen,
         ImagesScreen,
         CommandActionScreen,
+        CommandActionBrowserScreen,
     ],
     exports: [
         screenRender,
@@ -37,6 +39,7 @@ import { AutocompleteComponent } from '@utils';
         AutocompleteComponent,
         ImagesScreen,
         CommandActionScreen,
+        CommandActionBrowserScreen,
     ]
 })
 

@@ -44,7 +44,7 @@ export class TestResultScreen extends Screen implements OnInit {
      */
     traverseTests(test, target=[]) {
         test.forEach(t => {
-            if(t.type === 'suite') {
+            if (t.type === 'suite') {
                 this.traverseTests(t.results, target);
             } else if (t.type === 'test') {
                 target.push(t);

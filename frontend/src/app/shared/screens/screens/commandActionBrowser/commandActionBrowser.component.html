@@ -1,0 +1,35 @@
+<div class="col-sm-12">
+    <div style="margin-top: 10px; max-height: 60vh;">
+        <div class="row">
+            <div class="col-sm-12">
+                <input #searchTerm (input)="searchCommandActions(searchTerm.value)" class="input form-control" type="text" placeholder="Search tests by name ..."/>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px">
+            <div class="col-sm-4">
+                <strong>Currently Selected Command Action: </strong>  
+            </div>
+            <div class="col-sm-8">{{selectedCommandAction.name}}</div>
+        </div>
+        <div class="row">
+            <div style="max-height: 40vh; overflow-y: scroll; width: 100%; margin-top: 10px">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr (click)="selectCommandAction(command.name)" *ngFor="let command of frontendCommandActions">
+                            <td>{{command.name}}</td>
+                            <td>{{command.description}}</td>
+                            <td>{{command.type}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

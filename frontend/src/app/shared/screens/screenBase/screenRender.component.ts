@@ -17,8 +17,8 @@ import * as $ from 'jquery';
 export class screenRender {
     @Input('type') type: any;                                                    // The type of screen, must be defined in screenModels.
     @ViewChild('layout', { read: ViewContainerRef }) layout: ViewContainerRef;   // The layout where the screen layout should be applied.
-    @Output() saved: EventEmitter<any> = new EventEmitter();                  // Emit the saved event once saved for any screen that is subscribed.
-    @Output() closed: EventEmitter<any> = new EventEmitter();                 // Emit the closed event once closed for any screen that is subscribed.
+    @Output() saved: EventEmitter<any> = new EventEmitter();                     // Emit the saved event once saved for any screen that is subscribed.
+    @Output() closed: EventEmitter<any> = new EventEmitter();                    // Emit the closed event once closed for any screen that is subscribed.
     screenName: string = "Renderer";                                             // Name that should be displayed on the screen header.
     component: Screen;                                                           // Basically the screen.
     screens: any = screenTypes;                                                  // Object containing all the screen and their types.
@@ -81,23 +81,35 @@ export class screenRender {
      */
     close() {
         if (!this.component.noModel && this.component.model.hasChanged()) {
-            let confirm = new Confirm("You may have unsaved changes, do you still want to exit ?", {
-                header: "Unsaved Changes"
-            }, (res) => {
-                if (res) {
-                    this.fadeOut();
+            if (this.component.options.closeConfirm) {
+                let confirm = new Confirm("You may have unsaved changes, do you still want to exit ?", {
+                    header: "Unsaved Changes"
+                }, (res) => {
+                    if (res) {
+                        this.fadeOut();
+                        this.openScreen = false;
+                        this.rendered = false;
+                        this.component.model.restoreFromSnapshot();
+                        setTimeout(() => {
+                            this.closed.emit(this.component.model.values());
+                            if (this.callbacks.close) {
+                                this.callbacks.close(this.component.model.values());
+                            }
+                        }, 500);
+                    }
+                });
+                confirm.open();
+            } else {
+                this.fadeOut();
+                setTimeout(() => {
+                    this.closed.emit(!this.component.noModel ? this.component.model.values() : null);
                     this.openScreen = false;
                     this.rendered = false;
-                    this.component.model.restoreFromSnapshot();
-                    setTimeout(() => {
-                        this.closed.emit(this.component.model.values());
-                        if (this.callbacks.close) {
-                            this.callbacks.close(this.component.model.values());
-                        }
-                    }, 500);
-                }
-            });
-            confirm.open();
+                    if (this.callbacks.close) {
+                        this.callbacks.close(!this.component.noModel ? this.component.model.values() : null);
+                    }
+                }, 500);
+            }
         } else {
             this.fadeOut();
             setTimeout(() => {
