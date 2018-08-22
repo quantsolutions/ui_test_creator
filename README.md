@@ -27,6 +27,7 @@ save_files folder location under "C:\ProgramData\TingusData\save_files"
 For help, just execute the test_runner.exe in command line and you will see the help text.
 
 ## Development Manual
+[Developer Manual](https://github.com/quantsolutions/ui_test_creator/wiki/Developer-Manual)
 
 * Angular 6.0.0
 * Electron 2.0.0
