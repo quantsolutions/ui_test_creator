@@ -4,7 +4,7 @@
 
 [Download Tingus Apps](https://github.com/quantsolutions/ui_test_creator/releases/latest)
 
-[User Manual](https://github.com/quantsolutions/ui_test_creator/wiki/User-Guide)
+[User Manual](https://github.com/quantsolutions/ui_test_creator/wiki/User-Manual)
 
 * Currently only works on Windows ( third party click lib only works on Windows )
 * Linux Support is HIGH Prioirty!!! ( Not fun to comment out code every time I develop )
