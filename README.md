@@ -31,4 +31,4 @@ For help, just execute the test_runner.exe in command line and you will see the 
 
 * Angular 6.0.0
 * Electron 2.0.0
-* Python 3.6 (Python used for builds: Python 3.6 32 bit) Pyinstaller has bugs with Python 3.6 64 bit
+* Python 3.5 (Python used for builds: Python 3.6 32 bit) Pyinstaller has bugs with Python 3.6 64 bit
