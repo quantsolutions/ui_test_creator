@@ -12,14 +12,14 @@
 **Read before running:**
 App can only be executed by **one user** at a time on a computer.
 
-**GUI APP:**
+### GUI APP
 1. Download tingus-setup-x.x.x.exe
 2. Execute tingus-setup-x.x.x.exe
 3. Done!!! The app is installed and you can use it.
 
 save_files folder location under "C:\ProgramData\TingusData\save_files"
 
-**Headless Test Runner:**
+### Headless Test Runner
 1. Download test_runner.zip
 2. Extract test_runner.zip
 3. Execute test_runner.exe
