@@ -1,14 +1,16 @@
 # Tingus
 
-## User Manual
+## User Instructions
 
 [Download Tingus Apps](https://github.com/quantsolutions/ui_test_creator/releases/latest)
+
+[User Manual](https://github.com/quantsolutions/ui_test_creator/wiki/User-Guide)
 
 * Currently only works on Windows ( third party click lib only works on Windows )
 * Linux Support is HIGH Prioirty!!! ( Not fun to comment out code every time I develop )
 
 **Read before running:**
-App can only be executed by one user at a time on one computer.
+App can only be executed by **one user** at a time on a computer.
 
 **GUI APP**
 1. Download tingus-setup-x.x.x.exe
