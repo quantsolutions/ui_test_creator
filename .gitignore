@@ -14,7 +14,6 @@ frontend/testem.log
 frontend/typings
 frontend/package-lock.json
 frontend/release-builds
-frontend/dist
 
 # e2e
 frontend/e2e/*.js
@@ -26,10 +25,10 @@ frontend/e2e/*.map
 __pycache__
 
 # Project Files
-backend/TingusData/
-backend/dist/
-apps/Screenshot_Tool/dist/
-apps/Screenshot_Tool/build_temp/
+*TingusData/
+*dist/
+*build_temp/
+*.spec
 apps/Screenshot_Tool/Screenshot_Tool.spec
 backend/build_temp/
 backend/Tingus-Backend.spec

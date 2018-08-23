@@ -2,8 +2,10 @@ import logging
 import sys
 import json
 
+
 logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=logging.INFO)
 logging.info('Starting...')
+
 if sys.platform.startswith('linux'):
     logging.error('Cannot run on non Windows env :\'-(. Linux OS Detected.')
     exit()
@@ -13,6 +15,7 @@ else:
     logging.info('Importing modules...')
     import runner
 
+    # Setup APP Settings and data. Save Folder and Settings File paths are default paths from Tingus GUI app
     APP = {
         'status': 'Starting',
         'save_folder': os.path.normpath(os.getenv("PROGRAMDATA") + '/TingusData' + '/save_files/'),
