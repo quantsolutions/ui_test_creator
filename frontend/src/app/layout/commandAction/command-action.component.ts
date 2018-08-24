@@ -21,6 +21,9 @@ export class CommandActionComponent implements OnInit {
 
     ngOnInit() {
         this.refreshCommandActions();
+        this.commandActionScreen.saved.subscribe(() => this.refreshCommandActions());
+        this.commandActionScreen.closed.subscribe(() => this.refreshCommandActions());
+
     }
 
     refreshCommandActions(): void {
@@ -47,11 +50,9 @@ export class CommandActionComponent implements OnInit {
     newCommandAction() {
         this.selectedCommandAction = new CommandAction();
         this.commandActionScreen.open(this.selectedCommandAction);
-        this.refreshCommandActions()
     }
 
     openCommandAction(command) {
         this.commandActionScreen.open(command);
-        this.refreshCommandActions()
     }
 }

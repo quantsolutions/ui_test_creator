@@ -14,13 +14,6 @@ if sys.platform.startswith('linux'):
     logging.info("Linux OS Detected, running test will be disabled.")
     SAVE_FOLDER = os.path.normpath(os.getcwd() + '/TingusData' + '/save_files')
 else:
-    # import pyautogui
-    # from lackey import click as _click
-    # from lackey import doubleClick as _doubleClick
-    # from lackey import rightClick as _rightClick
-    # from lackey import wait as _wait
-    # from lackey import waitVanish
-    # from lackey import Pattern
     # import psycopg2
     SAVE_FOLDER = os.path.normpath(os.getenv("PROGRAMDATA") + '/TingusData' + '/save_files/')
 
@@ -180,120 +173,15 @@ class Main_Routes:
 
         return self.web.json_response(self.formatResponse(test_result))
 
-    # if sys.platform == "linux" or sys.platform == "linux2":
-    #     logging.info("Run Test Suite disabled")
-    # else:
-    #     def _runTestSuite(self, model):
-    #         suite_results = []
-    #         for index, test in enumerate(model['tests']):
-    #             if test['type'] == 'suite':
-    #                 test_suite = self._load_test_suite(test['name'])
-    #                 suite_results.append({
-    #                     "name": test_suite["name"],
-    #                     "index": index,
-    #                     "type": "suite",
-    #                     "results": self._runTestSuite(test_suite)
-    #                 })
-    #             elif test['type'] == 'test':
-    #                 test_ = self._load_test(test['name'])
-    #                 suite_results.append({
-    #                     "name": test_["name"],
-    #                     "index": index,
-    #                     "type": "test",
-    #                     "results": self._run_test(test_)
-    #                 })
-
-    #         return suite_results
-
-    # async def runTest(self, model):
-    #     payload = await model.json()
-    #     payload = payload['model']
-
-    #     return self.web.json_response(self.formatResponse(self._run_test(payload)))
-
-    # if sys.platform == "linux" or sys.platform == "linux2":
-    #     logging.info("Run Test Suite disabled")
-    # else:
-    #     def _run_test(self, model):
-    #         test_result =  {
-    #             "failed_actions": [],
-    #             "success_actions": []
-    #         }
-    #         time.sleep(SETTINGS_FILE.get("testSettings", {}).get("runTestDelay", 5))
-    #         for index, action in enumerate(model['actions']):
-    #             if action['action'] in ['click', 'rclick', 'doubleclick', 'wait', 'clickwait', 'waitvanish']:
-    #                 image_meta = ImageJson(action['data'])
-    #                 action_delay = int(action['delay']) + SETTINGS_FILE.get("testSettings", {}).get('actionDelayOffset', 0)
-    #             try:
-    #                 if action['action'] == 'click':
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-    #                         _click(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
-    #                 elif action['action'] == 'rclick':
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-    #                         _rightClick(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
-    #                 elif action['action'] == 'doubleclick':
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-    #                         _doubleClick(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
-    #                 elif action['action'] == 'wait':
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-    #                 elif action['action'] == 'clickwait':
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         _wait(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-    #                         _click(Pattern(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
-    #                 elif action['action'] == 'type':
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         pyautogui.typewrite(action['data'])
-    #                 elif action['action'] == 'keycombo':
-    #                     keys = action['data'].split('+')
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         pyautogui.hotkey(*keys)
-    #                 elif action['action'] == 'keypress':
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         pyautogui.typewrite(action['data'])
-    #                 elif action['action'] == 'typetab':
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         pyautogui.typewrite(action['data'])
-    #                         pyautogui.hotkey('tab')
-    #                 elif action['action'] == 'sleep':
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         time.sleep(int(action['data']))
-    #                 elif action['action'] == 'close':
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         pyautogui.hotkey('alt', 'f4')
-    #                 elif action['action'] == 'command':
-    #                     for _ in range(int(action.get('repeat', '1'))):
-    #                         self._runCommandAction(action['data'])
-    #                 # elif action['action'] == 'waitvanish':
-    #                 #     for _ in range(int(action.get('repeat', '1'))):
-    #                 #         waitVanish(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-
-    #                 test_result["success_actions"].append({
-    #                     "index": index,
-    #                     "action": action["action"],
-    #                     "data": action["data"]
-    #                 })
-    #             except Exception as ex:
-    #                 logging.error(ex)
-    #                 test_result["failed_actions"].append({
-    #                     "index": index,
-    #                     "action": action["action"],
-    #                     "data": action["data"],
-    #                     "error": str(ex.__doc__)
-    #                 })
-    #         return test_result
-
     async def searchTests(self, search_term):
         payload = await search_term.json()
         payload = payload['search_term']
         tests = self._getTests()
         tests_ = []
         for test in tests:
-            if test['name'].lower().find(payload.lower()) > -1:
+            if test['name'].lower().find(payload.lower()) > -1 or test['description'].lower().find(payload.lower()) > -1:
                 tests_.append(test)
+
         return self.web.json_response(self.formatResponse(tests_))
 
     async def searchSuites(self, search_term):
@@ -302,8 +190,9 @@ class Main_Routes:
         suites = self._getSuites()
         suites_ = []
         for suite in suites:
-            if suite['name'].lower().find(payload.lower()) > -1:
+            if suite['name'].lower().find(payload.lower()) > -1 or suite['description'].lower().find(payload.lower()) > -1:
                 suites_.append(suite)
+
         return self.web.json_response(self.formatResponse(suites_))
 
     async def searchCommandActions(self, search_term):
@@ -312,8 +201,9 @@ class Main_Routes:
         commandActions = self._getCommandActions()
         commands_ = []
         for cmd in commandActions:
-            if cmd['name'].lower().find(payload.lower()) > -1:
+            if cmd['name'].lower().find(payload.lower()) > -1 or cmd['description'].lower().find(payload.lower()) > -1:
                 commands_.append(cmd)
+
         return self.web.json_response(self.formatResponse(commands_))
 
     def _runCommandAction(self, commandActionName):

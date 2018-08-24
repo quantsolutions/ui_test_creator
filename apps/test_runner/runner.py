@@ -4,6 +4,7 @@ import logging
 import json
 import time
 import errno
+import subprocess
 
 import pyautogui
 from lackey import click as _click
@@ -18,6 +19,8 @@ logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=loggi
 
 
 class Runner:
+    """Class Runner main task is to handle running of tests.
+    """
     def __init__(self, app_data):
         self.data = app_data
         self.__data_init__()
@@ -150,7 +153,8 @@ class Runner:
         json_data = open(os.path.normpath(self.data['save_folder'] + '/command_actions/' + commandActionName + '.json'))
         data = json.load(json_data)
         if data['type'] == 'batch':
-            os.system(data['data'])
+            # os.system(data['data'])
+            subprocess.run(data['data'])
         # elif data['type'] == 'pgsql':
         #     conn = psycopg2.connect('dbname={dbname} user={user} password={password} host={host} port={port}'.format(dbname=data['dbname'], user=data['user'], password=data['password'], host=['host'], port=['port']))
         #     cur = conn.cursor()
@@ -158,6 +162,8 @@ class Runner:
 
 
 class ImageJson:
+    """Class ImageJson makes it easier to get a image and its metadata.
+    """
     def __init__(self, image_name, save_path):
         self.save_path = save_path
         self.image_meta = self._read_json(image_name)
@@ -172,8 +178,9 @@ class ImageJson:
 
 class FileHandling:
     """Better why to handle files that needs to be saved etc.
-    The function below safe_open() take a path and will check if path exist.
+    The function below safe_open_w() take a path and will check if path exist.
     If it doesn't, it will attempt to create the folders.
+
     EXAMPLE USAGE: with safe_open_w('/Users/bill/output/output-text.txt') as f:
                        f.write(stuff_to_file)
     """
@@ -187,13 +194,13 @@ class FileHandling:
                 raise
 
     def safe_open_w(self, path):
-        ''' Open "path" for writing, creating any parent directories as needed.
-        '''
+        """Open "path" for writing, creating any parent directories as needed.
+        """
         self._mkdir_p(os.path.dirname(path))
         return open(path, 'w')
 
     def safe_create_path(self, path):
-        '''Create Path give if doesn't exist
-        '''
+        """Create Path give if doesn't exist
+        """
         self._mkdir_p(os.path.dirname(path))
         return path
