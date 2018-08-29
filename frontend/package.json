@@ -72,10 +72,10 @@
         }
     },
     "dependencies": {
-        "electron-log": "^2.2.14",
-        "electron-updater": "^2.21.10",
-        "font-awesome": "^4.7.0",
-        "jquery": "^3.2.1"
+        "electron-log": "2.2.14",
+        "electron-updater": "2.21.10",
+        "font-awesome": "4.7.0",
+        "jquery": "3.2.1"
     },
     "devDependencies": {
         "rxjs": "6.1.0",
