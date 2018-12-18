@@ -25,6 +25,7 @@ logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 _modulename = 'goodxtest'
 DATABASE = 'goodxtest'
 SAVE_FOLDER = os.path.normpath(os.getcwd() + '/save_files/')
+NUMBER = 1
 
 # Class
 class goodxtest():
@@ -196,7 +197,9 @@ class goodxtest():
             return self._parent.doLogout()
 
     def getUser(self, session):
-        return self._parent.getUser()
+        global NUMBER
+        NUMBER = NUMBER + 1
+        return NUMBER
 
     def getLoggedIn(self, session):
         return self._parent.getLoggedIn()

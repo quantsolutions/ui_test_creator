@@ -1,12 +1,8 @@
 # ======== IMPORTS ===================================================================================================================== 
-import sys, getopt, cherrypy, json, os, argparse, simplejson
+import sys, getopt, json, os, argparse
 import importlib.util
 from lib import database_manager
-from cherrypy.lib import sessions
 import logging
-from ws4py.websocket import EchoWebSocket
-from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
-
 # logging.basicConfig(filename="main_logfile.log", filemode="w", format="%(asctime)s %(message)s", level=logging.INFO)
 logging.basicConfig(format="%(asctime)s %(message)s", level=logging.INFO)
 from flask import Flask, request
@@ -15,11 +11,12 @@ from flask import Flask, request
 SETTINGS_FILE = {}
 ARGUMENTS = []
 DATABASE = "client"
+INSTANCES = []
 
 # ======== GLOBAL FUNCTIONS ============================================================================================================
 class customFlask(Flask):
-    def __init__(self, import_name, static_url_path=None, static_folder="static", static_host=None, host_matching=False, template_folder="templates", instance_path=None, instance_relative_config=False, root_path=None):
-        super().__init__(import_name, static_url_path=None, static_folder="static", template_folder="templates", instance_path=None, instance_relative_config=False, root_path=None)
+    def __init__(self, *args, **kwags):
+        super().__init__(*args, **kwags)
         self.module_dict = {}
         self.database_dict = {}
         self.build_modules()
@@ -28,7 +25,10 @@ class customFlask(Flask):
     def build_modules(self):
         for module in os.listdir(os.getcwd()+"/modules"):
             if module[-3:] == ".py":
-                self.module_dict[module[:-3]] = importlib.util.spec_from_file_location(module[:-3], os.getcwd()+"/modules"+"/"+str(module))
+                module_spec = importlib.util.spec_from_file_location(module[:-3], os.getcwd()+"/modules"+"/"+str(module))
+                _module_ = importlib.util.module_from_spec(module_spec)
+                module_spec.loader.exec_module(_module_)
+                self.module_dict[module[:-3]] = getattr(_module_, module[:-3])(self, self.getDatabase)
 
     def build_databases(self):
         for database in SETTINGS_FILE.get("databases", []):
@@ -66,15 +66,15 @@ class customFlask(Flask):
     #         raise Exception("NOT LOGGED IN")
 
     def callModule(self, module_name):
-        _module_ = importlib.util.module_from_spec(self.module_dict[module_name])
-        self.module_dict[module_name].loader.exec_module(_module_)
-        return getattr(_module_, module_name)(self, self.getDatabase)
-    
+        return self.module_dict[module_name]
+
     def callModuleFunc(self, module_name, func_name, params):
-        return getattr(self.callModule(module_name), func_name)(**params)
+        module = self.callModule(module_name)
+        function = getattr(module, func_name)
+        return function(**params)
 
     def getDatabase(self, database_name=None):
-        if self.database_dict.get(database_name, None):
+        if self.database_dict.get(database_name):
             return self.database_dict[database_name]
         else:
             raise Exception("Database %s is not in the database_dict"%(database_name))
@@ -110,54 +110,29 @@ class customFlask(Flask):
             logging.info("USERNAME: %s; \nPASSWORD: %s"%(username, password))
             logging.info("***********************************************************")
             raise Exception("LOGIN FAILED: Password or Username Incorrect")
-    
-    # def getLoggedIn(self):
-    #     return cherrypy.session.get("user", None)
-
-    # def doLogout(self):
-    #     try:
-    #         cherrypy.session.clear()
-    #         return "LOGOUT SUCCESSFUL"
-    #     except:
-    #         raise Exception("LOGOUT FAILED: NOT LOGGED IN")
 
 app = customFlask(__name__)
 
 @app.route('/', defaults={'path': ''}, methods=['GET', 'POST'])
 @app.route('/<path:path>', methods=['GET', 'POST'])
 def default(path):
-    path = path.split("/")
     """
     Function: Default function that parses and calls the correct module with the function and parameters. Then parses it and sends the result back to the
                 url call from where it came.
     """
-    module_ = None
-    func_ = None
-
-    # Get Module That should be called from the url example http://127.0.0.1/booking/getClient -> booking will be the module.
-    # Check if the module is defined in the url request, otherwise just serve the index.html
+    path = path.split("/")
     try:
-        module_ = path[0]
-    except:
-        return open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend", "index.html"))
+        module_, function_ = path[0], path[1]
+    except Exception as ex:
+        module_, function_ = None, None
 
-    # Check if the module was valid.
-    valid_module = True if app.module_dict.get(module_, None) else False # Check if the module exists
-
-    # Get Function that should be called from the url example http://127.0.0.1/booking/getClient -> getClient will be the function.
-    # Check if the function is defined in the url request, otherwise just serve the index.html
     try:
-        func_ = path[1]
-    except:
-        return open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "frontend", "index.html"))
-
-    # Get Parameters that was sent with the url request.
-    try:
-        params_ = simplejson.loads(request.data)
+        params_ = {}
+        params_.update({**(request.get_json() or {}), **(request.values or {})})
     except:
         params_ = {}
 
-    if valid_module:
+    if app.module_dict.get(module_):
         try:
             # Check if the user is logged in, let it pass if the function call is login or logout.
             # if func_ not in ["login", "logout", "getUser"]:
@@ -168,30 +143,30 @@ def default(path):
 
             # logging.info to know what is happening
             logging.info("*************************** CALLING ****************************")
-            logging.info("MODULE: %s; \nFUNCTION: %s; \nPARAMETERS: %s;"%(module_, func_, str(params_)))
+            logging.info("MODULE: %s; \nFUNCTION: %s; \nPARAMETERS: %s;"%(module_, function_, str(params_)))
             logging.info("****************************************************************")                
 
             # Call the module with the function
-            data = app.callModuleFunc(module_, func_, params_)
+            data = app.callModuleFunc(module_, function_, params_)
             result = True
-            msg = "Success"
+            message = "Success"
         except Exception as ex:
             logging.info("******************** EXCEPTION OCCURED *************************")
-            logging.info("MODULE: %s; \nFUNCTION: %s; \nPARAMETERS: %s; \nEXCEPTION: %s;"%(module_, func_, str(params_), str(ex)))
+            logging.info("MODULE: %s; \nFUNCTION: %s; \nPARAMETERS: %s; \nEXCEPTION: %s;"%(module_, function_, str(params_), str(ex)))
             logging.info("****************************************************************")
-            msg = str(ex) if str(ex) != "'%s' object has no attribute '%s'"%(module_, func_) else "Function %s does not exist on module %s"%(func_, module_) 
+            message = str(ex) if str(ex) != "'%s' object has no attribute '%s'"%(module_, function_) else "Function %s does not exist on module %s"%(function_, module_) 
             data = None
             result = False
     else:
         logging.info("******************** EXCEPTION OCCURED *************************")
-        logging.info("EXCEPTION: Module %s was not found"%(module_))
+        logging.info("EXCEPTION: Module %s was not found"%(str(module_)))
         logging.info("****************************************************************")
-        msg = "MODULE " + module_ + " WAS NOT FOUND"
+        message = "MODULE %s WAS NOT FOUND"%(str(module_))
         data = None
         result = False
     ret = {
         "result": result,
-        "msg": msg,
+        "message": message,
         "data": data
     }
     return json.dumps(ret)
