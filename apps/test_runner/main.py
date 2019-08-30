@@ -25,6 +25,7 @@ else:
     parser = argparse.ArgumentParser(description='Tingus Start Options.')
     parser.add_argument('run_test', help='Name of the Test Case or Test Suite to run', type=str)
     parser.add_argument('test_type', help='Test type. test or suite', type=str)
+    #parser.add_argument('pg_connection_str', help='postgres connection string (optional)', type=str)
 
     parser.add_argument('--settings', help='Settings file path', type=str)
     parser.add_argument('--save', help='Save directory path of Tingus data', type=str)

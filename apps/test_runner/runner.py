@@ -13,9 +13,37 @@ from lackey import rightClick as _rightClick
 from lackey import wait as _wait
 from lackey import waitVanish
 from lackey import Pattern
+import psycopg2
+
+
+
+
 
 
 logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=logging.INFO)
+
+
+
+class MySemaphore:
+    def __init__(self):   
+        self.process_id = 112    
+        self.pg_conn_str = """dbname={dbname} user={user} password={password} host={host} port={port}
+             """.format(dbname='medwell_sa', user='postgres', password="masterkey", host="localhost", port="5412")
+        conn = psycopg2.connect( self.pg_conn_str )
+        cur = conn.cursor()
+        cur.execute( 'create table if not exists tingus_semaphore( process_id integer primary key , busy integer, comment jsonb ) ' )
+        conn.commit()
+        conn.close()
+
+    def update_status ( self, mystatus, comment ):
+        conn = psycopg2.connect( self.pg_conn_str )
+        cur = conn.cursor()
+        cur.execute( """insert into tingus_semaphore( process_id, busy,comment ) values( 11, {x_status}, '{x_comment}' ) 
+                             on conflict (process_id) do update set busy  = {x_status}, comment = tingus_semaphore.comment||'{x_comment}'
+                                   """.format(x_status=mystatus, x_comment = comment) )
+        conn.commit()
+        conn.close()
+    
 
 
 class Runner:
@@ -25,7 +53,7 @@ class Runner:
         self.data = app_data
         self.__data_init__()
         self.FileHandling = FileHandling()
-
+        self.sema = MySemaphore()
         self.run_test(self.data['run_test'], self.data['test_type'])
 
     def __data_init__(self):
@@ -41,7 +69,9 @@ class Runner:
 
 
     def _run_test(self, test_name, test_type):
+        self.sema.update_status( 1, '{"started":"now"}' )
         results = []
+        print( 'test_type %s '%(test_type) )
         if test_type == 'suite':
             try:
                 json_data = json.load(open(os.path.normpath(self.data['save_folder'] + '/suites/' + test_name + '.json')))
@@ -83,10 +113,14 @@ class Runner:
         }
 
         for index, action in enumerate(model['actions']):
+            print ( ' ACTION index %s ___action %s '%(index, action ) )
             if action['action'] in ['click', 'rclick', 'doubleclick', 'wait', 'clickwait', 'waitvanish']:
                 image_meta = ImageJson(action['data'], self.data['save_folder'])
+                print( '    1. MARGRIT index %s ___action %s '%(index, action ) ) 
                 action_delay = int(action['delay']) + self.data['settings'].get("testSettings", {}).get('actionDelayOffset', 0)
+                print( '    2. MARGRIT index %s ___action %s '%(index, action ) ) 
             try:
+                print( '    3. MARGRIT index %s ___action %s '%(index, action ) ) 
                 if action['action'] == 'click':
                     for _ in range(int(action.get('repeat', '1'))):
                         _wait(os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png'), action_delay)
@@ -139,14 +173,20 @@ class Runner:
                     'data': action['data'],
                 })
             except Exception as ex:
+                
+                print( '4.MARGRIT  ') 
                 logging.error(ex)
+                self.sema.update_status( 0, '{"error": "%s", "exit_code": "-1"}'%(str(ex.__doc__)) )
                 test_result['failed_actions'].append({
                     'index': index,
                     'action': action['action'],
                     'data': action['data'],
                     'error': str(ex.__doc__)
                 })
-
+                sys.exit( -1 )
+                return 
+        self.sema.update_status( 0, '{ "exit_code": "0"}' ) 
+        sys.exit( 0 )
         return test_result
 
     def _runCommandAction(self, commandActionName):
