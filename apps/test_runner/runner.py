@@ -5,27 +5,28 @@ import json
 import time
 import errno
 import subprocess
-
 import pyautogui
-from lackey import click as _click
-from lackey import doubleClick as _doubleClick
-from lackey import rightClick as _rightClick
-from lackey import wait as _wait
-from lackey import waitVanish
-from lackey import Pattern
-
-
-logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=logging.INFO)
-
 
 class Runner:
     """Class Runner main task is to handle running of tests.
     """
     def __init__(self, app_data):
         self.data = app_data
+        _logfilename = self.data['settings'].get("testSettings", {}).get("logName", "")
+        #print( 'logfilename %s '% (_logfilename ) )
+        if _logfilename != "":
+            logging.info('Progress will be logged in file %s'%(_logfilename )  )       
+            logid = logging.getLogger()
+            for hndl in logid.handlers[:]:
+                logid.removeHandler( hndl )
+            logging.basicConfig(filename=_logfilename,format='%(levelname)s: %(asctime)s %(message)s', level=logging.INFO)           
+        else:    
+            logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=logging.INFO)           
+                
+        logging.info( '------------------')
+        
         self.__data_init__()
         self.FileHandling = FileHandling()
-
         self.run_test(self.data['run_test'], self.data['test_type'])
 
     def __data_init__(self):
@@ -38,7 +39,24 @@ class Runner:
         result = self._run_test(test_name, test_type)
         with self.FileHandling.safe_open_w(os.path.normpath(self.data['save_folder'] + '/logs/' + self.log_name + '.json')) as fp:
             json.dump(result, fp, indent=4)
-
+    
+    
+    def _test_name( self,  default_folder , sub_directory, test_name ):
+        _testname = os.path.normpath(test_name)
+        _name, _ext  = os.path.splitext( _testname )
+        if _ext != '.json':
+            _testname = '%s%s'%(_name,'.json' )
+        if os.path.isfile( _testname ):
+            return _testname
+        else:    
+            _testname= os.path.normpath( default_folder + sub_directory + _testname  )       
+            if os.path.isfile( _testname ):
+                return _testname
+            else:
+                logging.error(  'Test file not found %s ',_testname  )
+                raise FileNotFoundError
+          
+       
 
     def _run_test(self, test_name, test_type):
         results = []
@@ -61,7 +79,7 @@ class Runner:
 
         elif test_type == 'test':
             try:
-                json_data = json.load(open(os.path.normpath(self.data['save_folder'] + '/tests/' + test_name + '.json')))
+                json_data = json.load(open( self._test_name(self.data['save_folder'], '/tests/',test_name) ))
             except FileNotFoundError:
                 logging.error('The test does not exist or the defined test type is incorrect or the save_folder path is not correct.')
                 exit()
@@ -81,31 +99,54 @@ class Runner:
             'failed_actions': [],
             'success_actions': []
         }
-
+        _found = 0    
+        _confidence = 0.9
         for index, action in enumerate(model['actions']):
+            _found = 1
             if action['action'] in ['click', 'rclick', 'doubleclick', 'wait', 'clickwait', 'waitvanish']:
                 image_meta = ImageJson(action['data'], self.data['save_folder'])
                 action_delay = int(action['delay']) + self.data['settings'].get("testSettings", {}).get('actionDelayOffset', 0)
             try:
                 if action['action'] == 'click':
+                    _image_path =  os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png' ) 
+                    logging.info( 'Looking for pattern %s delay %s' % ( _image_path, action_delay ))
                     for _ in range(int(action.get('repeat', '1'))):
-                        _wait(os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png'), action_delay)
-                        _click(Pattern(os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
+                        time.sleep( action_delay)
+                        place = pyautogui.locateOnScreen( _image_path, confidence = _confidence,grayscale=True )  # grayscale a bit faster.
+                        _my_confidence = _confidence
+                        while ( place == None ) and ( _my_confidence > 0.5 ):                            
+                            logging.info( ' !!!!!! Reducing confidence level for %s .  Confidence level %s '%(_image_path,_my_confidence) )
+                            place = pyautogui.locateOnScreen( _image_path, confidence = _my_confidence, grayscale = False )
+                            _my_confidence = _my_confidence- 0.1
+                        
+                        if place == None:
+                            _errmess = "Cannot locate image %s. Please check that your application is located on the primary screen.\nYour image file might also be out of date." % (_image_path)                                
+                            raise NameError( _errmess )
+                        else:    
+                            logging.info( 'clicking image %s.  Confidence level %s. '%(_image_path,_my_confidence) )
+                        pyautogui.click( pyautogui.center( place ) )
+                        
                 elif action['action'] == 'rclick':
                     for _ in range(int(action.get('repeat', '1'))):
-                        _wait(os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png'), action_delay)
-                        _rightClick(Pattern(os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
+                        _image_path =  os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png' ) 
+                        _wait(_image_path, action_delay)
+                        place = pyautogui.locateCenterOnScreen( _image_path, confidence = _confidence )
+                        pyautogui.rightClick( place )
                 elif action['action'] == 'doubleclick':
                     for _ in range(int(action.get('repeat', '1'))):
-                        _wait(os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png'), action_delay)
-                        _doubleClick(Pattern(os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
+                        _image_path =  os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png' ) 
+                        _wait(_image_path, action_delay)
+                        place = pyautogui.locateCenterOnScreen( _image_path, confidence = _confidence )
+                        pyautogui.doubleClick( place )                    
                 elif action['action'] == 'wait':
                     for _ in range(int(action.get('repeat', '1'))):
                         _wait(os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png'), action_delay)
                 elif action['action'] == 'clickwait':
                     for _ in range(int(action.get('repeat', '1'))):
-                        _wait(os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png'), action_delay)
-                        _click(Pattern(os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png')).targetOffset(image_meta.get_click_offset()[0], image_meta.get_click_offset()[1]))
+                        _image_path =  os.path.normpath(self.data['save_folder'] + '/images/' + action['data'] + '.png' ) 
+                        _wait(_image_path, action_delay)                        
+                        place = pyautogui.locateCenterOnScreen( _image_path, confidence = _confidence )
+                        pyautogui.click( place )                              
                 elif action['action'] == 'type':
                     for _ in range(int(action.get('repeat', '1'))):
                         pyautogui.typewrite(action['data'])
@@ -129,10 +170,6 @@ class Runner:
                 elif action['action'] == 'command':
                     for _ in range(int(action.get('repeat', '1'))):
                         self._runCommandAction(action['data'])
-                # elif action['action'] == 'waitvanish':
-                #     for _ in range(int(action.get('repeat', '1'))):
-                #         waitVanish(os.path.normpath(SAVE_FOLDER + '/images/' + action['data'] + '.png'), action_delay)
-
                 test_result['success_actions'].append({
                     'index': index,
                     'action': action['action'],
@@ -146,19 +183,20 @@ class Runner:
                     'data': action['data'],
                     'error': str(ex.__doc__)
                 })
-
+                sys.exit( -1 )
+                return 
+        #self.sema.update_status( 0, '{ "exit_code": "0"}' ) 
+        
+        if _found == 0:
+            logging.error( 'Unknown action % '%(model['actions']))
+        sys.exit( 0 )
         return test_result
 
     def _runCommandAction(self, commandActionName):
         json_data = open(os.path.normpath(self.data['save_folder'] + '/command_actions/' + commandActionName + '.json'))
         data = json.load(json_data)
         if data['type'] == 'batch':
-            # os.system(data['data'])
             subprocess.run(data['data'])
-        # elif data['type'] == 'pgsql':
-        #     conn = psycopg2.connect('dbname={dbname} user={user} password={password} host={host} port={port}'.format(dbname=data['dbname'], user=data['user'], password=data['password'], host=['host'], port=['port']))
-        #     cur = conn.cursor()
-        #     cur.execute(data['data'])
 
 
 class ImageJson:
