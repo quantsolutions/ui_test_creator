@@ -13,6 +13,8 @@ class Runner:
     def __init__(self, app_data):
         self.data = app_data
         _logfilename = self.data['settings'].get("testSettings", {}).get("logName", "")
+        self.data['save_folder'] =  self.data['settings'].get("testSettings", {}).get("save_folder", self.data['save_folder'])
+        
         #print( 'logfilename %s '% (_logfilename ) )
         if _logfilename != "":
             logging.info('Progress will be logged in file %s'%(_logfilename )  )       
