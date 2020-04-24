@@ -6,10 +6,10 @@ import json
 
 
 logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=logging.INFO)
-class WriteToLog( message ):
+def WriteToLog( __message ):
     write_log = False
     if write_log == True:
-        logging.info(message)
+        logging.info(__message)
     
 
 
