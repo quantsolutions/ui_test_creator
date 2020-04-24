@@ -6,7 +6,14 @@ import json
 
 
 logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=logging.INFO)
-logging.info('Starting...')
+class WriteToLog( message ):
+    write_log = False
+    if write_log == True:
+        logging.info(message)
+    
+
+
+WriteToLog('Starting...')
 
 if sys.platform.startswith('linux'):
     logging.error('Cannot run on non Windows env :\'-(. Linux OS Detected.')
@@ -14,7 +21,7 @@ if sys.platform.startswith('linux'):
 else:
     import argparse
     import os
-    logging.info('Importing modules...')
+    WriteToLog('Importing modules...')
     import runner
 
     # Setup APP Settings and data. Save Folder and Settings File paths are default paths from Tingus GUI app
@@ -42,7 +49,7 @@ else:
 
     
     
-    logging.info('Reading command line input...')
+    WriteToLog('Reading command line input...')
     if not len(sys.argv) > 1:
         parser.print_help()
         parser.exit()
@@ -97,5 +104,5 @@ else:
     _hndl = open(APP['settings_file'], 'r')
     APP['settings'] = json.load(_hndl)    
 
-    logging.info('Running test engine...')
+    WriteToLog('Running test engine...')
     runner.Runner(APP)

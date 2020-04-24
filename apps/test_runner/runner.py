@@ -7,6 +7,7 @@ import errno
 import subprocess
 import pyautogui
 
+FAILSAFE = False
 class Runner:
     """Class Runner main task is to handle running of tests.
     """
