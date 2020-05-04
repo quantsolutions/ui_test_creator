@@ -35,3 +35,4 @@ backend/Tingus-Backend.spec
 frontend/private/GH_TOKEN.txt
 
 apps/test_runner/test_runner_dist_20190909_med_branch.rar
+/apps/test_runner/_tingus_setup.exe
