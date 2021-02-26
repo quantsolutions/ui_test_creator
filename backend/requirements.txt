@@ -1,4 +1,4 @@
-aiohttp==3.3.2
+aiohttp==3.7.4
 aiohttp_cors==0.7.0
 pyinstaller==3.3.1
 
